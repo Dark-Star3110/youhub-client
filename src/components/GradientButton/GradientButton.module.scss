@@ -1,0 +1,56 @@
+.gradient-button {
+  position: relative;
+  min-width: fit-content;
+  height: 40px;
+  padding: 0 24px;
+  text-align: center;
+  line-height: 40px;
+  color: #fff;
+  font-size: 14px;
+  text-transform: uppercase;
+  text-decoration: none;
+  font-family: sans-serif;
+  box-sizing: border-box;
+  border: none;
+  background-image: linear-gradient(90deg, #03a9f4, #f441a5, #ffeb3b, #03a9f4);
+  background-size: 400%;
+  border-radius: 30px;
+  &:hover {
+    cursor: pointer;
+    animation: gradient 8s linear infinite;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    bottom: -5px;
+    left: -5px;
+    z-index: -1;
+    background-image: linear-gradient(
+      90deg,
+      #03a9f4,
+      #f441a5,
+      #ffeb3b,
+      #03a9f4
+    );
+    background-size: 400%;
+    border-radius: 40px;
+    transition: 0.5s;
+    opacity: 0;
+  }
+  &:hover::before {
+    filter: blur(10px);
+    opacity: 1;
+    animation: gradient 8s linear infinite;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 400%;
+  }
+}

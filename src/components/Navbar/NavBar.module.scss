@@ -1,0 +1,129 @@
+@import "../../styles/variable.scss";
+// navbar
+.navigation {
+  position: fixed;
+  width: 300px;
+  // height: 100%;
+  top: 0;
+  bottom: 0;
+  background-color: $black3-color;
+  border-left: 10px solid $black3-color;
+  transition: 0.5s;
+  overflow: hidden;
+  .logo {
+    width: 120px;
+    height: 40px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    overflow: hidden;
+    img {
+      width: 120px;
+      height: 40px;
+    }
+  }
+  ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    li {
+      position: relative;
+      width: 100%;
+      list-style: none;
+      border-top-left-radius: 30px;
+      border-bottom-left-radius: 30px;
+      a {
+        position: relative;
+        display: flex;
+        width: 100%;
+        text-decoration: none;
+        color: $grey-color;
+        font-weight: 500;
+        .icon {
+          position: relative;
+          display: block;
+          min-width: 60px;
+          height: 60px;
+          line-height: 70px;
+          text-align: center;
+          i {
+            font-size: 1.75em;
+          }
+        }
+        .title {
+          position: relative;
+          display: block;
+          padding: 0 10px;
+          height: 60px;
+          line-height: 60px;
+          text-align: start;
+          white-space: nowrap;
+        }
+      }
+    }
+    li:hover {
+      background-color: $black1-color;
+      a {
+        color: $white-color;
+      }
+      a::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        right: 0;
+        width: 50px;
+        height: 50px;
+        background-color: transparent;
+        border-radius: 50%;
+        box-shadow: 35px 35px 0 10px $black1-color;
+      }
+      a::after {
+        content: "";
+        position: absolute;
+        bottom: -50px;
+        right: 0;
+        width: 50px;
+        height: 50px;
+        background-color: transparent;
+        border-radius: 50%;
+        box-shadow: 35px -35px 0 10px $black1-color;
+      }
+    }
+    li:nth-child(1) {
+      margin-bottom: 80px;
+      pointer-events: none;
+      a {
+        color: #f79817;
+      }
+    }
+  }
+}
+
+// navigation change scale
+.navigation.active {
+  width: 80px;
+}
+
+// responsive
+@media (max-width: 991px) {
+  .navigation {
+    left: -300px;
+  }
+  .navigation.active {
+    width: 300px;
+    left: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .navigation {
+    width: 100%;
+    left: -100%;
+    z-index: 1;
+  }
+  .navigation.active {
+    width: 100vw;
+    left: 0;
+  }
+}

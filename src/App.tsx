@@ -1,24 +1,33 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useContext } from "react";
+import { Routes, Route } from "react-router-dom";
+import Contact from "./components/Contact";
+import Explore from "./components/Explore";
+import Home from "./components/Home";
+import Library from "./components/Library";
+import Navbar from "./components/Navbar";
+import Subscriptions from "./components/Subscriptions";
+import TopBar from "./components/TopBar";
+import { NavContext } from "./contexts/NavContext";
+
+import "./styles/App.scss";
 
 function App() {
+  // context
+  const { action } = useContext(NavContext);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <Navbar />
+      <div className={`App ${action}`}>
+        <TopBar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/explore" element={<Explore />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/library" element={<Library />} />
+          <Route path="/contact" element={<Contact />} />
+        </Routes>
+      </div>
     </div>
   );
 }

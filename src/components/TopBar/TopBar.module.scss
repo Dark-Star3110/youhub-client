@@ -1,0 +1,134 @@
+@import "../../styles/variable.scss";
+
+// topnav
+.topbar {
+  width: inherit;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+  background-color: $black3-color;
+  position: fixed;
+  top: 0;
+  z-index: 1;
+  opacity: 0.9;
+
+  .toggle {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    color: $white-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2em;
+    cursor: pointer;
+    i {
+      font-weight: 100;
+    }
+  }
+  .search {
+    position: relative;
+    // left: -100px;
+    width: 40%;
+    display: flex;
+    input {
+      width: 100%;
+      height: 40px;
+      padding: 5px 20px;
+      outline: none;
+      border: 1px solid #6d6a6a;
+      background-color: $black2-color;
+      font-size: 1em;
+      color: $white-color;
+    }
+    button {
+      width: 64px;
+      border: none;
+      background-color: #6d6a6a;
+      cursor: pointer;
+      i {
+        font-size: 1.2em;
+        font-weight: 100;
+        color: $white-color;
+      }
+    }
+    .voice {
+      width: 56px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: $black2-color;
+      border-radius: 50%;
+      margin-left: 10px;
+      cursor: pointer;
+      i {
+        font-size: 1.2em;
+      }
+    }
+  }
+  .user {
+    color: $white-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .user-item {
+      margin: 0 0.8em;
+    }
+    i {
+      font-size: 1.2em;
+      font-weight: 100;
+    }
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+}
+
+// responsive
+@media (max-width: 991px) {
+  .topbar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .topbar {
+    .user {
+      flex-direction: column-reverse;
+      margin-top: 1em;
+      .user-item {
+        margin-bottom: 0.6em;
+        display: none;
+      }
+      .user-img {
+        display: inline-block;
+      }
+      &:hover {
+        cursor: pointer;
+        background-color: $black3-color;
+        margin-top: 6em;
+        .user-item {
+          display: block;
+        }
+      }
+    }
+    .search {
+      width: 60%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .user {
+    min-width: 40px;
+  }
+  .toggle {
+    z-index: 10;
+    right: 0;
+  }
+}

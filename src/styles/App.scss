@@ -1,0 +1,99 @@
+@import "variable";
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: sans-serif;
+  color: $white-color;
+}
+
+.container {
+  //   position: relative;
+  width: 100%;
+}
+
+.App {
+  position: absolute;
+  width: calc(100% - 300px);
+  left: 300px;
+  min-height: 100vh;
+  background-color: $black1-color;
+  transition: 0.5s;
+}
+
+.App.active {
+  width: calc(100% - 80px);
+  left: 80px;
+}
+
+h1 {
+  position: absolute;
+  top: 45%;
+  left: 45%;
+  font-size: 64px;
+}
+
+// reponsive
+@media (max-width: 1024px) {
+  .gradient-button {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 991px) {
+  .navigation {
+    left: -300px;
+  }
+  .navigation.active {
+    width: 300px;
+    left: 0;
+  }
+  .App {
+    width: 100%;
+    left: 0;
+  }
+  .App.active {
+    left: 300px;
+  }
+  .topbar {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .user {
+    min-width: 40px;
+  }
+  .navigation {
+    width: 100%;
+    left: -100%;
+    z-index: 1;
+  }
+  .navigation.active {
+    width: 100vw;
+    left: 0;
+  }
+  .gradient-button {
+    width: 175px;
+  }
+  .App.active {
+    width: 0;
+    transition: none;
+    background-color: $black1-color;
+    .topbar {
+      //   position: absolute;
+      .search,
+      .user {
+        display: none;
+      }
+    }
+    .toggle {
+      position: fixed;
+      right: 0;
+    }
+  }
+}

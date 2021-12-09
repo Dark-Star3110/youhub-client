@@ -11,6 +11,9 @@
   border-top: 1px solid $grey-color;
   border-bottom: 1px solid $grey-color;
   background-color: $black3-color;
+  overflow: hidden;
+  // overflow-x: scroll;
+  // overflow-y: hidden;
   .slick-nav-item {
     width: fit-content;
     display: flex;

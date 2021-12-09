@@ -21,13 +21,21 @@ body {
   width: calc(100% - 300px);
   left: 300px;
   min-height: 100vh;
+  // max-height: 100%;
   background-color: $black1-color;
   transition: 0.5s;
+  padding-bottom: 80px;
 }
 
 .App.active {
   width: calc(100% - 80px);
   left: 80px;
+}
+
+.App.full {
+  transition: 0s;
+  width: 100%;
+  left: 0;
 }
 
 h1 {

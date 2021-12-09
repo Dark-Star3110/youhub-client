@@ -63,11 +63,11 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/">
+          <Link to="/login">
             <span className={styles.icon}>
-              <i className="fas fa-sign-out-alt"></i>
+              <i className="fas fa-sign-in-alt"></i>
             </span>
-            <span className={styles.title}>Đăng xuất</span>
+            <span className={styles.title}>Đăng nhập</span>
           </Link>
         </li>
       </ul>

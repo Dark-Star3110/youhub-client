@@ -1,0 +1,12 @@
+mutation Login (
+  $loginInput: LoginInput,
+  $socialLogin: SocialLogin
+) {
+  login (loginInput: $loginInput, socialLogin: $socialLogin) {
+    ...mutationStatuses
+    token
+    errors {
+      ...fieldError
+    }
+  }
+}

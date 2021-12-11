@@ -1,18 +1,30 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
-import NavContextProvider from "./contexts/NavContext";
 import { BrowserRouter } from "react-router-dom";
+import App /* , { authLink } */ from "./App";
+import ApolloClientProvider from "./contexts/ApolloClientProvider";
+import NavContextProvider from "./contexts/NavContext";
+import UserContextProvider from "./contexts/UserContext";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
+
+import { config } from "dotenv"
+config()
+
+console.log(process.env);
+
 
 ReactDOM.render(
   <React.StrictMode>
-    <NavContextProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </NavContextProvider>
+    <UserContextProvider>
+      <ApolloClientProvider>
+        <NavContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </NavContextProvider>
+      </ApolloClientProvider>
+    </UserContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

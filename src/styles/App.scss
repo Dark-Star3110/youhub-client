@@ -4,6 +4,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 body {
   min-height: 100vh;
   overflow-x: hidden;
@@ -36,6 +37,7 @@ body {
   transition: 0s;
   width: 100%;
   left: 0;
+  padding-bottom: 0;
 }
 
 h1 {

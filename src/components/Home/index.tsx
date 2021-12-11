@@ -1,6 +1,6 @@
 import SlickNav from "../SlickNav";
-
 import styles from "./Home.module.scss";
+
 
 const Home = () => {
   const data = [

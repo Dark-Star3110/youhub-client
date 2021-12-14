@@ -10,7 +10,7 @@ const ApolloClientProvider = ({ children }: { children: ReactNode}) => {
   const client = new ApolloClient({
     ssrMode: typeof window === 'undefined',
     link: new HttpLink({
-      uri: process.env.GRAPHQL_ENDPOINT as string,
+      uri: process.env.REACT_APP_GRAPHQL_ENDPOINT as string,
       credentials: 'include',
       headers: {
         'authorization': token ? `Bearer ${token}` : ''

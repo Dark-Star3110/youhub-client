@@ -73,7 +73,7 @@ const Login = () => {
   const { signIn } = useGoogleLogin({
     onSuccess,
     onFailure,
-    clientId: process.env.GOOGLE_CLIENT_ID as string
+    clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID as string
   })
 
   // login with local 

@@ -10,7 +10,6 @@ import Navbar from "./components/Navbar";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
 import { NavContext } from "./contexts/NavContext";
-import { useCheckAuth } from "./hooks/useCheckAuth";
 /* import { useLogin } from "./contexts/UserContext";
 import { useCheckAuth } from "./hooks/useCheckAuth"; */
 import { useRouter } from "./hooks/useRouter";
@@ -26,9 +25,6 @@ function App() {
 
   // location
   const router = useRouter();
-
-  const { data } = useCheckAuth()
-  console.log(data);
   
   // check authentication
   

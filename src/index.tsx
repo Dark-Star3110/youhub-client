@@ -8,11 +8,6 @@ import UserContextProvider from "./contexts/UserContext";
 import "./index.css";   
 import reportWebVitals from "./reportWebVitals";
 
-import { config } from "dotenv"
-config()
-
-console.log(process.env);
-
 
 ReactDOM.render(
   <React.StrictMode>

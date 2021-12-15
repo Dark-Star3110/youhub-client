@@ -89,7 +89,6 @@ const Login = () => {
       }
     })
 
-    console.log('qua day');
     // check errors here
 
     if (response.data?.login.success) {

@@ -27,7 +27,7 @@ function App() {
   const router = useRouter();
   
   // check authentication
-  
+
   // effect 
   useEffect(() => {
     // console.log(router.location.pathname);

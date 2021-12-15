@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import App /* , { authLink } */ from "./App";
+import App from "./App";
 import ApolloClientProvider from "./contexts/ApolloClientProvider";
 import NavContextProvider from "./contexts/NavContext";
 import UserContextProvider from "./contexts/UserContext";

@@ -1,0 +1,5 @@
+mutation CreateVideo ($createVideoInput: CreateVideoInput!) {
+  createVideo (createVideoInput: $createVideoInput) {
+    
+  }
+}

@@ -3,16 +3,19 @@ import ReactDOM from "react-dom";
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import NavContextProvider from "./contexts/NavContext";
 import { BrowserRouter } from "react-router-dom";
+import NavContextProvider from "./contexts/NavContext";
+import LoginContextProvider from "./contexts/LoginContext";
 
 ReactDOM.render(
   <React.StrictMode>
-    <NavContextProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </NavContextProvider>
+    <LoginContextProvider>
+      <NavContextProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </NavContextProvider>
+    </LoginContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

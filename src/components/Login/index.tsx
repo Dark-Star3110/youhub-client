@@ -102,7 +102,7 @@ const Login = () => {
       <div className={styles["panels-container"]}>
         <div className={styles["panel"] + " " + styles["left-panel"]}>
           <div className={styles.content}>
-            <h3>New here ?</h3>
+            <h3>Bạn chưa có tài khoản ?</h3>
             <p>
               Lorem ipsum, dolor sit amet consectetur adipisicing elit. Debitis,
               ex ratione. Aliquid!
@@ -118,7 +118,7 @@ const Login = () => {
         </div>
         <div className={styles["panel"] + " " + styles["right-panel"]}>
           <div className={styles.content}>
-            <h3>One of us ?</h3>
+            <h3>Ok chưa ?</h3>
             <p>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum
               laboriosam ad deleniti.

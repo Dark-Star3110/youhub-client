@@ -1,4 +1,5 @@
 @import "../../styles/variable.scss";
+@import "../../styles/mixim.scss";
 
 // topnav
 .topbar {
@@ -38,7 +39,7 @@
       height: 40px;
       padding: 5px 20px;
       outline: none;
-      border: 1px solid #6d6a6a;
+      border: 1px solid $black4-color;
       background-color: $black2-color;
       font-size: 1em;
       color: $white-color;
@@ -46,8 +47,16 @@
     button {
       width: 64px;
       border: none;
-      background-color: #6d6a6a;
+      background-color: $black4-color;
       cursor: pointer;
+      position: relative;
+      &::before {
+        @include bottom_tail("tìm kiếm");
+        display: none;
+      }
+      &:hover::before {
+        display: block;
+      }
       i {
         font-size: 1.2em;
         font-weight: 100;
@@ -57,13 +66,19 @@
     .voice {
       width: 56px;
       text-align: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      @include center();
       background-color: $black2-color;
       border-radius: 50%;
       margin-left: 10px;
       cursor: pointer;
+      position: relative;
+      &::before {
+        @include bottom_tail("voice search");
+        display: none;
+      }
+      &:hover::before {
+        display: block;
+      }
       i {
         font-size: 1.2em;
       }
@@ -80,11 +95,117 @@
     i {
       font-size: 1.2em;
       font-weight: 100;
+      cursor: pointer;
     }
-    img {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+    .user-item-img {
+      margin: 0 0.8em;
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+    }
+    .create-btn,
+    .noti-btn {
+      position: relative;
+    }
+    .create-btn::before {
+      @include bottom_tail("tạo video");
+      display: none;
+    }
+    .create-btn:hover::before {
+      display: block;
+    }
+    .noti-btn::before {
+      @include bottom_tail("thông báo");
+      display: none;
+    }
+    .noti-btn:hover::before {
+      display: block;
+    }
+  }
+  .user-info {
+    display: none;
+    @include menu_dropdown(0, 72px);
+    .user-info-head {
+      display: flex;
+      border-bottom: 1px solid #888;
+      padding: 8px 36px 8px 16px;
+      img {
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+      .user-info-head__title {
+        padding: 4px;
+        margin-left: 8px;
+        p {
+          color: #388ed7;
+        }
+      }
+    }
+    .user-info-item {
+      width: 300px;
+      padding: 8px 36px 8px 16px;
+      cursor: pointer;
+      .user-info-icon {
+        font-size: 24px;
+        margin-right: 16px;
+      }
+      .user-info-title {
+        font-size: 14px;
+      }
+      &:hover {
+        background-color: $black4-color;
+      }
+    }
+  }
+  .user-info.show-user {
+    display: block;
+  }
+  .video-create-menu {
+    display: none;
+    @include menu_dropdown(60px, 28px);
+    .video-create-item {
+      width: 200px;
+      padding: 8px 36px 8px 16px;
+      cursor: pointer;
+      .video-create-icon {
+        font-size: 24px;
+        margin-right: 16px;
+      }
+      .video-create-title {
+        font-size: 14px;
+      }
+      &:hover {
+        background-color: $black4-color;
+      }
+      a {
+        color: $white-color;
+      }
+    }
+  }
+  .video-create-menu.show-create {
+    display: block;
+  }
+
+  .login-btn {
+    padding: 5px;
+    border: 2px solid $blue1-color;
+    border-radius: 5px;
+    color: $blue1-color;
+    .login-btn__icon {
+      font-size: 24px;
+      margin: 6px;
+    }
+    .login-btn__title {
+      display: inline-block;
+      font-size: 18px;
+      height: 24px;
+      padding-bottom: 4px;
+      margin: 0 6px;
     }
   }
 }

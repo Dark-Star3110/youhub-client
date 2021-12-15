@@ -2,6 +2,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Contact from "./components/Contact";
+import Create from "./components/Create";
 import Explore from "./components/Explore";
 import Home from "./components/Home";
 import Library from "./components/Library";
@@ -49,6 +50,7 @@ function App() {
           <Route path="/library" element={<Library />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/create" element={<Create />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </div>

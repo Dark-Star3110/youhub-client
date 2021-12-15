@@ -5,9 +5,8 @@ import App from "./App";
 import ApolloClientProvider from "./contexts/ApolloClientProvider";
 import NavContextProvider from "./contexts/NavContext";
 import UserContextProvider from "./contexts/UserContext";
-import "./index.css";   
+import "./index.css";
 import reportWebVitals from "./reportWebVitals";
-
 
 ReactDOM.render(
   <React.StrictMode>

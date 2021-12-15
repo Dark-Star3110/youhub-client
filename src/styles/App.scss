@@ -1,8 +1,36 @@
 @import "variable";
+html {
+  box-sizing: border-box;
+}
 * {
   margin: 0;
   padding: 0;
+}
+*,
+*:before,
+*:after {
   box-sizing: border-box;
+}
+
+input,
+textarea,
+select,
+button {
+  outline: none;
+}
+input {
+  line-height: normal;
+}
+label,
+button {
+  cursor: pointer;
+}
+a {
+  text-decoration: none;
+}
+img {
+  display: block;
+  max-width: 100%;
 }
 
 body {
@@ -37,7 +65,7 @@ body {
   transition: 0s;
   width: 100%;
   left: 0;
-  padding-bottom: 0;
+  padding-bottom: 0px;
 }
 
 h1 {
@@ -68,6 +96,9 @@ h1 {
   }
   .App.active {
     left: 300px;
+  }
+  .App.active.full {
+    left: 0;
   }
   .topbar {
     width: 100%;
@@ -105,5 +136,8 @@ h1 {
       position: fixed;
       right: 0;
     }
+  }
+  .App.active.full {
+    width: 100%;
   }
 }

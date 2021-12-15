@@ -1,0 +1,4 @@
+fragment catagoryInfo on Catagory {
+  id
+  name
+}

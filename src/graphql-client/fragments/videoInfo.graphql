@@ -1,0 +1,10 @@
+fragment videoInfo on Video {
+  id
+  title
+  description
+  commentable
+  thumbnailUrl
+  size
+  createdAt
+  updatedAt
+}

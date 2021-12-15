@@ -1,21 +1,24 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
-import App from "./App";
-import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter } from "react-router-dom";
+import App /* , { authLink } */ from "./App";
+import ApolloClientProvider from "./contexts/ApolloClientProvider";
 import NavContextProvider from "./contexts/NavContext";
-import LoginContextProvider from "./contexts/LoginContext";
+import UserContextProvider from "./contexts/UserContext";
+import "./index.css";
+import reportWebVitals from "./reportWebVitals";
 
 ReactDOM.render(
   <React.StrictMode>
-    <LoginContextProvider>
-      <NavContextProvider>
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </NavContextProvider>
-    </LoginContextProvider>
+    <UserContextProvider>
+      <ApolloClientProvider>
+        <NavContextProvider>
+          <BrowserRouter>
+            <App />
+          </BrowserRouter>
+        </NavContextProvider>
+      </ApolloClientProvider>
+    </UserContextProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );

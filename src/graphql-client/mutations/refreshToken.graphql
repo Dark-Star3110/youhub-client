@@ -1,0 +1,9 @@
+mutation RefreshToken {
+  refreshToken {
+    ...mutationStatuses
+    token
+    errors {
+      ...fieldError
+    }
+  }
+}

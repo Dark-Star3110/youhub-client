@@ -1,0 +1,9 @@
+mutation Signup ($signupInput: SignupInput!) {
+  signup (signupInput: $signupInput) {
+    ...mutationStatuses
+    token
+    errors {
+      ...fieldError
+    }
+  }
+}

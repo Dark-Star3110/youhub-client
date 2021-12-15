@@ -1,0 +1,14 @@
+fragment userInfo on User {
+  id
+  username
+  email
+  socialId
+  firstName
+  lastName
+  channelDecscription
+  image_url
+  dateOfBirth
+  role
+  createdAt
+  updatedAt
+}

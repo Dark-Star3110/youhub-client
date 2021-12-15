@@ -1,5 +1,6 @@
+
 import { useContext, useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
 import Explore from "./components/Explore";
@@ -10,9 +11,11 @@ import Navbar from "./components/Navbar";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
 import { NavContext } from "./contexts/NavContext";
+/* import { useLogin } from "./contexts/UserContext";
+import { useCheckAuth } from "./hooks/useCheckAuth"; */
 import { useRouter } from "./hooks/useRouter";
-
 import "./styles/App.scss";
+
 
 function App() {
   // state
@@ -20,10 +23,13 @@ function App() {
 
   // context
   const { action } = useContext(NavContext);
+
   // location
   const router = useRouter();
-
-  // effect
+  
+  // check authentication
+  
+  // effect 
   useEffect(() => {
     // console.log(router.location.pathname);
     if (router.location.pathname === "/login") {
@@ -51,5 +57,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;

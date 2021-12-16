@@ -1,5 +1,5 @@
 
-import { useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useLayoutEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
@@ -11,6 +11,9 @@ import Navbar from "./components/Navbar";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
 import { NavContext } from "./contexts/NavContext";
+import { useLogin } from "./contexts/UserContext";
+import { useRefreshTokenMutation } from "./generated/graphql";
+import { useCheckAuth } from "./hooks/useCheckAuth";
 /* import { useLogin } from "./contexts/UserContext";
 import { useCheckAuth } from "./hooks/useCheckAuth"; */
 import { useRouter } from "./hooks/useRouter";
@@ -23,11 +26,58 @@ function App() {
 
   // context
   const { action } = useContext(NavContext);
+  const { setState: setUserContext } = useLogin()
 
   // location
   const router = useRouter();
   
   // check authentication
+  useCheckAuth()
+  const [ refreshTokenMutation ] = useRefreshTokenMutation()
+
+  const verifyUser = useCallback(async () => {
+    const response = await refreshTokenMutation()
+    const token = response.data?.refreshToken.token as (string | undefined)
+    setUserContext(function (preValues) {
+      return {
+        ...preValues,
+        token
+      }
+    })
+    setTimeout(verifyUser, 10 * 60 * 1000)
+  }, [setUserContext, refreshTokenMutation])
+
+  useLayoutEffect(() => {
+    verifyUser()
+  }, [verifyUser])
+
+  // sync login
+  const syncLogin = useCallback(event => {
+    if (event.key === 'login') {
+      window.location.reload()
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('storage', syncLogin)
+    return () => {
+      window.removeEventListener('storage', syncLogin)
+    }
+  }, [syncLogin])
+
+  // sync logout
+  const syncLogout = useCallback(event => {
+    if (event.key === 'logout') {
+      window.location.reload()
+    }
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('storage', syncLogout)
+    return () => {
+      window.removeEventListener('storage', syncLogout)
+    }
+  }, [syncLogout])
 
   // effect 
   useEffect(() => {

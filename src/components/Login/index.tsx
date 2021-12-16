@@ -4,6 +4,7 @@ import LogImg from "../../assets/img/log.svg";
 import RegisImg from "../../assets/img/register.svg";
 import { useLogin } from "../../contexts/UserContext";
 import { Strategy, useLoginMutation, useSignupMutation } from "../../generated/graphql";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
 import styles from "./Login.module.scss";
 
@@ -21,6 +22,8 @@ interface ISignupDataDefault {
 }
 
 const Login = () => {
+  
+  useCheckAuth()
   // state
   const [mode, setMode] = useState<string>("");
   const [seen, setSeen] = useState<boolean>(false);
@@ -62,6 +65,7 @@ const Login = () => {
         ...preValues,
         token: response.data?.login.token as string,
       }))
+      window.localStorage.setItem('login', Date.now().toString())
       router.navigate('/')
     } 
   }
@@ -96,6 +100,7 @@ const Login = () => {
         ...preValues,
         token: response.data?.login.token as string,
       }))
+      window.localStorage.setItem('login', Date.now().toString())
       router.push('/')
     }
   }
@@ -111,8 +116,9 @@ const Login = () => {
 
     // check errors here
 
-    if (response.data?.signup.success) 
-      router.push('/login')
+    if (response.data?.signup.success) {
+      setMode("")
+    }
   }
 
   return (

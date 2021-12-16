@@ -15,6 +15,8 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Catagory = {
@@ -39,10 +41,25 @@ export type Comment = {
   video: Video;
 };
 
+export type CreateVideoInput = {
+  commentable?: InputMaybe<Scalars['Boolean']>;
+  description: Scalars['String'];
+  id: Scalars['String'];
+  size: Scalars['String'];
+  thumbnailUrl?: InputMaybe<Scalars['String']>;
+  title: Scalars['String'];
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   error: Scalars['String'];
   type: Scalars['String'];
+};
+
+export type FileResponse = {
+  __typename?: 'FileResponse';
+  id: Scalars['String'];
+  size?: Maybe<Scalars['String']>;
 };
 
 export type LoginInput = {
@@ -52,9 +69,24 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createVideo: VideoMutationResponse;
+  generateThumbnailImg?: Maybe<Scalars['String']>;
   login: UserMutationResponse;
+  logout: Scalars['Boolean'];
   refreshToken: UserMutationResponse;
   signup: UserMutationResponse;
+  updateInfo: UserMutationResponse;
+  uploadVideo: FileResponse;
+};
+
+
+export type MutationCreateVideoArgs = {
+  createVideoInput: CreateVideoInput;
+};
+
+
+export type MutationGenerateThumbnailImgArgs = {
+  videoId: Scalars['String'];
 };
 
 
@@ -66,6 +98,16 @@ export type MutationLoginArgs = {
 
 export type MutationSignupArgs = {
   signupInput: SignupInput;
+};
+
+
+export type MutationUpdateInfoArgs = {
+  updateInput: UpdateUserInfoInput;
+};
+
+
+export type MutationUploadVideoArgs = {
+  file: Scalars['Upload'];
 };
 
 export type MutationResponse = {
@@ -100,9 +142,18 @@ export enum Strategy {
   Local = 'LOCAL'
 }
 
+export type UpdateUserInfoInput = {
+  channelDecscription?: InputMaybe<Scalars['String']>;
+  dateOfBirth?: InputMaybe<Scalars['String']>;
+  firstName?: InputMaybe<Scalars['String']>;
+  image_url?: InputMaybe<Scalars['String']>;
+  lastName?: InputMaybe<Scalars['String']>;
+  password?: InputMaybe<Scalars['String']>;
+};
+
 export type User = {
   __typename?: 'User';
-  chanels?: Maybe<Array<User>>;
+  chanelsSubscribe?: Maybe<Array<User>>;
   channelDecscription?: Maybe<Scalars['String']>;
   comments?: Maybe<Array<Comment>>;
   commentsDisLiked?: Maybe<Array<Comment>>;
@@ -142,14 +193,23 @@ export type Video = {
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   id: Scalars['ID'];
-  size: Scalars['Float'];
+  numUsersDisLiked?: Maybe<Scalars['Float']>;
+  size: Scalars['String'];
   thumbnailUrl?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
-  usersDisLiked?: Maybe<Array<User>>;
   usersLiked?: Maybe<Array<User>>;
   usersWatchLater?: Maybe<Array<User>>;
+};
+
+export type VideoMutationResponse = MutationResponse & {
+  __typename?: 'VideoMutationResponse';
+  code: Scalars['Float'];
+  errors?: Maybe<Array<FieldError>>;
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+  video?: Maybe<Video>;
 };
 
 export type CatagoryInfoFragment = { __typename?: 'Catagory', id: string, name: string };
@@ -162,7 +222,7 @@ export type MutationStatusesFragment = { __typename?: 'UserMutationResponse', co
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
-export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: number, createdAt: any, updatedAt: any };
+export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any };
 
 export type LoginMutationVariables = Exact<{
   loginInput?: InputMaybe<LoginInput>;
@@ -171,6 +231,11 @@ export type LoginMutationVariables = Exact<{
 
 
 export type LoginMutation = { __typename?: 'Mutation', login: { __typename?: 'UserMutationResponse', token?: string | null | undefined, code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
 export type RefreshTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -283,6 +348,36 @@ export function useLoginMutation(baseOptions?: Apollo.MutationHookOptions<LoginM
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = Apollo.MutationResult<LoginMutation>;
 export type LoginMutationOptions = Apollo.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
+export const LogoutDocument = gql`
+    mutation Logout {
+  logout
+}
+    `;
+export type LogoutMutationFn = Apollo.MutationFunction<LogoutMutation, LogoutMutationVariables>;
+
+/**
+ * __useLogoutMutation__
+ *
+ * To run a mutation, you first call `useLogoutMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogoutMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logoutMutation, { data, loading, error }] = useLogoutMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
+export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
+export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
+export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const RefreshTokenDocument = gql`
     mutation RefreshToken {
   refreshToken {

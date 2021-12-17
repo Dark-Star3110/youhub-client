@@ -1,23 +1,33 @@
-import React, { useState } from "react";
-import { GoogleLoginResponse, GoogleLoginResponseOffline, useGoogleLogin } from "react-google-login";
+import React, { useContext, useState } from "react";
+import {
+  GoogleLoginResponse,
+  GoogleLoginResponseOffline,
+  useGoogleLogin,
+} from "react-google-login";
 import LogImg from "../../assets/img/log.svg";
 import RegisImg from "../../assets/img/register.svg";
+import { LoginContext } from "../../contexts/LoginContext";
+import { ToastContext } from "../../contexts/ToastContext";
 import { useLogin } from "../../contexts/UserContext";
-import { Strategy, useLoginMutation, useSignupMutation } from "../../generated/graphql";
+import {
+  Strategy,
+  useLoginMutation,
+  useSignupMutation,
+} from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
 import styles from "./Login.module.scss";
 
 interface ILoginDataDefault {
-  username: string
-  password: string
+  username: string;
+  password: string;
 }
 
 interface ISignupDataDefault {
-  username: string
-  email: string
-  password: string
-  firstName: string
-  lastName: string
+  username: string;
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
 }
 
 const Login = () => {
@@ -26,95 +36,102 @@ const Login = () => {
   const [seen, setSeen] = useState<boolean>(false);
   const [loginData, setLoginData] = useState<ILoginDataDefault>({
     password: "",
-    username: ""
-  })
+    username: "",
+  });
   const [signupData, setSignupData] = useState<ISignupDataDefault>({
     username: "",
     password: "",
     email: "",
     firstName: "",
     lastName: "",
-  })
+  });
 
-  const router = useRouter()
-  
-  // user context 
-  const {setState: setUserState } = useLogin()
-  
+  const router = useRouter();
+
+  // user context
+  const { setState: setUserState } = useLogin();
+  const { toggleLogin } = useContext(LoginContext);
+  const { notify } = useContext(ToastContext);
+
   // login mutation
-  const [loginMutation, /* {data, loading, error} */] = useLoginMutation()
-  const [signupMutation] = useSignupMutation()
+  const [loginMutation /* {data, loading, error} */] = useLoginMutation();
+  const [signupMutation] = useSignupMutation();
 
   // login with google
-  const onSuccess = async (res: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    const res_su = res as GoogleLoginResponse
+  const onSuccess = async (
+    res: GoogleLoginResponse | GoogleLoginResponseOffline
+  ) => {
+    const res_su = res as GoogleLoginResponse;
     const response = await loginMutation({
       variables: {
         socialLogin: {
           type: Strategy.Google,
-          accessToken: res_su.tokenId
-        }
-      }
-    })
-    
+          accessToken: res_su.tokenId,
+        },
+      },
+    });
+
     if (response.data?.login.success) {
-      setUserState(preValues => ({
+      setUserState((preValues) => ({
         ...preValues,
         token: response.data?.login.token as string,
-      }))
-      router.navigate('/')
-    } 
-  }
+      }));
+      toggleLogin(true);
+      notify("success", "dang nhap thanh cong");
+      router.navigate("/");
+    }
+  };
 
   const onFailure = (error: any) => {
-    console.log('login failure', error);
-  }
+    console.log("login failure", error);
+  };
 
   const { signIn } = useGoogleLogin({
     onSuccess,
     onFailure,
-    clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID as string
-  })
+    clientId: process.env.REACT_APP_GOOGLE_CLIENT_ID as string,
+  });
 
-  // login with local 
+  // login with local
   const handleLoginSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     const response = await loginMutation({
       variables: {
         loginInput: {
           username: loginData.username,
-          password: loginData.password
-        } 
-      }
-    })
+          password: loginData.password,
+        },
+      },
+    });
 
-    console.log('qua day');
+    console.log("qua day");
     // check errors here
 
     if (response.data?.login.success) {
-      setUserState(preValues => ({
+      setUserState((preValues) => ({
         ...preValues,
         token: response.data?.login.token as string,
-      }))
-      router.push('/')
+      }));
+      toggleLogin(true);
+      notify("success", "dang nhap thanh cong");
+      router.push("/");
     }
-  }
+  };
 
   // sign up
   const handleSignupSubmit = async (e: React.MouseEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     const response = await signupMutation({
       variables: {
-        signupInput: {...signupData}
-      }
-    })
+        signupInput: { ...signupData },
+      },
+    });
 
     // check errors here
 
-    if (response.data?.signup.success) 
-      router.push('/login')
-  }
+    if (response.data?.signup.success) router.push("/login");
+  };
 
   return (
     <div className={styles.container + " " + styles[mode]}>
@@ -124,19 +141,24 @@ const Login = () => {
             <h2 className={styles["title"]}>Sign in</h2>
             <div className={styles["input-field"]}>
               <i className="fas fa-user"></i>
-              <input 
-                type="text" 
-                placeholder="Username" 
-                value={loginData.username} 
-                onChange={(e)=>setLoginData(pre => ({...pre,username: e.target.value}))}
+              <input
+                type="text"
+                placeholder="Username"
+                value={loginData.username}
+                onChange={(e) =>
+                  setLoginData((pre) => ({ ...pre, username: e.target.value }))
+                }
               />
             </div>
             <div className={styles["input-field"]}>
               <i className="fas fa-lock"></i>
-              <input 
-                type={seen ? "text" : "password"} 
-                placeholder="Password" value={loginData.password} 
-                onChange={(e)=>setLoginData(pre => ({...pre,password: e.target.value}))} 
+              <input
+                type={seen ? "text" : "password"}
+                placeholder="Password"
+                value={loginData.password}
+                onChange={(e) =>
+                  setLoginData((pre) => ({ ...pre, password: e.target.value }))
+                }
               />
               {seen ? (
                 <i
@@ -150,7 +172,12 @@ const Login = () => {
                 ></i>
               )}
             </div>
-            <input type="submit" value="Login" className={styles.btn} onClick={handleLoginSubmit}/>
+            <input
+              type="submit"
+              value="Login"
+              className={styles.btn}
+              onClick={handleLoginSubmit}
+            />
             <p className={styles["social-text"]}>
               Or Sign in with social platforms
             </p>
@@ -173,29 +200,35 @@ const Login = () => {
             <h2 className={styles.title}>Sign up</h2>
             <div className={styles["input-field"]}>
               <i className="fas fa-user"></i>
-              <input 
-                type="text" 
-                placeholder="Username" 
+              <input
+                type="text"
+                placeholder="Username"
                 value={signupData.username}
-                onChange={(e) => setSignupData(pre => ({...pre, username: e.target.value}))}
+                onChange={(e) =>
+                  setSignupData((pre) => ({ ...pre, username: e.target.value }))
+                }
               />
             </div>
             <div className={styles["input-field"]}>
               <i className="fas fa-envelope"></i>
-              <input 
-                type="email" 
+              <input
+                type="email"
                 placeholder="Email"
                 value={signupData.email}
-                onChange={(e) => setSignupData(pre => ({...pre, email: e.target.value}))} 
+                onChange={(e) =>
+                  setSignupData((pre) => ({ ...pre, email: e.target.value }))
+                }
               />
             </div>
             <div className={styles["input-field"]}>
               <i className="fas fa-lock"></i>
-              <input 
+              <input
                 type={seen ? "text" : "password"}
-                placeholder="Password" 
+                placeholder="Password"
                 value={signupData.password}
-                onChange={(e) => setSignupData(pre => ({...pre, password: e.target.value}))}
+                onChange={(e) =>
+                  setSignupData((pre) => ({ ...pre, password: e.target.value }))
+                }
               />
               {seen ? (
                 <i
@@ -211,23 +244,35 @@ const Login = () => {
             </div>
             <div className={styles["input-field"]}>
               <i className="fas fa-file-signature"></i>
-              <input 
-                type="text" 
-                placeholder="First name" 
+              <input
+                type="text"
+                placeholder="First name"
                 value={signupData.firstName}
-                onChange={(e) => setSignupData(pre => ({...pre, firstName: e.target.value}))}
+                onChange={(e) =>
+                  setSignupData((pre) => ({
+                    ...pre,
+                    firstName: e.target.value,
+                  }))
+                }
               />
             </div>
             <div className={styles["input-field"]}>
               <i className="fas fa-file-signature"></i>
-              <input 
-                type="text" 
-                placeholder="Last name" 
+              <input
+                type="text"
+                placeholder="Last name"
                 value={signupData.lastName}
-                onChange={(e) => setSignupData(pre => ({...pre, lastName: e.target.value}))}
+                onChange={(e) =>
+                  setSignupData((pre) => ({ ...pre, lastName: e.target.value }))
+                }
               />
             </div>
-            <input type="submit" className={styles.btn} value="Sign up" onClick={handleSignupSubmit}/>
+            <input
+              type="submit"
+              className={styles.btn}
+              value="Sign up"
+              onClick={handleSignupSubmit}
+            />
           </form>
         </div>
       </div>

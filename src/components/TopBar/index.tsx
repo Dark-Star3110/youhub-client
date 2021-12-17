@@ -59,10 +59,13 @@ const TopBar = () => {
         </div>
       ) : (
         <Link to="/login" className={styles["login-btn"]}>
-          <span className={styles["login-btn__icon"]}>
-            <i className="far fa-user-circle"></i>
-          </span>
-          <span className={styles["login-btn__title"]}>Đăng nhập</span>
+          <div className={styles["outer"] + " " + styles["button"]}>
+            <button>
+              <i className="far fa-user-circle"></i> Đăng nhập
+            </button>
+            <span></span>
+            <span></span>
+          </div>
         </Link>
       )}
       <div className={styles["user-info"] + " " + styles["show-" + show]}>

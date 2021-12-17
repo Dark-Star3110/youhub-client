@@ -1,6 +1,7 @@
-
 import { useContext, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
 import Explore from "./components/Explore";
@@ -10,12 +11,12 @@ import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
+import Watch from "./components/Watch";
 import { NavContext } from "./contexts/NavContext";
 /* import { useLogin } from "./contexts/UserContext";
 import { useCheckAuth } from "./hooks/useCheckAuth"; */
 import { useRouter } from "./hooks/useRouter";
 import "./styles/App.scss";
-
 
 function App() {
   // state
@@ -26,10 +27,10 @@ function App() {
 
   // location
   const router = useRouter();
-  
+
   // check authentication
-  
-  // effect 
+
+  // effect
   useEffect(() => {
     // console.log(router.location.pathname);
     if (router.location.pathname === "/login") {
@@ -41,6 +42,7 @@ function App() {
 
   return (
     <div className="container">
+      <ToastContainer />
       {display && <Navbar />}
       <div className={`App ${action} ${display ? "" : "full"}`}>
         {display && <TopBar />}
@@ -51,12 +53,12 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create" element={<Create />} />
+          <Route path="/watch/:slug" element={<Watch />} />
           <Route path="/" element={<Home />} />
         </Routes>
       </div>
     </div>
   );
 }
-
 
 export default App;

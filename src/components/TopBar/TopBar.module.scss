@@ -192,21 +192,69 @@
   }
 
   .login-btn {
-    padding: 5px;
-    border: 2px solid $blue1-color;
-    border-radius: 5px;
-    color: $blue1-color;
-    .login-btn__icon {
-      font-size: 24px;
-      margin: 6px;
-    }
-    .login-btn__title {
-      display: inline-block;
+    i {
       font-size: 18px;
-      height: 24px;
-      padding-bottom: 4px;
-      margin: 0 6px;
+      padding: 4px;
     }
+    .outer {
+      position: relative;
+      background-image: linear-gradient(#14a2ef, #ed01e5);
+      button,
+      span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      button {
+        background-color: #111;
+        color: #f2f2f2;
+        border: none;
+        outline: none;
+        font-size: 16px;
+        letter-spacing: 1px;
+        // text-transform: uppercase;
+        cursor: pointer;
+        z-index: 9;
+      }
+      span {
+        width: 100%;
+        height: 100%;
+        background: inherit;
+      }
+      &:hover {
+        background-image: linear-gradient(#14ffe9, #ffeb3b, #ff00e0);
+        animation: rotate 1.5s linear infinite;
+        span:nth-child(1) {
+          filter: blur(7px);
+        }
+        span:nth-child(2) {
+          filter: blur(14px);
+        }
+      }
+    }
+    .button {
+      width: 160px;
+      height: 50px;
+      border-radius: 30px;
+      button {
+        width: 150px;
+        height: 40px;
+        border-radius: 30px;
+      }
+      span {
+        border-radius: 30px;
+      }
+    }
+  }
+}
+
+@keyframes rotate {
+  from {
+    filter: hue-rotate(0deg);
+  }
+  to {
+    filter: hue-rotate(360deg);
   }
 }
 

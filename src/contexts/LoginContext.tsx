@@ -18,7 +18,7 @@ export const LoginContext =
   createContext<LoginContextDefault>(LoginContextInit);
 
 const LoginContextProvider = ({ children }: LoginContextProps) => {
-  const [islogin, setIsLogin] = useState(true);
+  const [islogin, setIsLogin] = useState(false);
 
   const login = (action: boolean) => {
     setIsLogin(action);

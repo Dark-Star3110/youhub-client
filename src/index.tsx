@@ -3,7 +3,9 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App /* , { authLink } */ from "./App";
 import ApolloClientProvider from "./contexts/ApolloClientProvider";
+import LoginContextProvider from "./contexts/LoginContext";
 import NavContextProvider from "./contexts/NavContext";
+import ToastContextProvider from "./contexts/ToastContext";
 import UserContextProvider from "./contexts/UserContext";
 import "./index.css";
 import reportWebVitals from "./reportWebVitals";
@@ -12,11 +14,15 @@ ReactDOM.render(
   <React.StrictMode>
     <UserContextProvider>
       <ApolloClientProvider>
-        <NavContextProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </NavContextProvider>
+        <LoginContextProvider>
+          <NavContextProvider>
+            <BrowserRouter>
+              <ToastContextProvider>
+                <App />
+              </ToastContextProvider>
+            </BrowserRouter>
+          </NavContextProvider>
+        </LoginContextProvider>
       </ApolloClientProvider>
     </UserContextProvider>
   </React.StrictMode>,

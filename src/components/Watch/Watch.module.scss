@@ -1,0 +1,6 @@
+@import "../../styles/mixim.scss";
+
+.watch {
+  margin-top: 80px;
+  @include center();
+}

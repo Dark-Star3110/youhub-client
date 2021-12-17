@@ -62,14 +62,6 @@ const Navbar = () => {
             <span className={styles.title}>Liên hệ</span>
           </Link>
         </li>
-        <li>
-          <Link to="/login">
-            <span className={styles.icon}>
-              <i className="fas fa-sign-in-alt"></i>
-            </span>
-            <span className={styles.title}>Đăng nhập</span>
-          </Link>
-        </li>
       </ul>
     </div>
   );

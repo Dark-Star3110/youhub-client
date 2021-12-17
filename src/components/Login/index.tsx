@@ -6,7 +6,6 @@ import {
 } from "react-google-login";
 import LogImg from "../../assets/img/log.svg";
 import RegisImg from "../../assets/img/register.svg";
-import { LoginContext } from "../../contexts/LoginContext";
 import { ToastContext } from "../../contexts/ToastContext";
 import { useLogin } from "../../contexts/UserContext";
 import {
@@ -14,6 +13,7 @@ import {
   useLoginMutation,
   useSignupMutation,
 } from "../../generated/graphql";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
 import styles from "./Login.module.scss";
 
@@ -31,6 +31,7 @@ interface ISignupDataDefault {
 }
 
 const Login = () => {
+  useCheckAuth();
   // state
   const [mode, setMode] = useState<string>("");
   const [seen, setSeen] = useState<boolean>(false);
@@ -50,7 +51,6 @@ const Login = () => {
 
   // user context
   const { setState: setUserState } = useLogin();
-  const { toggleLogin } = useContext(LoginContext);
   const { notify } = useContext(ToastContext);
 
   // login mutation
@@ -76,7 +76,7 @@ const Login = () => {
         ...preValues,
         token: response.data?.login.token as string,
       }));
-      toggleLogin(true);
+      window.localStorage.setItem("login", Date.now().toString());
       notify("success", "dang nhap thanh cong");
       router.navigate("/");
     }
@@ -105,7 +105,6 @@ const Login = () => {
       },
     });
 
-    console.log("qua day");
     // check errors here
 
     if (response.data?.login.success) {
@@ -113,7 +112,7 @@ const Login = () => {
         ...preValues,
         token: response.data?.login.token as string,
       }));
-      toggleLogin(true);
+      window.localStorage.setItem("login", Date.now().toString());
       notify("success", "dang nhap thanh cong");
       router.push("/");
     }
@@ -130,7 +129,9 @@ const Login = () => {
 
     // check errors here
 
-    if (response.data?.signup.success) router.push("/login");
+    if (response.data?.signup.success) {
+      setMode("");
+    }
   };
 
   return (

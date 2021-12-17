@@ -1,8 +1,9 @@
 import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { User } from "../generated/graphql";
 
 export interface State {
   token?: string
-  details?: any
+  details?: User
 }
 
 export interface UserContextDefault {

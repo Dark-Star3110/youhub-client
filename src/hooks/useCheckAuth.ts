@@ -1,17 +1,31 @@
 import { useEffect } from 'react';
-import { useMeQuery } from '../generated/graphql';
+import { useLogin } from '../contexts/UserContext';
+import { useMeQuery, User } from '../generated/graphql';
 import { useRouter } from './useRouter';
 
 export const useCheckAuth = () => {
+  const { state: userState, setState: setUserState} = useLogin()
   const { data, loading } = useMeQuery({
-    fetchPolicy: 'cache-and-network'
+    skip: userState.details ? true : false
   })
   const router = useRouter()
   
   useEffect(()=> {
-    if (!loading && data?.me && router.pathname==='/login')
-      router.push('/')
-  }, [data, loading, router])
+    if (!userState.details && data?.me) {
+      setUserState(function(preValues) {
+        return {
+          ...preValues,
+          details: data.me as User
+        }
+      })
+    }
 
-  return {data, loading}
+    if (!loading && userState.details && router.pathname==='/login')
+      router.push('/')
+  }, [data, loading, router, userState.details, setUserState])
+
+  return {
+    data: userState.details, 
+    loading
+  }
 }

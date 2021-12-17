@@ -1,9 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
-import App /* , { authLink } */ from "./App";
+import App from "./App";
 import ApolloClientProvider from "./contexts/ApolloClientProvider";
-import LoginContextProvider from "./contexts/LoginContext";
 import NavContextProvider from "./contexts/NavContext";
 import ToastContextProvider from "./contexts/ToastContext";
 import UserContextProvider from "./contexts/UserContext";
@@ -14,15 +13,13 @@ ReactDOM.render(
   <React.StrictMode>
     <UserContextProvider>
       <ApolloClientProvider>
-        <LoginContextProvider>
-          <NavContextProvider>
-            <BrowserRouter>
-              <ToastContextProvider>
-                <App />
-              </ToastContextProvider>
-            </BrowserRouter>
-          </NavContextProvider>
-        </LoginContextProvider>
+        <NavContextProvider>
+          <BrowserRouter>
+            <ToastContextProvider>
+              <App />
+            </ToastContextProvider>
+          </BrowserRouter>
+        </NavContextProvider>
       </ApolloClientProvider>
     </UserContextProvider>
   </React.StrictMode>,

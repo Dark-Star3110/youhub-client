@@ -1,23 +1,44 @@
 import axios from "axios";
 import { ChangeEvent, useContext, useState } from "react";
 import { ToastContext } from "../../contexts/ToastContext";
+import { useLogin } from "../../contexts/UserContext";
+import { useCreateVideoMutation } from "../../generated/graphql";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
+import { useRouter } from "../../hooks/useRouter";
 import styles from "./Create.module.scss";
 
 const serverPort = "http://localhost:8000/video/upload";
 
 const Create = () => {
-  const [file, setFile] = useState<File>();
-  const [img, setImg] = useState<string>("");
+  useCheckAuth()
+  const { state: {token} } = useLogin()
+  const [fileVideo, setFileVideo] = useState<File>();
+  const [fileImg, setFileImg] = useState<File>();
+  const [img, setImg] = useState<string>('');
   const [percent, setPercent] = useState(0);
+  const [ inputValue, setInputValue ] = useState({
+    title: '',
+    description: ''
+  })
+
+  const router = useRouter()
 
   const { notify } = useContext(ToastContext);
+
+  const [ createVideoMutation ] = useCreateVideoMutation()
 
   const handleCreateVideo = async (e: React.MouseEvent) => {
     e.preventDefault();
     const formData = new FormData();
-    if (file) {
-      formData.append("file", file);
+    if (fileVideo) {
+      if (fileImg) formData.append("file", fileImg);
+      formData.append('file', fileVideo);
       try {
+        if (!inputValue.title) {
+          notify('warning', 'Vui lòng nhập tiêu đề')
+          return
+        }
+
         const res = await axios.post(serverPort, formData, {
           onUploadProgress: (progressEvent) => {
             let newPercent = Math.round(
@@ -25,8 +46,36 @@ const Create = () => {
             );
             setPercent(newPercent);
           },
+          headers: {
+            'authorization': `Bearer ${token}`
+          }
         });
+
+        if (res.status !== 200) {
+          notify("error", "có lỗi xảy ra vui lòng thử lại!");
+          return
+        }
+        
+        const res_graph = await createVideoMutation({
+          variables: {
+            createVideoInput: {
+              id: res.data.videoId as string,
+              size: res.data.size as string,
+              thumbnailUrl: res.data.imgId,
+              commentable: true,
+              ...inputValue
+            }
+          }
+        })
+
+        if (res_graph.data?.createVideo.success) {
+          notify("success", "đăng video thành công");
+          setTimeout(()=>router.push('/'), 1000)
+        } else {
+          notify("error", "có lỗi xảy ra vui lòng thử lại!");
+        }
       } catch (e) {
+        console.log(e);
         notify("error", "có lỗi xảy ra vui lòng thử lại!");
       }
     }
@@ -39,23 +88,31 @@ const Create = () => {
         setPercent(0);
       }
       const file = files[0];
-      if (file.type !== "video/mp4") {
+      if (file.type.indexOf('video/')===-1) {
         notify("warning", "định dạng file không hợp lệ");
-        return;
+        return
       }
-      setFile(file);
+      setFileVideo(file);
     }
   };
 
   const handleChooseImg = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
+      const file = files[0]
+      if (file.type.indexOf('image/')===-1) {
+        notify("warning", "định dạng file không hợp lệ");
+        return
+      }
+      
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result;
         setImg(result as string);
       };
       reader.readAsDataURL(files[0]);
+
+      setFileImg(file)
     }
   };
 
@@ -68,12 +125,13 @@ const Create = () => {
             type="file"
             className={styles["file-input"]}
             hidden
+            required
             onChange={handleChange}
           />
           <i className="fas fa-cloud-upload-alt"></i>
           <p>Chọn file để tải lên</p>
         </label>
-        {file && percent !== 100 && (
+        {fileVideo && percent !== 100 && (
           <section className={styles["progress-area"]}>
             <li className={styles["row"]}>
               <i className="fas fa-file-video"></i>
@@ -81,7 +139,7 @@ const Create = () => {
                 <div className={styles["details"]}>
                   <span
                     className={styles["name"]}
-                  >{`${file?.name} ~ uploading`}</span>
+                  >{`${fileVideo?.name} ~ uploading`}</span>
                   <span className={styles["percent"]}>{`${percent}%`}</span>
                 </div>
                 <div className={styles["progress-bar"]}>
@@ -102,9 +160,9 @@ const Create = () => {
                 <div className={styles["details"]}>
                   <span
                     className={styles["name"]}
-                  >{`${file?.name} ~ uploaded`}</span>
+                  >{`${fileVideo?.name} ~ uploaded`}</span>
                   <span className={styles["size"]}>{`${
-                    file ? file.size / 100 : 0
+                    fileVideo ? fileVideo.size / 100 : 0
                   } bytes`}</span>{" "}
                   {}
                 </div>
@@ -113,13 +171,15 @@ const Create = () => {
             </li>
           </section>
         )}
-        {file && (
+        {fileVideo && (
           <form className={styles["form-field"]}>
             <div className={styles["form-item"]}>
               <input
                 type="text"
                 id="name"
                 className={styles["form-input"]}
+                value={inputValue.title}
+                onChange={(e) => setInputValue(pre => ({...pre, title: e.target.value}))}
                 placeholder=" "
                 required
               />
@@ -132,6 +192,8 @@ const Create = () => {
                 type="text"
                 id="desciption"
                 className={styles["form-input"]}
+                value={inputValue.description}
+                onChange={(e) => setInputValue(pre => ({...pre, description: e.target.value}))}
                 placeholder=" "
               />
               <label htmlFor="desciption" className={styles["form-label"]}>
@@ -166,8 +228,12 @@ const Create = () => {
               type="submit"
               value="Hủy tác vụ"
               onClick={() => {
-                setFile(undefined);
-                setImg("");
+                setFileVideo(undefined);
+                setImg('');
+                setInputValue({
+                  title: "",
+                  description: ""
+                })
               }}
               className={styles["submit-btn"]}
             />

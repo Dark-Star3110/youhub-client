@@ -1,5 +1,11 @@
-# mutation CreateVideo ($createVideoInput: CreateVideoInput!) {
-#   createVideo (createVideoInput: $createVideoInput) {
-    
-#   }
-# }
+mutation CreateVideo ($createVideoInput: CreateVideoInput!) {
+  createVideo (createVideoInput: $createVideoInput) {
+    ...mutationStatuses
+    video {
+      ...videoInfo
+    }
+    errors {
+      ...fieldError
+    }
+  }
+}

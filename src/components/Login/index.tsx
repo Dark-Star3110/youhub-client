@@ -79,10 +79,13 @@ const Login = () => {
       window.localStorage.setItem("login", Date.now().toString());
       notify("success", "dang nhap thanh cong");
       router.navigate("/");
+    } else {
+      notify("error", "dang nhap that bai");
     }
   };
 
   const onFailure = (error: any) => {
+    notify("error", "dang nhap that bai");
     console.log("login failure", error);
   };
 

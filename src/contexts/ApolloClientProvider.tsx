@@ -2,7 +2,6 @@ import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from "@apollo/c
 import { ReactNode } from "react"
 import { useLogin } from "./UserContext"
 
-
 const ApolloClientProvider = ({ children }: { children: ReactNode}) => {
   
   const {state: {token}} = useLogin()

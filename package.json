@@ -59,6 +59,7 @@
     "@graphql-codegen/introspection": "2.1.0",
     "@graphql-codegen/typescript": "2.4.1",
     "@graphql-codegen/typescript-operations": "2.2.1",
-    "@graphql-codegen/typescript-react-apollo": "3.2.2"
+    "@graphql-codegen/typescript-react-apollo": "3.2.2",
+    "@types/apollo-upload-client": "^14.1.0"
   }
 }

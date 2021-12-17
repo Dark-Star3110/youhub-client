@@ -15,9 +15,12 @@ export type Scalars = {
   Float: number;
   /** The javascript `Date` as string. Type represents date and time as the ISO Date string. */
   DateTime: any;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
+
+export enum Action {
+  Activate = 'ACTIVATE',
+  Disactivate = 'DISACTIVATE'
+}
 
 export type Catagory = {
   __typename?: 'Catagory';
@@ -44,7 +47,7 @@ export type Comment = {
 export type CreateVideoInput = {
   commentable?: InputMaybe<Scalars['Boolean']>;
   description: Scalars['String'];
-  id: Scalars['String'];
+  id: Scalars['ID'];
   size: Scalars['String'];
   thumbnailUrl?: InputMaybe<Scalars['String']>;
   title: Scalars['String'];
@@ -56,12 +59,6 @@ export type FieldError = {
   type: Scalars['String'];
 };
 
-export type FileResponse = {
-  __typename?: 'FileResponse';
-  id: Scalars['String'];
-  size?: Maybe<Scalars['String']>;
-};
-
 export type LoginInput = {
   password: Scalars['String'];
   username: Scalars['String'];
@@ -70,13 +67,15 @@ export type LoginInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createVideo: VideoMutationResponse;
-  generateThumbnailImg?: Maybe<Scalars['String']>;
+  deleteVideo: VideoMutationResponse;
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
+  reactVideo: VideoMutationResponse;
   refreshToken: UserMutationResponse;
   signup: UserMutationResponse;
   updateInfo: UserMutationResponse;
-  uploadVideo: FileResponse;
+  updateVideo: VideoMutationResponse;
+  watchLater: VideoMutationResponse;
 };
 
 
@@ -85,14 +84,21 @@ export type MutationCreateVideoArgs = {
 };
 
 
-export type MutationGenerateThumbnailImgArgs = {
-  videoId: Scalars['String'];
+export type MutationDeleteVideoArgs = {
+  videoId: Scalars['ID'];
 };
 
 
 export type MutationLoginArgs = {
   loginInput?: InputMaybe<LoginInput>;
   socialLogin?: InputMaybe<SocialLogin>;
+};
+
+
+export type MutationReactVideoArgs = {
+  action: Action;
+  type: Type;
+  videoId: Scalars['ID'];
 };
 
 
@@ -106,8 +112,15 @@ export type MutationUpdateInfoArgs = {
 };
 
 
-export type MutationUploadVideoArgs = {
-  file: Scalars['Upload'];
+export type MutationUpdateVideoArgs = {
+  updateVideoInput: UpdateVideoInput;
+  videoId: Scalars['ID'];
+};
+
+
+export type MutationWatchLaterArgs = {
+  action: Action;
+  videoId: Scalars['ID'];
 };
 
 export type MutationResponse = {
@@ -142,13 +155,24 @@ export enum Strategy {
   Local = 'LOCAL'
 }
 
+export enum Type {
+  Dislike = 'DISLIKE',
+  Like = 'LIKE'
+}
+
 export type UpdateUserInfoInput = {
   channelDecscription?: InputMaybe<Scalars['String']>;
   dateOfBirth?: InputMaybe<Scalars['String']>;
   firstName?: InputMaybe<Scalars['String']>;
-  image_url?: InputMaybe<Scalars['String']>;
+  imageId?: InputMaybe<Scalars['String']>;
   lastName?: InputMaybe<Scalars['String']>;
   password?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateVideoInput = {
+  commentable?: InputMaybe<Scalars['Boolean']>;
+  description?: InputMaybe<Scalars['String']>;
+  title?: InputMaybe<Scalars['String']>;
 };
 
 export type User = {
@@ -218,11 +242,22 @@ export type CommentInfoFragment = { __typename?: 'Comment', id: string, content:
 
 export type FieldErrorFragment = { __typename?: 'FieldError', type: string, error: string };
 
-export type MutationStatusesFragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined };
+type MutationStatuses_UserMutationResponse_Fragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined };
+
+type MutationStatuses_VideoMutationResponse_Fragment = { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined };
+
+export type MutationStatusesFragment = MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
 export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any };
+
+export type CreateVideoMutationVariables = Exact<{
+  createVideoInput: CreateVideoInput;
+}>;
+
+
+export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   loginInput?: InputMaybe<LoginInput>;
@@ -275,7 +310,7 @@ export const FieldErrorFragmentDoc = gql`
 }
     `;
 export const MutationStatusesFragmentDoc = gql`
-    fragment mutationStatuses on UserMutationResponse {
+    fragment mutationStatuses on MutationResponse {
   code
   success
   message
@@ -309,6 +344,47 @@ export const VideoInfoFragmentDoc = gql`
   updatedAt
 }
     `;
+export const CreateVideoDocument = gql`
+    mutation CreateVideo($createVideoInput: CreateVideoInput!) {
+  createVideo(createVideoInput: $createVideoInput) {
+    ...mutationStatuses
+    video {
+      ...videoInfo
+    }
+    errors {
+      ...fieldError
+    }
+  }
+}
+    ${MutationStatusesFragmentDoc}
+${VideoInfoFragmentDoc}
+${FieldErrorFragmentDoc}`;
+export type CreateVideoMutationFn = Apollo.MutationFunction<CreateVideoMutation, CreateVideoMutationVariables>;
+
+/**
+ * __useCreateVideoMutation__
+ *
+ * To run a mutation, you first call `useCreateVideoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateVideoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createVideoMutation, { data, loading, error }] = useCreateVideoMutation({
+ *   variables: {
+ *      createVideoInput: // value for 'createVideoInput'
+ *   },
+ * });
+ */
+export function useCreateVideoMutation(baseOptions?: Apollo.MutationHookOptions<CreateVideoMutation, CreateVideoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateVideoMutation, CreateVideoMutationVariables>(CreateVideoDocument, options);
+      }
+export type CreateVideoMutationHookResult = ReturnType<typeof useCreateVideoMutation>;
+export type CreateVideoMutationResult = Apollo.MutationResult<CreateVideoMutation>;
+export type CreateVideoMutationOptions = Apollo.BaseMutationOptions<CreateVideoMutation, CreateVideoMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInput: LoginInput, $socialLogin: SocialLogin) {
   login(loginInput: $loginInput, socialLogin: $socialLogin) {

@@ -19,6 +19,8 @@ export const useCheckAuth = () => {
         }
       })
     }
+    if (!loading && !userState.details && router.pathname!=='/login' && router.pathname!=='/')
+      router.push('/login')
 
     if (!loading && userState.details && router.pathname==='/login')
       router.push('/')

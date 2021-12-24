@@ -1,5 +1,6 @@
 import axios from "axios";
-import { ChangeEvent, useContext, useState } from "react";
+import Loading from "../Loading";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { ToastContext } from "../../contexts/ToastContext";
 import { useLogin } from "../../contexts/UserContext";
 import { useCreateVideoMutation } from "../../generated/graphql";
@@ -10,33 +11,43 @@ import styles from "./Create.module.scss";
 const serverPort = "http://localhost:8000/video/upload";
 
 const Create = () => {
-  useCheckAuth()
-  const { state: {token} } = useLogin()
+  useCheckAuth();
+  const {
+    state: { token },
+  } = useLogin();
   const [fileVideo, setFileVideo] = useState<File>();
   const [fileImg, setFileImg] = useState<File>();
-  const [img, setImg] = useState<string>('');
+  const [img, setImg] = useState<string>("");
   const [percent, setPercent] = useState(0);
-  const [ inputValue, setInputValue ] = useState({
-    title: '',
-    description: ''
-  })
+  const [inputValue, setInputValue] = useState({
+    title: "",
+    description: "",
+  });
+  const [loading, setLoading] = useState(false);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const { notify } = useContext(ToastContext);
 
-  const [ createVideoMutation ] = useCreateVideoMutation()
+  const [createVideoMutation] = useCreateVideoMutation();
+
+  // effect
+  useEffect(() => {
+    if (percent === 100) {
+      setTimeout(() => setLoading(true), 1000);
+    }
+  }, [percent]);
 
   const handleCreateVideo = async (e: React.MouseEvent) => {
     e.preventDefault();
     const formData = new FormData();
     if (fileVideo) {
       if (fileImg) formData.append("file", fileImg);
-      formData.append('file', fileVideo);
+      formData.append("file", fileVideo);
       try {
         if (!inputValue.title) {
-          notify('warning', 'Vui lòng nhập tiêu đề')
-          return
+          notify("warning", "Vui lòng nhập tiêu đề");
+          return;
         }
 
         const res = await axios.post(serverPort, formData, {
@@ -47,15 +58,15 @@ const Create = () => {
             setPercent(newPercent);
           },
           headers: {
-            'authorization': `Bearer ${token}`
-          }
+            authorization: `Bearer ${token}`,
+          },
         });
 
         if (res.status !== 200) {
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
-          return
+          return;
         }
-        
+
         const res_graph = await createVideoMutation({
           variables: {
             createVideoInput: {
@@ -63,14 +74,15 @@ const Create = () => {
               size: res.data.size as string,
               thumbnailUrl: res.data.imgId,
               commentable: true,
-              ...inputValue
-            }
-          }
-        })
+              ...inputValue,
+            },
+          },
+        });
 
         if (res_graph.data?.createVideo.success) {
+          setLoading(false);
           notify("success", "đăng video thành công");
-          setTimeout(()=>router.push('/'), 1000)
+          setTimeout(() => router.push("/"), 1000);
         } else {
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
         }
@@ -88,9 +100,9 @@ const Create = () => {
         setPercent(0);
       }
       const file = files[0];
-      if (file.type.indexOf('video/')===-1) {
+      if (file.type.indexOf("video/") === -1) {
         notify("warning", "định dạng file không hợp lệ");
-        return
+        return;
       }
       setFileVideo(file);
     }
@@ -99,12 +111,12 @@ const Create = () => {
   const handleChooseImg = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const file = files[0]
-      if (file.type.indexOf('image/')===-1) {
+      const file = files[0];
+      if (file.type.indexOf("image/") === -1) {
         notify("warning", "định dạng file không hợp lệ");
-        return
+        return;
       }
-      
+
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result;
@@ -112,7 +124,7 @@ const Create = () => {
       };
       reader.readAsDataURL(files[0]);
 
-      setFileImg(file)
+      setFileImg(file);
     }
   };
 
@@ -179,7 +191,9 @@ const Create = () => {
                 id="name"
                 className={styles["form-input"]}
                 value={inputValue.title}
-                onChange={(e) => setInputValue(pre => ({...pre, title: e.target.value}))}
+                onChange={(e) =>
+                  setInputValue((pre) => ({ ...pre, title: e.target.value }))
+                }
                 placeholder=" "
                 required
               />
@@ -193,7 +207,12 @@ const Create = () => {
                 id="desciption"
                 className={styles["form-input"]}
                 value={inputValue.description}
-                onChange={(e) => setInputValue(pre => ({...pre, description: e.target.value}))}
+                onChange={(e) =>
+                  setInputValue((pre) => ({
+                    ...pre,
+                    description: e.target.value,
+                  }))
+                }
                 placeholder=" "
               />
               <label htmlFor="desciption" className={styles["form-label"]}>
@@ -229,17 +248,18 @@ const Create = () => {
               value="Hủy tác vụ"
               onClick={() => {
                 setFileVideo(undefined);
-                setImg('');
+                setImg("");
                 setInputValue({
                   title: "",
-                  description: ""
-                })
+                  description: "",
+                });
               }}
               className={styles["submit-btn"]}
             />
           </form>
         )}
       </div>
+      {loading && <Loading />}
     </div>
   );
 };

@@ -12,6 +12,7 @@
   border-bottom: 1px solid $grey-color;
   background-color: $black3-color;
   overflow: hidden;
+  z-index: 1;
   // overflow-x: scroll;
   // overflow-y: hidden;
   .slick-nav-item {

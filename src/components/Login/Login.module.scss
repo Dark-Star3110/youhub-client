@@ -100,6 +100,46 @@
   }
 }
 
+.input-field-half {
+  margin: 10px 0;
+  max-width: 380px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  .input-field-half-item {
+    width: 48%;
+    background-color: #f0f0f0;
+    height: 55px;
+    border-radius: 55px;
+    display: grid;
+    grid-template-columns: 25% 75%;
+    padding: 0 0.4rem;
+    position: relative;
+  }
+  i {
+    text-align: center;
+    line-height: 55px;
+    color: #acacac;
+    transition: 0.5s;
+    font-size: 1.1rem;
+    cursor: pointer;
+  }
+
+  input {
+    background: none;
+    outline: none;
+    border: none;
+    line-height: 1;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #333;
+    &::placeholder {
+      color: #aaa;
+      font-weight: 500;
+    }
+  }
+}
+
 .social-text {
   padding: 0.7rem 0;
   font-size: 1rem;
@@ -373,5 +413,14 @@
   .container.sign-up-mode:before {
     bottom: 28%;
     left: 50%;
+  }
+  .input-field-half {
+    flex-direction: column;
+    margin: 0 0;
+    .input-field-half-item {
+      width: 100%;
+      margin: 10px 0;
+      grid-template-columns: 18% 82%;
+    }
   }
 }

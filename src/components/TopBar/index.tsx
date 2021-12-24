@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { NavContext } from "../../contexts/NavContext";
 
@@ -10,43 +10,70 @@ import styles from "./TopBar.module.scss";
 import { useLogin } from "../../contexts/UserContext";
 import { useLogoutMutation } from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
+import { ExtraNavContext } from "../../contexts/ExtraNavContext";
 
-const TopBar = () => {
+interface TopBarProps {
+  type: string;
+}
+
+const TopBar = ({ type }: TopBarProps) => {
   // state
   const [show, setShow] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
-  const router = useRouter()
+  const router = useRouter();
   // context
   const { toggleNav } = useContext(NavContext);
-  const { state: {details}, setState: setUserContext } = useLogin()
-  
-  const [ logoutMutation ] = useLogoutMutation()
+  const { toggleExtraNav } = useContext(ExtraNavContext);
+  const {
+    state: { details },
+    setState: setUserContext,
+  } = useLogin();
+
+  const [logoutMutation] = useLogoutMutation();
 
   const logoutHandler = async () => {
-    const response = await logoutMutation()
+    const response = await logoutMutation();
     if (response.data?.logout) {
-      console.log('qua day');
-      setUserContext(preValues => ({
+      console.log("qua day");
+      setUserContext((preValues) => ({
         ...preValues,
         details: undefined,
-        token: undefined
-      }))
-      window.localStorage.setItem('logout', Date.now().toString())
-      router.push('/')
+        token: undefined,
+      }));
+      window.localStorage.setItem("logout", Date.now().toString());
+      router.push("/");
     }
     // check error here
-  }
+  };
+
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
 
   return (
     <div className={styles.topbar}>
-      <div className={styles.toggle} onClick={toggleNav}>
-        <i className="fas fa-bars"></i>
-      </div>
+      {type === "watch" ? (
+        <div className={styles.toggle} onClick={() => toggleExtraNav()}>
+          <i className="fas fa-align-left"></i>
+        </div>
+      ) : (
+        <div className={styles.toggle} onClick={toggleNav}>
+          <i className="fas fa-bars"></i>
+        </div>
+      )}
       <div className={styles.search}>
-        <input type="text" placeholder="Tìm kiếm" />
-        <button>
-          <i className="fas fa-search"></i>
-        </button>
+        <input
+          type="text"
+          placeholder="Tìm kiếm"
+          value={searchInput}
+          onChange={handleSearch}
+        />
+        <Link to={`/search?q=${searchInput}`}>
+          <button>
+            <i className="fas fa-search"></i>
+          </button>
+        </Link>
         <span className={styles.voice}>
           <i className="fas fa-microphone"></i>
         </span>
@@ -74,12 +101,20 @@ const TopBar = () => {
                 setShow(show === "user" ? "" : "user");
               }}
             >
-              <img className={styles["user-img"]} src={details.image_url as string} alt="user" />
+              <img
+                className={styles["user-img"]}
+                src={details.image_url as string}
+                alt="user"
+              />
             </div>
           </div>
           <div className={styles["user-info"] + " " + styles["show-" + show]}>
             <div className={styles["user-info-head"]}>
-              <img className={styles["user-info-img"]} src={details.image_url as string} alt="user" />
+              <img
+                className={styles["user-info-img"]}
+                src={details.image_url as string}
+                alt="user"
+              />
               <div className={styles["user-info-head__title"]}>
                 <h3>{`${details.firstName} ${details.lastName}`}</h3>
                 <p>Quản lí tài khoản của bạn</p>
@@ -107,7 +142,9 @@ const TopBar = () => {
             </div>
           </div>
           <div
-            className={styles["video-create-menu"] + " " + styles["show-" + show]}
+            className={
+              styles["video-create-menu"] + " " + styles["show-" + show]
+            }
           >
             <div
               className={styles["video-create-item"]}
@@ -119,7 +156,9 @@ const TopBar = () => {
                 <span className={styles["video-create-icon"]}>
                   <i className="far fa-file-video"></i>
                 </span>
-                <span className={styles["video-create-title"]}>Tải video lên</span>
+                <span className={styles["video-create-title"]}>
+                  Tải video lên
+                </span>
               </Link>
             </div>
             <div
@@ -131,7 +170,9 @@ const TopBar = () => {
               <span className={styles["video-create-icon"]}>
                 <i className="fas fa-film"></i>
               </span>
-              <span className={styles["video-create-title"]}>Phát trực tiếp</span>
+              <span className={styles["video-create-title"]}>
+                Phát trực tiếp
+              </span>
             </div>
           </div>
         </>

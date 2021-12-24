@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import SlickNav from "../SlickNav";
 import styles from "./Home.module.scss";
+import user_img from "../../assets/img/user.png";
 
 const Home = () => {
   const data = [
@@ -14,6 +15,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1r27Pc7Y4p8VALLxl3MUZSvMIAIoK2CGe",
@@ -25,6 +31,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1VOhQq4iMun2ojv9CindmKnd4s4CgAwDd",
@@ -36,6 +47,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1HSLvuGOSUfDQWC7ZwZlFobnfzlgGfwld",
@@ -47,6 +63,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1c2dBx0KCmX3aAbqRFYaJLxiwIPeOoZ73",
@@ -58,6 +79,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "12STlO4qx1tccXTTvRmdGG8cU57EJEdbK",
@@ -69,6 +95,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1GoZqWSYQXk2YYQz6T4KT27QCiPrSfK2V",
@@ -80,6 +111,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1XN64i3mSXalozFZ6lFBiDJSlgYHdZztG",
@@ -91,6 +127,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1Ot-lfQvZtOFrBv78hTmLT8SrMR3qflEs",
@@ -102,6 +143,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
     {
       id: "1D2Jya5U-kcuRjJSPJSfi4ZMJm1AQSyAx",
@@ -113,6 +159,11 @@ const Home = () => {
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
+      author: {
+        firstName: "user",
+        lastName: "mr",
+        image_url: user_img,
+      },
     },
   ];
 
@@ -123,21 +174,32 @@ const Home = () => {
         {data.map((video, index) => (
           <Link to={`/watch/${video.id}`} key={index}>
             <div className={styles["layout-item"]}>
-              <img
-                src={video.thumbNailUrl}
-                alt="img"
-                className={styles["layout-img"]}
-              />
+              <div className={styles["layout-img-container"]}>
+                <img
+                  src={video.thumbNailUrl}
+                  alt="img"
+                  className={styles["layout-img"]}
+                />
+                <h2>Xem ngay</h2>
+              </div>
               <div className={styles["layout-content"]}>
-                <h3 className={styles["layout-content_title"]}>
-                  {video.title}
-                </h3>
-                <h4 className={styles["layout-content_descript"]}>
-                  {video.description}
-                </h4>
-                <time className={styles["layout-content_time"]}>
-                  {video.createdAt}
-                </time>
+                <div className={styles["layout-content_img"]}>
+                  <img src={video.author.image_url} alt="user" />
+                </div>
+                <div className={styles["layout-content_inf"]}>
+                  <h3 className={styles["layout-content_title"]}>
+                    {video.title}
+                  </h3>
+                  <h4 className={styles["layout-content_descript"]}>
+                    {video.description}
+                  </h4>
+                  <h4 className={styles["layout-content_autname"]}>
+                    {video.author.lastName + " " + video.author.firstName}
+                  </h4>
+                  <time className={styles["layout-content_time"]}>
+                    {video.createdAt}
+                  </time>
+                </div>
               </div>
             </div>
           </Link>

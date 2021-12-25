@@ -1,0 +1,22 @@
+@import "../../styles/variable.scss";
+.secondary-item {
+  display: flex;
+  margin-bottom: 8px;
+  .secondary-item_img {
+    width: 45%;
+    margin-right: 8px;
+  }
+  .secondary-item_content {
+    width: 55%;
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #fff;
+    }
+    h4 {
+      font-weight: 400;
+      font-size: 14px;
+      color: $grey1-color;
+    }
+  }
+}

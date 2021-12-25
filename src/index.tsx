@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import ApolloClientProvider from "./contexts/ApolloClientProvider";
+import ExtraNavContextProvider from "./contexts/ExtraNavContext";
 import NavContextProvider from "./contexts/NavContext";
 import ToastContextProvider from "./contexts/ToastContext";
 import UserContextProvider from "./contexts/UserContext";
@@ -14,11 +15,13 @@ ReactDOM.render(
     <UserContextProvider>
       <ApolloClientProvider>
         <NavContextProvider>
-          <BrowserRouter>
-            <ToastContextProvider>
-              <App />
-            </ToastContextProvider>
-          </BrowserRouter>
+          <ExtraNavContextProvider>
+            <BrowserRouter>
+              <ToastContextProvider>
+                <App />
+              </ToastContextProvider>
+            </BrowserRouter>
+          </ExtraNavContextProvider>
         </NavContextProvider>
       </ApolloClientProvider>
     </UserContextProvider>

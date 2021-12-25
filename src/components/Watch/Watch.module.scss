@@ -1,6 +1,24 @@
-@import "../../styles/mixim.scss";
+@import "../../styles/variable.scss";
 
 .watch {
-  margin-top: 80px;
-  @include center();
+  display: flex;
+  margin: 60px 80px 0;
+  .primary {
+    width: 70%;
+    padding: 24px 24px 0 0;
+  }
+  .secondary {
+    width: 30%;
+    padding: 24px 24px 0 0;
+  }
+}
+
+@media (max-width: 1016px) {
+  .watch {
+    flex-direction: column;
+    .primary,
+    .secondary {
+      width: 100%;
+    }
+  }
 }

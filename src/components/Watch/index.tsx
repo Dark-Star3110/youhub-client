@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { useLogin } from "../../contexts/UserContext";
 import { useRouter } from "../../hooks/useRouter";
-
+import Comment from "../Comment";
+import Video from "../Video";
+import VideoConcern from "../VideoConcern";
 import styles from "./Watch.module.scss";
 
 const Watch = () => {
   // location
   const router = useRouter();
 
-  const { socket } = useLogin();
+  const { socket, cache } = useLogin();
 
   const videoId = router.query.slug as string;
 
@@ -18,24 +20,20 @@ const Watch = () => {
     }
     return () => {
       socket.emit("leave-room", videoId);
+      // clear cache comment paginated
+      cache.evict({ fieldName: "comments" });
     };
-  }, [socket, videoId]);
+  }, [socket, videoId, cache]);
 
   return (
     <div className={styles.watch}>
-      {/* <iframe
-        title="Drive video player"
-        src={`https://drive.google.com/file/d/${videoId}/preview`}
-        width="700"
-        height="480"
-        allow="autoplay"
-      ></iframe> */}
-      <video id="videoPlayer" width="650" height="400" controls muted>
-        <source
-          src={`http://localhost:8000/video/play-video/${videoId}`}
-          type="video/mp4"
-        />
-      </video>
+      <div className={styles["primary"]}>
+        <Video videoId={videoId} />
+        <Comment videoId={videoId} />
+      </div>
+      <div className={styles["secondary"]}>
+        <VideoConcern />
+      </div>
     </div>
   );
 };

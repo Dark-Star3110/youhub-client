@@ -11,13 +11,17 @@ import "react-toastify/dist/ReactToastify.css";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
 import Explore from "./components/Explore";
+import ExtraNav from "./components/ExtraNav";
 import Home from "./components/Home";
 import Library from "./components/Library";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
+import Search from "./components/Search";
+import Spinner from "./components/Spinner";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
 import Watch from "./components/Watch";
+import { ExtraNavContext } from "./contexts/ExtraNavContext";
 import { NavContext } from "./contexts/NavContext";
 import { useLogin } from "./contexts/UserContext";
 import { useRefreshTokenMutation } from "./generated/graphql";
@@ -29,18 +33,19 @@ import "./styles/App.scss";
 
 function App() {
   // state
-  const [display, setDisplay] = useState<boolean>(true);
+  const [display, setDisplay] = useState<string>("");
 
   // context
   const { action } = useContext(NavContext);
+  const { Eaction, toggleExtraNav } = useContext(ExtraNavContext);
   const { setState: setUserContext } = useLogin();
 
   // location
   const router = useRouter();
 
   // check authentication
-  useCheckAuth();
-  const [refreshTokenMutation] = useRefreshTokenMutation();
+  const [refreshTokenMutation, { loading: refreshLoading }] =
+    useRefreshTokenMutation();
 
   const verifyUser = useCallback(async () => {
     const response = await refreshTokenMutation();
@@ -58,6 +63,7 @@ function App() {
     verifyUser();
   }, [verifyUser]);
 
+  const { loading: authLoading } = useCheckAuth();
   // sync login
   const syncLogin = useCallback((event) => {
     if (event.key === "login") {
@@ -90,18 +96,25 @@ function App() {
   useEffect(() => {
     // console.log(router.location.pathname);
     if (router.location.pathname === "/login") {
-      setDisplay(false);
+      setDisplay("full");
+    } else if (router.location.pathname.includes("/watch")) {
+      setDisplay("watch");
     } else {
-      setDisplay(true);
+      setDisplay("");
     }
   }, [router.location.pathname]);
 
   return (
     <div className="container">
       <ToastContainer />
-      {display && <Navbar />}
-      <div className={`App ${action} ${display ? "" : "full"}`}>
-        {display && <TopBar />}
+      <div
+        className={`over-layer ${Eaction}`}
+        onClick={() => toggleExtraNav()}
+      ></div>
+      <ExtraNav />
+      {display === "" && <Navbar />}
+      <div className={`App ${action} ${display}`}>
+        {(display === "" || display === "watch") && <TopBar type={display} />}
         <Routes>
           <Route path="/explore" element={<Explore />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
@@ -110,7 +123,19 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/create" element={<Create />} />
           <Route path="/watch/:slug" element={<Watch />} />
-          <Route path="/" element={<Home />} />
+          <Route path="/search" element={<Search />} />
+          <Route
+            path="/"
+            element={
+              authLoading || refreshLoading ? (
+                <h1>
+                  <Spinner />
+                </h1>
+              ) : (
+                <Home />
+              )
+            }
+          />
         </Routes>
       </div>
     </div>

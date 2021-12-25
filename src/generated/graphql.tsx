@@ -31,17 +31,28 @@ export type Catagory = {
 
 export type Comment = {
   __typename?: 'Comment';
-  childComments?: Maybe<Array<Comment>>;
   content: Scalars['String'];
   createdAt: Scalars['DateTime'];
   deletedAt: Scalars['DateTime'];
   id: Scalars['ID'];
+  numUsersDisLiked?: Maybe<Scalars['Float']>;
+  numUsersLiked?: Maybe<Scalars['Float']>;
   parentComment?: Maybe<Comment>;
   updatedAt: Scalars['DateTime'];
   user: User;
-  usersDisLiked?: Maybe<Array<User>>;
-  usersLiked?: Maybe<Array<User>>;
-  video: Video;
+};
+
+export type CommentMutationResponse = MutationResponse & {
+  __typename?: 'CommentMutationResponse';
+  code: Scalars['Float'];
+  comment?: Maybe<Comment>;
+  errors?: Maybe<Array<FieldError>>;
+  message?: Maybe<Scalars['String']>;
+  success: Scalars['Boolean'];
+};
+
+export type CreateCommentInput = {
+  content: Scalars['String'];
 };
 
 export type CreateVideoInput = {
@@ -59,6 +70,13 @@ export type FieldError = {
   type: Scalars['String'];
 };
 
+export type GetCommentInput = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Float'];
+  parentCmtId?: InputMaybe<Scalars['String']>;
+  videoId: Scalars['String'];
+};
+
 export type LoginInput = {
   password: Scalars['String'];
   username: Scalars['String'];
@@ -66,16 +84,25 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  createComment: CommentMutationResponse;
   createVideo: VideoMutationResponse;
   deleteVideo: VideoMutationResponse;
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
-  reactVideo: VideoMutationResponse;
   refreshToken: UserMutationResponse;
   signup: UserMutationResponse;
+  updateComment: CommentMutationResponse;
   updateInfo: UserMutationResponse;
   updateVideo: VideoMutationResponse;
+  voteVideo: VideoMutationResponse;
   watchLater: VideoMutationResponse;
+};
+
+
+export type MutationCreateCommentArgs = {
+  createCommentInput: CreateCommentInput;
+  parentCommentId?: InputMaybe<Scalars['String']>;
+  videoId: Scalars['String'];
 };
 
 
@@ -95,15 +122,14 @@ export type MutationLoginArgs = {
 };
 
 
-export type MutationReactVideoArgs = {
-  action: Action;
-  type: Type;
-  videoId: Scalars['ID'];
+export type MutationSignupArgs = {
+  signupInput: SignupInput;
 };
 
 
-export type MutationSignupArgs = {
-  signupInput: SignupInput;
+export type MutationUpdateCommentArgs = {
+  commentId: Scalars['String'];
+  updateCommentInput: UpdateCommentInput;
 };
 
 
@@ -114,6 +140,13 @@ export type MutationUpdateInfoArgs = {
 
 export type MutationUpdateVideoArgs = {
   updateVideoInput: UpdateVideoInput;
+  videoId: Scalars['ID'];
+};
+
+
+export type MutationVoteVideoArgs = {
+  action: Action;
+  type: VoteType;
   videoId: Scalars['ID'];
 };
 
@@ -129,7 +162,21 @@ export type MutationResponse = {
   success: Scalars['Boolean'];
 };
 
-export type PaginatedVideos = {
+export type PaginatedComments = PaginatedResponse & {
+  __typename?: 'PaginatedComments';
+  cursor: Scalars['DateTime'];
+  hasMore: Scalars['Boolean'];
+  paginatedComments: Array<Comment>;
+  totalCount: Scalars['Float'];
+};
+
+export type PaginatedResponse = {
+  cursor: Scalars['DateTime'];
+  hasMore: Scalars['Boolean'];
+  totalCount: Scalars['Float'];
+};
+
+export type PaginatedVideos = PaginatedResponse & {
   __typename?: 'PaginatedVideos';
   cursor: Scalars['DateTime'];
   hasMore: Scalars['Boolean'];
@@ -139,10 +186,22 @@ export type PaginatedVideos = {
 
 export type Query = {
   __typename?: 'Query';
+  comment?: Maybe<Comment>;
+  comments?: Maybe<PaginatedComments>;
   hello: Scalars['String'];
   me?: Maybe<User>;
   video?: Maybe<Video>;
   videos?: Maybe<PaginatedVideos>;
+};
+
+
+export type QueryCommentArgs = {
+  id: Scalars['String'];
+};
+
+
+export type QueryCommentsArgs = {
+  getCmtInput: GetCommentInput;
 };
 
 
@@ -181,10 +240,9 @@ export enum Strategy {
   Local = 'LOCAL'
 }
 
-export enum Type {
-  Dislike = 'DISLIKE',
-  Like = 'LIKE'
-}
+export type UpdateCommentInput = {
+  content: Scalars['String'];
+};
 
 export type UpdateUserInfoInput = {
   channelDecscription?: InputMaybe<Scalars['String']>;
@@ -205,9 +263,6 @@ export type User = {
   __typename?: 'User';
   chanelsSubscribe?: Maybe<Array<User>>;
   channelDecscription?: Maybe<Scalars['String']>;
-  comments?: Maybe<Array<Comment>>;
-  commentsDisLiked?: Maybe<Array<Comment>>;
-  commentsLiked?: Maybe<Array<Comment>>;
   createdAt: Scalars['DateTime'];
   dateOfBirth?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
@@ -221,10 +276,6 @@ export type User = {
   subscribers?: Maybe<Array<User>>;
   updatedAt: Scalars['DateTime'];
   username?: Maybe<Scalars['String']>;
-  videos?: Maybe<Array<Video>>;
-  videosDisLiked?: Maybe<Array<Video>>;
-  videosLiked?: Maybe<Array<Video>>;
-  watchLaterVideos?: Maybe<Array<Video>>;
 };
 
 export type UserMutationResponse = MutationResponse & {
@@ -240,18 +291,16 @@ export type Video = {
   __typename?: 'Video';
   catagories?: Maybe<Array<Catagory>>;
   commentable: Scalars['Boolean'];
-  comments?: Maybe<Array<Comment>>;
   createdAt: Scalars['DateTime'];
   description: Scalars['String'];
   id: Scalars['ID'];
   numUsersDisLiked?: Maybe<Scalars['Float']>;
+  numUsersLiked?: Maybe<Scalars['Float']>;
   size: Scalars['String'];
   thumbnailUrl?: Maybe<Scalars['String']>;
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
-  usersLiked?: Maybe<Array<User>>;
-  usersWatchLater?: Maybe<Array<User>>;
 };
 
 export type VideoMutationResponse = MutationResponse & {
@@ -263,21 +312,37 @@ export type VideoMutationResponse = MutationResponse & {
   video?: Maybe<Video>;
 };
 
+export enum VoteType {
+  Dislike = 'DISLIKE',
+  Like = 'LIKE'
+}
+
 export type CatagoryInfoFragment = { __typename?: 'Catagory', id: string, name: string };
 
 export type CommentInfoFragment = { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any };
 
 export type FieldErrorFragment = { __typename?: 'FieldError', type: string, error: string };
 
+type MutationStatuses_CommentMutationResponse_Fragment = { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined };
+
 type MutationStatuses_UserMutationResponse_Fragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
 type MutationStatuses_VideoMutationResponse_Fragment = { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
-export type MutationStatusesFragment = MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
+export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_Fragment | MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
 export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any };
+
+export type CreateCommentMutationVariables = Exact<{
+  videoId: Scalars['String'];
+  createCommentInput: CreateCommentInput;
+  parentCommentId?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined, comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, image_url?: string | null | undefined } } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
 export type CreateVideoMutationVariables = Exact<{
   createVideoInput: CreateVideoInput;
@@ -311,6 +376,20 @@ export type SignupMutationVariables = Exact<{
 
 export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserMutationResponse', token?: string | null | undefined, code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
+export type CommentQueryVariables = Exact<{
+  id: Scalars['String'];
+}>;
+
+
+export type CommentQuery = { __typename?: 'Query', comment?: { __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, image_url?: string | null | undefined } } | null | undefined };
+
+export type CommentsQueryVariables = Exact<{
+  getCmtInput: GetCommentInput;
+}>;
+
+
+export type CommentsQuery = { __typename?: 'Query', comments?: { __typename?: 'PaginatedComments', totalCount: number, cursor: any, hasMore: boolean, paginatedComments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, image_url?: string | null | undefined } }> } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -334,7 +413,7 @@ export type VideosQueryVariables = Exact<{
 }>;
 
 
-export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
+export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
 
 export const CatagoryInfoFragmentDoc = gql`
     fragment catagoryInfo on Catagory {
@@ -392,6 +471,59 @@ export const VideoInfoFragmentDoc = gql`
   updatedAt
 }
     `;
+export const CreateCommentDocument = gql`
+    mutation CreateComment($videoId: String!, $createCommentInput: CreateCommentInput!, $parentCommentId: String) {
+  createComment(
+    videoId: $videoId
+    createCommentInput: $createCommentInput
+    parentCommentId: $parentCommentId
+  ) {
+    code
+    success
+    message
+    comment {
+      ...commentInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+    errors {
+      ...fieldError
+    }
+  }
+}
+    ${CommentInfoFragmentDoc}
+${FieldErrorFragmentDoc}`;
+export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutation, CreateCommentMutationVariables>;
+
+/**
+ * __useCreateCommentMutation__
+ *
+ * To run a mutation, you first call `useCreateCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
+ *   variables: {
+ *      videoId: // value for 'videoId'
+ *      createCommentInput: // value for 'createCommentInput'
+ *      parentCommentId: // value for 'parentCommentId'
+ *   },
+ * });
+ */
+export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOptions<CreateCommentMutation, CreateCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCommentMutation, CreateCommentMutationVariables>(CreateCommentDocument, options);
+      }
+export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
+export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
+export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
 export const CreateVideoDocument = gql`
     mutation CreateVideo($createVideoInput: CreateVideoInput!) {
   createVideo(createVideoInput: $createVideoInput) {
@@ -577,6 +709,91 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const CommentDocument = gql`
+    query Comment($id: String!) {
+  comment(id: $id) {
+    ...commentInfo
+    user {
+      firstName
+      lastName
+      image_url
+    }
+  }
+}
+    ${CommentInfoFragmentDoc}`;
+
+/**
+ * __useCommentQuery__
+ *
+ * To run a query within a React component, call `useCommentQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommentQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useCommentQuery(baseOptions: Apollo.QueryHookOptions<CommentQuery, CommentQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CommentQuery, CommentQueryVariables>(CommentDocument, options);
+      }
+export function useCommentLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommentQuery, CommentQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CommentQuery, CommentQueryVariables>(CommentDocument, options);
+        }
+export type CommentQueryHookResult = ReturnType<typeof useCommentQuery>;
+export type CommentLazyQueryHookResult = ReturnType<typeof useCommentLazyQuery>;
+export type CommentQueryResult = Apollo.QueryResult<CommentQuery, CommentQueryVariables>;
+export const CommentsDocument = gql`
+    query Comments($getCmtInput: GetCommentInput!) {
+  comments(getCmtInput: $getCmtInput) {
+    totalCount
+    cursor
+    hasMore
+    paginatedComments {
+      ...commentInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+  }
+}
+    ${CommentInfoFragmentDoc}`;
+
+/**
+ * __useCommentsQuery__
+ *
+ * To run a query within a React component, call `useCommentsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCommentsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCommentsQuery({
+ *   variables: {
+ *      getCmtInput: // value for 'getCmtInput'
+ *   },
+ * });
+ */
+export function useCommentsQuery(baseOptions: Apollo.QueryHookOptions<CommentsQuery, CommentsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CommentsQuery, CommentsQueryVariables>(CommentsDocument, options);
+      }
+export function useCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CommentsQuery, CommentsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CommentsQuery, CommentsQueryVariables>(CommentsDocument, options);
+        }
+export type CommentsQueryHookResult = ReturnType<typeof useCommentsQuery>;
+export type CommentsLazyQueryHookResult = ReturnType<typeof useCommentsLazyQuery>;
+export type CommentsQueryResult = Apollo.QueryResult<CommentsQuery, CommentsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -663,6 +880,8 @@ export const VideosDocument = gql`
     paginatedVideos {
       ...videoInfo
       user {
+        firstName
+        lastName
         fullName
         image_url
       }

@@ -1,0 +1,15 @@
+query Comments($getCmtInput: GetCommentInput!) {
+  comments(getCmtInput: $getCmtInput) {
+    totalCount
+    cursor
+    hasMore
+    paginatedComments {
+      ...commentInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+  }
+}

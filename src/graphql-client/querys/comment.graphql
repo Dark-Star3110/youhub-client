@@ -1,0 +1,10 @@
+query Comment($id: String!) {
+  comment(id: $id) {
+    ...commentInfo
+    user {
+      firstName
+      lastName
+      image_url
+    }
+  }
+}

@@ -45,6 +45,22 @@ body {
   width: 100%;
 }
 
+.over-layer {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: #000;
+  opacity: 0.6;
+  z-index: 4;
+}
+
+.over-layer.active {
+  display: block;
+}
+
 .App {
   position: absolute;
   width: calc(100% - 300px);
@@ -61,7 +77,8 @@ body {
   left: 80px;
 }
 
-.App.full {
+.App.full,
+.App.watch {
   transition: 0s;
   width: 100%;
   left: 0;

@@ -1,0 +1,78 @@
+@import "../../styles/variable.scss";
+.extra-nav {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 240px;
+  background-color: $black5-color;
+  transition: transform linear 0.3s;
+  transform: translateX(-100%);
+  z-index: 5;
+  .logo {
+    width: 120px;
+    height: 40px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-left: 10px;
+    overflow: hidden;
+    img {
+      width: 120px;
+      height: 40px;
+    }
+  }
+  ul {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    li {
+      position: relative;
+      width: 100%;
+      list-style: none;
+      a {
+        position: relative;
+        display: flex;
+        width: 100%;
+        text-decoration: none;
+        color: $white-color;
+        font-weight: 500;
+        padding: 0 10px;
+        .icon {
+          position: relative;
+          display: block;
+          min-width: 60px;
+          height: 60px;
+          line-height: 70px;
+          text-align: center;
+          i {
+            font-size: 1.75em;
+          }
+        }
+        .title {
+          position: relative;
+          display: block;
+          padding: 0 10px;
+          height: 60px;
+          line-height: 60px;
+          text-align: start;
+          white-space: nowrap;
+        }
+      }
+    }
+    li:hover {
+      background-color: #333;
+    }
+    li:nth-child(1) {
+      margin-bottom: 20px;
+      border-bottom: 2px solid $black3-color;
+    }
+    li:hover:nth-child(1) {
+      background-color: $black5-color;
+    }
+  }
+}
+
+.extra-nav.active {
+  transform: translateY(0);
+}

@@ -240,17 +240,6 @@ const Login = () => {
               />
             </div>
             <div className={styles["input-field"]}>
-              <i className="fas fa-envelope"></i>
-              <input
-                type="email"
-                placeholder="Email"
-                value={signupData.email}
-                onChange={(e) =>
-                  setSignupData((pre) => ({ ...pre, email: e.target.value }))
-                }
-              />
-            </div>
-            <div className={styles["input-field"]}>
               <i className="fas fa-lock"></i>
               <input
                 type={seen ? "text" : "password"}
@@ -272,28 +261,44 @@ const Login = () => {
                 ></i>
               )}
             </div>
-            <div className={styles["input-field"]}>
-              <i className="fas fa-file-signature"></i>
-              <input
-                type="text"
-                placeholder="First name"
-                value={signupData.firstName}
-                onChange={(e) =>
-                  setSignupData((pre) => ({
-                    ...pre,
-                    firstName: e.target.value,
-                  }))
-                }
-              />
+            <div className={styles["input-field-half"]}>
+              <div className={styles["input-field-half-item"]}>
+                <i className="fas fa-file-signature"></i>
+                <input
+                  type="text"
+                  placeholder="First name"
+                  value={signupData.firstName}
+                  onChange={(e) =>
+                    setSignupData((pre) => ({
+                      ...pre,
+                      firstName: e.target.value,
+                    }))
+                  }
+                />
+              </div>
+              <div className={styles["input-field-half-item"]}>
+                <i className="fas fa-file-signature"></i>
+                <input
+                  type="text"
+                  placeholder="Last name"
+                  value={signupData.lastName}
+                  onChange={(e) =>
+                    setSignupData((pre) => ({
+                      ...pre,
+                      lastName: e.target.value,
+                    }))
+                  }
+                />
+              </div>
             </div>
             <div className={styles["input-field"]}>
-              <i className="fas fa-file-signature"></i>
+              <i className="fas fa-envelope"></i>
               <input
-                type="text"
-                placeholder="Last name"
-                value={signupData.lastName}
+                type="email"
+                placeholder="Email"
+                value={signupData.email}
                 onChange={(e) =>
-                  setSignupData((pre) => ({ ...pre, lastName: e.target.value }))
+                  setSignupData((pre) => ({ ...pre, email: e.target.value }))
                 }
               />
             </div>

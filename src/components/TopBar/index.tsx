@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import { Link } from "react-router-dom";
 import { NavContext } from "../../contexts/NavContext";
 
@@ -10,15 +10,22 @@ import styles from "./TopBar.module.scss";
 import { useLogin } from "../../contexts/UserContext";
 import { useLogoutMutation } from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
+import { ExtraNavContext } from "../../contexts/ExtraNavContext";
 import Spinner from "../Spinner";
 
-const TopBar = () => {
+interface TopBarProps {
+  type: string;
+}
+
+const TopBar = ({ type }: TopBarProps) => {
   // state
   const [show, setShow] = useState("");
+  const [searchInput, setSearchInput] = useState("");
 
   const router = useRouter();
   // context
   const { toggleNav } = useContext(NavContext);
+  const { toggleExtraNav } = useContext(ExtraNavContext);
   const {
     state: { details },
     setState: setUserContext,
@@ -37,21 +44,39 @@ const TopBar = () => {
       }));
       window.localStorage.setItem("logout", Date.now().toString());
       window.localStorage.removeItem("login");
+
       router.push("/");
     }
     // check error here
   };
 
+  const handleSearch = (e: ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
+
   return (
     <div className={styles.topbar}>
-      <div className={styles.toggle} onClick={toggleNav}>
-        <i className="fas fa-bars"></i>
-      </div>
+      {type === "watch" ? (
+        <div className={styles.toggle} onClick={() => toggleExtraNav()}>
+          <i className="fas fa-align-left"></i>
+        </div>
+      ) : (
+        <div className={styles.toggle} onClick={toggleNav}>
+          <i className="fas fa-bars"></i>
+        </div>
+      )}
       <div className={styles.search}>
-        <input type="text" placeholder="Tìm kiếm" />
-        <button>
-          <i className="fas fa-search"></i>
-        </button>
+        <input
+          type="text"
+          placeholder="Tìm kiếm"
+          value={searchInput}
+          onChange={handleSearch}
+        />
+        <Link to={`/search?q=${searchInput}`}>
+          <button>
+            <i className="fas fa-search"></i>
+          </button>
+        </Link>
         <span className={styles.voice}>
           <i className="fas fa-microphone"></i>
         </span>

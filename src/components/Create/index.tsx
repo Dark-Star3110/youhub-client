@@ -1,5 +1,6 @@
 import axios from "axios";
-import { ChangeEvent, useContext, useState } from "react";
+import Loading from "../Loading";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { ToastContext } from "../../contexts/ToastContext";
 import { useLogin } from "../../contexts/UserContext";
 import { useCreateVideoMutation } from "../../generated/graphql";
@@ -22,12 +23,20 @@ const Create = () => {
     title: "",
     description: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
   const { notify } = useContext(ToastContext);
 
   const [createVideoMutation] = useCreateVideoMutation();
+
+  // effect
+  useEffect(() => {
+    if (percent === 100) {
+      setTimeout(() => setLoading(true), 1000);
+    }
+  }, [percent]);
 
   const handleCreateVideo = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -54,6 +63,7 @@ const Create = () => {
         });
 
         if (res.status !== 200) {
+          setLoading(false);
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
           return;
         }
@@ -68,6 +78,7 @@ const Create = () => {
               ...inputValue,
             },
           },
+
           update(cache, { data }) {
             cache.modify({
               fields: {
@@ -91,13 +102,16 @@ const Create = () => {
         });
 
         if (res_graph.data?.createVideo.video) {
+          setLoading(false);
           notify("success", "đăng video thành công");
           setTimeout(() => router.push("/"), 1000);
         } else {
+          setLoading(false);
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
         }
       } catch (e) {
         console.log(e);
+        setLoading(false);
         notify("error", "có lỗi xảy ra vui lòng thử lại!");
       }
     }
@@ -269,6 +283,7 @@ const Create = () => {
           </form>
         )}
       </div>
+      {loading && <Loading />}
     </div>
   );
 };

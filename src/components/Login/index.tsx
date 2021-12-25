@@ -15,6 +15,7 @@ import {
 } from "../../generated/graphql";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
+import Spinner from "../Spinner";
 import styles from "./Login.module.scss";
 
 interface ILoginDataDefault {
@@ -46,6 +47,7 @@ const Login = () => {
     firstName: "",
     lastName: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
 
@@ -61,6 +63,7 @@ const Login = () => {
   const onSuccess = async (
     res: GoogleLoginResponse | GoogleLoginResponseOffline
   ) => {
+    setLoading(true);
     const res_su = res as GoogleLoginResponse;
     const response = await loginMutation({
       variables: {
@@ -72,6 +75,7 @@ const Login = () => {
     });
 
     if (response.data?.login.success) {
+      setLoading(false);
       setUserState((preValues) => ({
         ...preValues,
         token: response.data?.login.token as string,
@@ -80,6 +84,7 @@ const Login = () => {
       notify("success", "dang nhap thanh cong");
       router.navigate("/");
     } else {
+      setLoading(false);
       notify("error", "dang nhap that bai");
     }
   };
@@ -97,6 +102,7 @@ const Login = () => {
 
   // login with local
   const handleLoginSubmit = async (e: React.MouseEvent) => {
+    setLoading(true);
     e.preventDefault();
 
     const response = await loginMutation({
@@ -119,10 +125,12 @@ const Login = () => {
       notify("success", "dang nhap thanh cong");
       router.push("/");
     }
+    setLoading(false);
   };
 
   // sign up
   const handleSignupSubmit = async (e: React.MouseEvent) => {
+    setLoading(true);
     e.preventDefault();
     const response = await signupMutation({
       variables: {
@@ -134,7 +142,15 @@ const Login = () => {
 
     if (response.data?.signup.success) {
       setMode("");
+      setSignupData({
+        username: "",
+        password: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+      });
     }
+    setLoading(false);
   };
 
   return (
@@ -142,7 +158,7 @@ const Login = () => {
       <div className={styles["forms-container"]}>
         <div className={styles["signin-signup"]}>
           <form action="#" className={styles["sign-in-form"]}>
-            <h2 className={styles["title"]}>Sign in</h2>
+            <h2 className={styles["title"]}>Sign up</h2>
             <div className={styles["input-field"]}>
               <i className="fas fa-user"></i>
               <input
@@ -176,12 +192,19 @@ const Login = () => {
                 ></i>
               )}
             </div>
-            <input
-              type="submit"
-              value="Login"
-              className={styles.btn}
-              onClick={handleLoginSubmit}
-            />
+            <div className={styles["btn-erea"]}>
+              {loading && (
+                <div className={styles["loading"]}>
+                  <Spinner />
+                </div>
+              )}
+              <input
+                type="submit"
+                value={loading ? "logining" : "login"}
+                className={styles.btn}
+                onClick={!loading ? handleLoginSubmit : undefined}
+              />
+            </div>
             <p className={styles["social-text"]}>
               Or Sign in with social platforms
             </p>
@@ -192,7 +215,10 @@ const Login = () => {
               <span className={styles["social-icon"]}>
                 <i className="fab fa-twitter"></i>
               </span>
-              <span className={styles["social-icon"]} onClick={signIn}>
+              <span
+                className={styles["social-icon"]}
+                onClick={!loading ? signIn : undefined}
+              >
                 <i className="fab fa-google"></i>
               </span>
               <span className={styles["social-icon"]}>
@@ -201,7 +227,7 @@ const Login = () => {
             </div>
           </form>
           <form action="#" className={styles["sign-up-form"]}>
-            <h2 className={styles.title}>Sign up</h2>
+            <h2 className={styles.title}>Sign in</h2>
             <div className={styles["input-field"]}>
               <i className="fas fa-user"></i>
               <input
@@ -271,12 +297,19 @@ const Login = () => {
                 }
               />
             </div>
-            <input
-              type="submit"
-              className={styles.btn}
-              value="Sign up"
-              onClick={handleSignupSubmit}
-            />
+            <div className={styles["btn-erea"]}>
+              {loading && (
+                <div className={styles["loading"]}>
+                  <Spinner />
+                </div>
+              )}
+              <input
+                type="submit"
+                className={styles.btn}
+                value="Sign up"
+                onClick={!loading ? handleSignupSubmit : undefined}
+              />
+            </div>
           </form>
         </div>
       </div>

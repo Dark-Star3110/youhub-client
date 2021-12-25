@@ -2,23 +2,24 @@ import { NetworkStatus } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { useVideosQuery } from "../../generated/graphql";
 import SlickNav from "../SlickNav";
+import Spinner from "../Spinner";
 import styles from "./Home.module.scss";
 
-const limit = 2;
+const limit = 4;
 
 const Home = () => {
   const { data, loading, fetchMore, networkStatus } = useVideosQuery({
     variables: {
-      limit
+      limit,
     },
-    notifyOnNetworkStatusChange: true
-  })
+    notifyOnNetworkStatusChange: true,
+  });
 
-  const loadingMore = networkStatus === NetworkStatus.fetchMore
+  const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
   const loadMore = () => {
-    fetchMore({variables: {cursor: data?.videos?.cursor}})
-  }
+    fetchMore({ variables: { cursor: data?.videos?.cursor } });
+  };
 
   return (
     <div className={styles.home}>
@@ -28,7 +29,10 @@ const Home = () => {
           <Link to={`/watch/${video.id}`} key={index}>
             <div className={styles["layout-item"]}>
               <img
-                src={video.thumbnailUrl || 'https://images6.alphacoders.com/311/thumbbig-311015.webp'}
+                src={
+                  video.thumbnailUrl ||
+                  "https://images6.alphacoders.com/311/thumbbig-311015.webp"
+                }
                 alt="img"
                 className={styles["layout-img"]}
               />
@@ -47,12 +51,11 @@ const Home = () => {
           </Link>
         ))}
       </div>
-      {!data?.videos && !loading && <h1 style={{marginTop: '20px'}}>Không có dữ liệu</h1>}
-      
-      {data?.videos?.hasMore && (
-        <button onClick={loadMore}>Load More</button>
+      {!data?.videos && !loading && (
+        <h1 style={{ marginTop: "20px" }}>Không có dữ liệu</h1>
       )}
-      
+      {data?.videos?.hasMore && <button onClick={loadMore}>Load More</button>}
+      {loadingMore && <Spinner />}
     </div>
   );
 };

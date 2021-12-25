@@ -16,6 +16,7 @@ const ApolloClientProvider = ({ children }: { children: ReactNode}) => {
         'authorization': token ? `Bearer ${token}` : ''
       }
     }),
+    connectToDevTools: true,
     cache: new InMemoryCache({
       typePolicies: {
         Query: {
@@ -24,6 +25,7 @@ const ApolloClientProvider = ({ children }: { children: ReactNode}) => {
               keyArgs: false,
               merge(existing, incoming) {
                 let paginatedVideos: Video[] = []
+                
                 if (existing && existing.paginatedVideos) {
                   paginatedVideos = paginatedVideos.concat(existing.paginatedVideos)
                 }

@@ -1,31 +1,41 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useLogin } from "../../contexts/UserContext";
 import { useRouter } from "../../hooks/useRouter";
 
 import styles from "./Watch.module.scss";
 
 const Watch = () => {
-  // state
-  const [videoId, setVideoId] = useState("");
-
   // location
   const router = useRouter();
 
-  // effect
+  const { socket } = useLogin();
+
+  const videoId = router.query.slug as string;
+
   useEffect(() => {
-    const { slug } = router.query;
-    // console.log(slug);
-    setVideoId(slug as string);
-  }, [router.query]);
+    if (videoId) {
+      socket.emit("join-room", videoId);
+    }
+    return () => {
+      socket.emit("leave-room", videoId);
+    };
+  }, [socket, videoId]);
 
   return (
     <div className={styles.watch}>
-      <iframe
+      {/* <iframe
         title="Drive video player"
         src={`https://drive.google.com/file/d/${videoId}/preview`}
         width="700"
         height="480"
         allow="autoplay"
-      ></iframe>
+      ></iframe> */}
+      <video id="videoPlayer" width="650" height="400" controls muted>
+        <source
+          src={`http://localhost:8000/video/play-video/${videoId}`}
+          type="video/mp4"
+        />
+      </video>
     </div>
   );
 };

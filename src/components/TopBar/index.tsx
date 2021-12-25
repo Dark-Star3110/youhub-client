@@ -10,32 +10,37 @@ import styles from "./TopBar.module.scss";
 import { useLogin } from "../../contexts/UserContext";
 import { useLogoutMutation } from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
+import Spinner from "../Spinner";
 
 const TopBar = () => {
   // state
   const [show, setShow] = useState("");
 
-  const router = useRouter()
+  const router = useRouter();
   // context
   const { toggleNav } = useContext(NavContext);
-  const { state: {details}, setState: setUserContext } = useLogin()
-  
-  const [ logoutMutation ] = useLogoutMutation()
+  const {
+    state: { details },
+    setState: setUserContext,
+  } = useLogin();
+
+  const [logoutMutation] = useLogoutMutation();
 
   const logoutHandler = async () => {
-    const response = await logoutMutation()
+    const response = await logoutMutation();
     if (response.data?.logout) {
-      console.log('qua day');
-      setUserContext(preValues => ({
+      console.log("qua day");
+      setUserContext((preValues) => ({
         ...preValues,
         details: undefined,
-        token: undefined
-      }))
-      window.localStorage.setItem('logout', Date.now().toString())
-      router.push('/')
+        token: undefined,
+      }));
+      window.localStorage.setItem("logout", Date.now().toString());
+      window.localStorage.removeItem("login");
+      router.push("/");
     }
     // check error here
-  }
+  };
 
   return (
     <div className={styles.topbar}>
@@ -51,6 +56,7 @@ const TopBar = () => {
           <i className="fas fa-microphone"></i>
         </span>
       </div>
+
       {details ? (
         <>
           <div className={styles.user}>
@@ -74,12 +80,20 @@ const TopBar = () => {
                 setShow(show === "user" ? "" : "user");
               }}
             >
-              <img className={styles["user-img"]} src={details.image_url as string} alt="user" />
+              <img
+                className={styles["user-img"]}
+                src={details.image_url as string}
+                alt="user"
+              />
             </div>
           </div>
           <div className={styles["user-info"] + " " + styles["show-" + show]}>
             <div className={styles["user-info-head"]}>
-              <img className={styles["user-info-img"]} src={details.image_url as string} alt="user" />
+              <img
+                className={styles["user-info-img"]}
+                src={details.image_url as string}
+                alt="user"
+              />
               <div className={styles["user-info-head__title"]}>
                 <h3>{`${details.firstName} ${details.lastName}`}</h3>
                 <p>Quản lí tài khoản của bạn</p>
@@ -107,7 +121,9 @@ const TopBar = () => {
             </div>
           </div>
           <div
-            className={styles["video-create-menu"] + " " + styles["show-" + show]}
+            className={
+              styles["video-create-menu"] + " " + styles["show-" + show]
+            }
           >
             <div
               className={styles["video-create-item"]}
@@ -119,7 +135,9 @@ const TopBar = () => {
                 <span className={styles["video-create-icon"]}>
                   <i className="far fa-file-video"></i>
                 </span>
-                <span className={styles["video-create-title"]}>Tải video lên</span>
+                <span className={styles["video-create-title"]}>
+                  Tải video lên
+                </span>
               </Link>
             </div>
             <div
@@ -131,11 +149,13 @@ const TopBar = () => {
               <span className={styles["video-create-icon"]}>
                 <i className="fas fa-film"></i>
               </span>
-              <span className={styles["video-create-title"]}>Phát trực tiếp</span>
+              <span className={styles["video-create-title"]}>
+                Phát trực tiếp
+              </span>
             </div>
           </div>
         </>
-      ) : (
+      ) : !window.localStorage.getItem("login") ? (
         <Link to="/login" className={styles["login-btn"]}>
           <div className={styles["outer"] + " " + styles["button"]}>
             <button>
@@ -145,6 +165,10 @@ const TopBar = () => {
             <span></span>
           </div>
         </Link>
+      ) : (
+        <div>
+          <Spinner />
+        </div>
       )}
     </div>
   );

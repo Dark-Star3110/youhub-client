@@ -1,25 +1,20 @@
-import { NetworkStatus } from "@apollo/client";
 import { Link } from "react-router-dom";
-import { useVideosQuery } from "../../generated/graphql";
-import SlickNav from "../SlickNav";
-import styles from "./Home.module.scss";
+import styles from "./VideoConcern.module.scss";
 import user_img from "../../assets/img/user.png";
 
-const limit = 2;
-
-const Home = () => {
-  const dataFake = [
+const VideoConcern = () => {
+  const data = [
     {
       id: "17ZXlVzLb0toTe3dtO8q80DmVlnQz9R99",
       title: "Tokyo Ghoul",
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images8.alphacoders.com/546/thumbbig-546902.webp",
+      thumbNailUrl: "https://images8.alphacoders.com/546/thumbbig-546902.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -31,11 +26,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images2.alphacoders.com/119/thumbbig-1192178.webp",
+      thumbNailUrl: "https://images2.alphacoders.com/119/thumbbig-1192178.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -47,11 +42,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images8.alphacoders.com/533/thumbbig-533007.webp",
+      thumbNailUrl: "https://images8.alphacoders.com/533/thumbbig-533007.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -63,11 +58,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images3.alphacoders.com/135/thumbbig-135625.webp",
+      thumbNailUrl: "https://images3.alphacoders.com/135/thumbbig-135625.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -79,11 +74,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images.alphacoders.com/605/thumbbig-605799.webp",
+      thumbNailUrl: "https://images.alphacoders.com/605/thumbbig-605799.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -95,11 +90,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images6.alphacoders.com/606/thumbbig-606263.webp",
+      thumbNailUrl: "https://images6.alphacoders.com/606/thumbbig-606263.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -111,11 +106,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images3.alphacoders.com/167/thumbbig-16729.webp",
+      thumbNailUrl: "https://images3.alphacoders.com/167/thumbbig-16729.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -127,11 +122,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images5.alphacoders.com/613/thumbbig-613925.webp",
+      thumbNailUrl: "https://images5.alphacoders.com/613/thumbbig-613925.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -143,11 +138,11 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images2.alphacoders.com/742/thumbbig-742320.webp",
+      thumbNailUrl: "https://images2.alphacoders.com/742/thumbbig-742320.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
@@ -159,83 +154,38 @@ const Home = () => {
       description: "this is description",
       userId: "1",
       commentable: true,
-      thumbnailUrl: "https://images6.alphacoders.com/311/thumbbig-311015.webp",
+      thumbNailUrl: "https://images6.alphacoders.com/311/thumbbig-311015.webp",
       size: 1000,
       createdAt: "09/12/2021",
       updatedAt: "09/12/2021",
-      user: {
+      author: {
         firstName: "user",
         lastName: "mr",
         image_url: user_img,
       },
     },
   ];
-  const { data, loading, fetchMore, networkStatus } = useVideosQuery({
-    variables: {
-      limit,
-    },
-    notifyOnNetworkStatusChange: true,
-  });
-
-  const loadingMore = networkStatus === NetworkStatus.fetchMore;
-
-  const loadMore = () => {
-    fetchMore({ variables: { cursor: data?.videos?.cursor } });
-  };
-
-  const videos = data?.videos?.paginatedVideos || dataFake;
 
   return (
-    <div className={styles.home}>
-      <SlickNav />
-      <div className={styles.layout}>
-        {videos.map((video, index) => (
-          <Link to={`/watch/${video.id}`} key={index}>
-            <div className={styles["layout-item"]}>
-              <div className={styles["layout-img-container"]}>
-                <img
-                  src={
-                    video.thumbnailUrl ||
-                    "https://images6.alphacoders.com/311/thumbbig-311015.webp"
-                  }
-                  alt="img"
-                  className={styles["layout-img"]}
-                />
-                <h2>Xem ngay</h2>
-              </div>
-              <div className={styles["layout-content"]}>
-                <div className={styles["layout-content_img"]}>
-                  <img
-                    src={
-                      video.user.image_url ||
-                      "https://images6.alphacoders.com/311/thumbbig-311015.webp"
-                    }
-                    alt="user"
-                  />
-                </div>
-                <div className={styles["layout-content_inf"]}>
-                  <h3 className={styles["layout-content_title"]}>
-                    {video.title}
-                  </h3>
-                  <h4 className={styles["layout-content_descript"]}>
-                    {video.description}
-                  </h4>
-                  <h4 className={styles["layout-content_autname"]}>
-                    {video.user.lastName + " " + video.user.firstName}
-                  </h4>
-                  <time className={styles["layout-content_time"]}>
-                    {video.createdAt}
-                  </time>
-                </div>
-              </div>
+    <>
+      {data.map((video) => (
+        <Link to={`/watch/${video.id}`} key={video.id}>
+          <div className={styles["secondary-item"]}>
+            <div className={styles["secondary-item_img"]}>
+              <img src={video.thumbNailUrl} alt="video" />
             </div>
-          </Link>
-        ))}
-      </div>
-
-      {data?.videos?.hasMore && <button onClick={loadMore}>Load More</button>}
-    </div>
+            <div className={styles["secondary-item_content"]}>
+              <h3>
+                {video.title} - {video.description}
+              </h3>
+              <h4>{video.author.lastName + " " + video.author.firstName}</h4>
+              <h4>{video.createdAt}</h4>
+            </div>
+          </div>
+        </Link>
+      ))}
+    </>
   );
 };
 
-export default Home;
+export default VideoConcern;

@@ -5,6 +5,7 @@ fragment userInfo on User {
   socialId
   firstName
   lastName
+  fullName
   channelDecscription
   image_url
   dateOfBirth

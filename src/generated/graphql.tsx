@@ -129,10 +129,36 @@ export type MutationResponse = {
   success: Scalars['Boolean'];
 };
 
+export type PaginatedVideos = {
+  __typename?: 'PaginatedVideos';
+  cursor: Scalars['DateTime'];
+  hasMore: Scalars['Boolean'];
+  paginatedVideos: Array<Video>;
+  totalCount: Scalars['Float'];
+};
+
 export type Query = {
   __typename?: 'Query';
   hello: Scalars['String'];
   me?: Maybe<User>;
+  video?: Maybe<Video>;
+  videos?: Maybe<PaginatedVideos>;
+};
+
+
+export type QueryVideoArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryVideosArgs = {
+  catagory?: InputMaybe<Array<Scalars['String']>>;
+  catagoryId?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  query?: InputMaybe<Scalars['String']>;
+  user?: InputMaybe<Array<Scalars['String']>>;
+  userId?: InputMaybe<Scalars['String']>;
 };
 
 export type SignupInput = {
@@ -186,6 +212,7 @@ export type User = {
   dateOfBirth?: Maybe<Scalars['DateTime']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
+  fullName?: Maybe<Scalars['String']>;
   id: Scalars['ID'];
   image_url?: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
@@ -248,7 +275,7 @@ type MutationStatuses_VideoMutationResponse_Fragment = { __typename?: 'VideoMuta
 
 export type MutationStatusesFragment = MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
 
-export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
+export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
 export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any };
 
@@ -287,7 +314,27 @@ export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: '
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any } | null | undefined };
+
+export type VideoQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any } | null | undefined };
+
+export type VideosQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+  userId?: InputMaybe<Scalars['String']>;
+  user?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  catagoryId?: InputMaybe<Scalars['String']>;
+  catagory?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
+  query?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
 
 export const CatagoryInfoFragmentDoc = gql`
     fragment catagoryInfo on Catagory {
@@ -324,6 +371,7 @@ export const UserInfoFragmentDoc = gql`
   socialId
   firstName
   lastName
+  fullName
   channelDecscription
   image_url
   dateOfBirth
@@ -563,3 +611,98 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const VideoDocument = gql`
+    query Video($id: ID!) {
+  video(id: $id) {
+    ...videoInfo
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useVideoQuery__
+ *
+ * To run a query within a React component, call `useVideoQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideoQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideoQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useVideoQuery(baseOptions: Apollo.QueryHookOptions<VideoQuery, VideoQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideoQuery, VideoQueryVariables>(VideoDocument, options);
+      }
+export function useVideoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideoQuery, VideoQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideoQuery, VideoQueryVariables>(VideoDocument, options);
+        }
+export type VideoQueryHookResult = ReturnType<typeof useVideoQuery>;
+export type VideoLazyQueryHookResult = ReturnType<typeof useVideoLazyQuery>;
+export type VideoQueryResult = Apollo.QueryResult<VideoQuery, VideoQueryVariables>;
+export const VideosDocument = gql`
+    query Videos($limit: Int!, $cursor: String, $userId: String, $user: [String!], $catagoryId: String, $catagory: [String!], $query: String) {
+  videos(
+    limit: $limit
+    cursor: $cursor
+    userId: $userId
+    user: $user
+    catagoryId: $catagoryId
+    catagory: $catagory
+    query: $query
+  ) {
+    totalCount
+    cursor
+    hasMore
+    paginatedVideos {
+      ...videoInfo
+      user {
+        firstName
+        lastName
+        fullName
+        image_url
+      }
+    }
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useVideosQuery__
+ *
+ * To run a query within a React component, call `useVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideosQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *      userId: // value for 'userId'
+ *      user: // value for 'user'
+ *      catagoryId: // value for 'catagoryId'
+ *      catagory: // value for 'catagory'
+ *      query: // value for 'query'
+ *   },
+ * });
+ */
+export function useVideosQuery(baseOptions: Apollo.QueryHookOptions<VideosQuery, VideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideosQuery, VideosQueryVariables>(VideosDocument, options);
+      }
+export function useVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideosQuery, VideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideosQuery, VideosQueryVariables>(VideosDocument, options);
+        }
+export type VideosQueryHookResult = ReturnType<typeof useVideosQuery>;
+export type VideosLazyQueryHookResult = ReturnType<typeof useVideosLazyQuery>;
+export type VideosQueryResult = Apollo.QueryResult<VideosQuery, VideosQueryVariables>;

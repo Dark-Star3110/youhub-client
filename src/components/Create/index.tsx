@@ -63,6 +63,7 @@ const Create = () => {
         });
 
         if (res.status !== 200) {
+          setLoading(false);
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
           return;
         }
@@ -84,10 +85,12 @@ const Create = () => {
           notify("success", "đăng video thành công");
           setTimeout(() => router.push("/"), 1000);
         } else {
+          setLoading(false);
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
         }
       } catch (e) {
         console.log(e);
+        setLoading(false);
         notify("error", "có lỗi xảy ra vui lòng thử lại!");
       }
     }

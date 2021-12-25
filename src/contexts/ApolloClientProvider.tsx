@@ -1,5 +1,6 @@
 import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from "@apollo/client"
 import { ReactNode } from "react"
+import { Video } from "../generated/graphql"
 import { useLogin } from "./UserContext"
 
 const ApolloClientProvider = ({ children }: { children: ReactNode}) => {
@@ -15,7 +16,27 @@ const ApolloClientProvider = ({ children }: { children: ReactNode}) => {
         'authorization': token ? `Bearer ${token}` : ''
       }
     }),
-    cache: new InMemoryCache()
+    cache: new InMemoryCache({
+      typePolicies: {
+        Query: {
+          fields: {
+            videos: {
+              keyArgs: false,
+              merge(existing, incoming) {
+                let paginatedVideos: Video[] = []
+                if (existing && existing.paginatedVideos) {
+                  paginatedVideos = paginatedVideos.concat(existing.paginatedVideos)
+                }
+                if (incoming && incoming.paginatedVideos) {
+                  paginatedVideos = paginatedVideos.concat(incoming.paginatedVideos)
+                }
+                return {...incoming, paginatedVideos}
+              }
+            }
+          }
+        }
+      }
+    })
   })
   
   return (

@@ -183,7 +183,7 @@ const Home = () => {
     fetchMore({ variables: { cursor: data?.videos?.cursor } });
   };
 
-  const videos = data?.videos?.paginatedVideos; /*  || dataFake */
+  const videos = data?.videos?.paginatedVideos || dataFake ;
 
   return (
     <div className={styles.home}>

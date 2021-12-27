@@ -29,6 +29,7 @@ const TopBar = ({ type }: TopBarProps) => {
   const {
     state: { details },
     setState: setUserContext,
+    cache,
   } = useLogin();
 
   const [logoutMutation] = useLogoutMutation();
@@ -36,12 +37,13 @@ const TopBar = ({ type }: TopBarProps) => {
   const logoutHandler = async () => {
     const response = await logoutMutation();
     if (response.data?.logout) {
-      console.log("qua day");
       setUserContext((preValues) => ({
         ...preValues,
         details: undefined,
         token: undefined,
       }));
+      cache.evict({ fieldName: "me" });
+
       window.localStorage.setItem("logout", Date.now().toString());
       window.localStorage.removeItem("login");
 

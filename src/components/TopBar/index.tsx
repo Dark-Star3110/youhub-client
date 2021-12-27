@@ -11,6 +11,7 @@ import { useLogin } from "../../contexts/UserContext";
 import { useLogoutMutation } from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
 import { ExtraNavContext } from "../../contexts/ExtraNavContext";
+import Spinner from "../Spinner";
 
 interface TopBarProps {
   type: string;
@@ -42,6 +43,8 @@ const TopBar = ({ type }: TopBarProps) => {
         token: undefined,
       }));
       window.localStorage.setItem("logout", Date.now().toString());
+      window.localStorage.removeItem("login");
+
       router.push("/");
     }
     // check error here
@@ -78,6 +81,7 @@ const TopBar = ({ type }: TopBarProps) => {
           <i className="fas fa-microphone"></i>
         </span>
       </div>
+
       {details ? (
         <>
           <div className={styles.user}>
@@ -176,7 +180,7 @@ const TopBar = ({ type }: TopBarProps) => {
             </div>
           </div>
         </>
-      ) : (
+      ) : !window.localStorage.getItem("login") ? (
         <Link to="/login" className={styles["login-btn"]}>
           <div className={styles["outer"] + " " + styles["button"]}>
             <button>
@@ -186,6 +190,10 @@ const TopBar = ({ type }: TopBarProps) => {
             <span></span>
           </div>
         </Link>
+      ) : (
+        <div>
+          <Spinner />
+        </div>
       )}
     </div>
   );

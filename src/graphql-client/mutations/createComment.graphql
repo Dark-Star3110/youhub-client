@@ -1,0 +1,26 @@
+mutation CreateComment(
+  $videoId: String!
+  $createCommentInput: CreateCommentInput!
+  $parentCommentId: String
+) {
+  createComment(
+    videoId: $videoId
+    createCommentInput: $createCommentInput
+    parentCommentId: $parentCommentId
+  ) {
+    code
+    success
+    message
+    comment {
+      ...commentInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+    errors {
+      ...fieldError
+    }
+  }
+}

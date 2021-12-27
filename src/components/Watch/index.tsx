@@ -1,30 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useLogin } from "../../contexts/UserContext";
 import { useRouter } from "../../hooks/useRouter";
 import Comment from "../Comment";
-
-import styles from "./Watch.module.scss";
 import Video from "../Video";
 import VideoConcern from "../VideoConcern";
+import styles from "./Watch.module.scss";
 
 const Watch = () => {
-  // state
-  const [videoId, setVideoId] = useState("");
-
   // location
   const router = useRouter();
 
-  // effect
+  const { socket, cache } = useLogin();
+
+  const videoId = router.query.slug as string;
+
   useEffect(() => {
-    const { slug } = router.query;
-    // console.log(slug);
-    setVideoId(slug as string);
-  }, [router.query]);
+    if (videoId) {
+      socket.emit("join-room", videoId);
+    }
+    return () => {
+      socket.emit("leave-room", videoId);
+      // clear cache comment paginated
+      cache.evict({ fieldName: "comments" });
+    };
+  }, [socket, videoId, cache]);
 
   return (
     <div className={styles.watch}>
       <div className={styles["primary"]}>
         <Video videoId={videoId} />
-        <Comment />
+        <Comment videoId={videoId} />
       </div>
       <div className={styles["secondary"]}>
         <VideoConcern />

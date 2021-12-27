@@ -78,9 +78,30 @@ const Create = () => {
               ...inputValue,
             },
           },
+
+          update(cache, { data }) {
+            cache.modify({
+              fields: {
+                videos(existing) {
+                  if (data?.createVideo.success && data.createVideo.video) {
+                    const refVideo = cache.identify(data.createVideo.video);
+                    const newVideos = {
+                      ...existing,
+                      totalCount: existing.totalCount + 1,
+                      paginatedVideos: [
+                        { __ref: refVideo },
+                        ...existing.paginatedVideos,
+                      ],
+                    };
+                    return newVideos;
+                  }
+                },
+              },
+            });
+          },
         });
 
-        if (res_graph.data?.createVideo.success) {
+        if (res_graph.data?.createVideo.video) {
           setLoading(false);
           notify("success", "đăng video thành công");
           setTimeout(() => router.push("/"), 1000);

@@ -1,10 +1,109 @@
-import { useLogin } from "../../contexts/UserContext";
-import styles from "./Comment.module.scss";
+import { useEffect, useState } from "react";
 import user_img from "../../assets/img/user.png";
-import { useState } from "react";
+import { useLogin } from "../../contexts/UserContext";
+import {
+  CommentDocument,
+  CommentQuery,
+  useCommentsQuery,
+  useCreateCommentMutation,
+} from "../../generated/graphql";
+import Spinner from "../Spinner";
+import styles from "./Comment.module.scss";
 
-const Comment = () => {
-  const comments = [
+interface CommentProps {
+  videoId: string;
+}
+
+const Comment = ({ videoId }: CommentProps) => {
+  const [show, setShow] = useState(false);
+  const [commentValue, setCommentValue] = useState("");
+  const {
+    state: { details },
+    socket,
+    cache,
+  } = useLogin();
+
+  const { data, loading: queryLoading } = useCommentsQuery({
+    variables: {
+      getCmtInput: { limit: 4, videoId },
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const [onCmtCreate, { loading: createLoading }] = useCreateCommentMutation();
+
+  useEffect(() => {
+    socket.on("message", (comment) => {
+      cache.writeQuery<CommentQuery>({
+        query: CommentDocument,
+        data: { comment },
+      });
+      cache.modify({
+        fields: {
+          comments(existing) {
+            const cmtRef = cache.identify(comment);
+            const newComments = existing.totalCount
+              ? {
+                  ...existing,
+                  totalCount: existing.totalCount + 1,
+                  paginatedComments: [
+                    { __ref: cmtRef },
+                    ...existing.paginatedComments,
+                  ],
+                }
+              : {
+                  totalCount: 1,
+                  hasMore: false,
+                  cursor: comment.createdAt,
+                  paginatedComments: [{ __ref: cmtRef }],
+                };
+            return newComments;
+          },
+        },
+        optimistic: true,
+        broadcast: true,
+      });
+    });
+    return () => {
+      socket.off("message");
+    };
+  }, [socket, cache]);
+
+  const handleCreateComment = async () => {
+    const response = await onCmtCreate({
+      variables: {
+        videoId,
+        createCommentInput: {
+          content: commentValue,
+        },
+      },
+      /* update(cache, { data }) {
+        cache.modify({
+          fields: {
+            comments(existing) {
+              if (data?.createComment.success && data.createComment.comment) {
+                const cmtRef = cache.identify(data.createComment.comment);
+                return {
+                  ...existing,
+                  totalCount: existing.totalCount ? existing.totalCount + 1 : 1,
+                  paginatedComments: [
+                    { __ref: cmtRef },
+                    ...existing.paginatedComments,
+                  ],
+                };
+              }
+            },
+          },
+        });
+      }, */
+    });
+    if (response.data?.createComment.comment) {
+      setCommentValue("");
+      socket.emit("comment", response.data.createComment.comment, videoId);
+    }
+  };
+
+  const commentsFake = [
     {
       id: "123",
       content: "Thích đứa cùng lớp mà k dám nói sợ nó chê mình xấu :((",
@@ -54,12 +153,8 @@ const Comment = () => {
     },
   ];
 
-  const [show, setShow] = useState(false);
-  const [commentValue, setCommentValue] = useState("");
-  const {
-    state: { details },
-  } = useLogin();
-
+  if (queryLoading) return <Spinner />;
+  const comments = data?.comments?.paginatedComments;
   return (
     <div className={styles.Comment}>
       <h3>69 bình luận</h3>
@@ -94,7 +189,7 @@ const Comment = () => {
                   styles[`${commentValue === "" ? "" : "active"}`]
                 }
                 disabled={commentValue === "" ? true : false}
-                onClick={() => console.log("handeComment")}
+                onClick={handleCreateComment}
               >
                 BÌNH LUẬN
               </button>
@@ -102,10 +197,10 @@ const Comment = () => {
           )}
         </div>
       </div>
-      {comments.map((comment) => (
+      {comments?.map((comment) => (
         <div className={styles["comment-item"]} key={comment.id}>
           <div className={styles["comment-item__img"]}>
-            <img src={comment.user.image_url} alt="user" />
+            <img src={comment.user.image_url as string} alt="user" />
           </div>
           <div>
             <h3>

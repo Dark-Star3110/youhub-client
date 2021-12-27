@@ -17,6 +17,7 @@ import Library from "./components/Library";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Search from "./components/Search";
+import Spinner from "./components/Spinner";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
 import Watch from "./components/Watch";
@@ -43,8 +44,8 @@ function App() {
   const router = useRouter();
 
   // check authentication
-  useCheckAuth();
-  const [refreshTokenMutation] = useRefreshTokenMutation();
+  const [refreshTokenMutation, { loading: refreshLoading }] =
+    useRefreshTokenMutation();
 
   const verifyUser = useCallback(async () => {
     const response = await refreshTokenMutation();
@@ -62,6 +63,7 @@ function App() {
     verifyUser();
   }, [verifyUser]);
 
+  const { loading: authLoading } = useCheckAuth();
   // sync login
   const syncLogin = useCallback((event) => {
     if (event.key === "login") {
@@ -122,7 +124,18 @@ function App() {
           <Route path="/create" element={<Create />} />
           <Route path="/watch/:slug" element={<Watch />} />
           <Route path="/search" element={<Search />} />
-          <Route path="/" element={<Home />} />
+          <Route
+            path="/"
+            element={
+              authLoading || refreshLoading ? (
+                <h1>
+                  <Spinner />
+                </h1>
+              ) : (
+                <Home />
+              )
+            }
+          />
         </Routes>
       </div>
     </div>

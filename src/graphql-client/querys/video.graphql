@@ -1,6 +1,5 @@
-query Video ($id: ID!) {
+query Video($id: ID!) {
   video(id: $id) {
     ...videoInfo
-    
   }
 }

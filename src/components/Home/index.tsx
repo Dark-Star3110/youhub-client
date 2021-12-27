@@ -1,11 +1,11 @@
 import { NetworkStatus } from "@apollo/client";
 import { Link } from "react-router-dom";
+import user_img from "../../assets/img/user.png";
 import { useVideosQuery } from "../../generated/graphql";
 import SlickNav from "../SlickNav";
 import styles from "./Home.module.scss";
-import user_img from "../../assets/img/user.png";
 
-const limit = 2;
+const limit = 4;
 
 const Home = () => {
   const dataFake = [
@@ -183,13 +183,13 @@ const Home = () => {
     fetchMore({ variables: { cursor: data?.videos?.cursor } });
   };
 
-  const videos = data?.videos?.paginatedVideos || dataFake;
+  const videos = data?.videos?.paginatedVideos; /*  || dataFake */
 
   return (
     <div className={styles.home}>
       <SlickNav />
       <div className={styles.layout}>
-        {videos.map((video, index) => (
+        {videos?.map((video, index) => (
           <Link to={`/watch/${video.id}`} key={index}>
             <div className={styles["layout-item"]}>
               <div className={styles["layout-img-container"]}>

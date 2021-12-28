@@ -5,8 +5,8 @@
     top: 50%; 
     left: 50%;
     transform: translate(-50%,-50%);
-    width: 400px;
-    height: 400px;
+    width: 350px;
+    height: 450px;
     display: flex;
     justify-content: center;
     background-color: white;
@@ -17,18 +17,27 @@
         // align-items: center;
         justify-content: flex-start;
         flex-direction: column;
+        // .message { 
+        //     height: 300px;
+        // }
         h2 { 
             text-align: center;
             padding-top: 40px;
             padding-bottom: 15px;
         }
-        input { 
+        input,textarea { 
             padding: 8px 16px; 
             width: 300px;
             border-radius: 5px;
             text-decoration: none;
             border: 1px solid #ccc; 
             margin-top: 30px;
+            &:focus { 
+                border: 1px solid $black-color;
+            }
+        }
+        textarea { 
+            resize: none;
         }
         button { 
             margin-top: 30px;

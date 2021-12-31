@@ -17,7 +17,6 @@ import Library from "./components/Library";
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Search from "./components/Search";
-import Spinner from "./components/Spinner";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
 import Watch from "./components/Watch";
@@ -25,7 +24,6 @@ import { ExtraNavContext } from "./contexts/ExtraNavContext";
 import { NavContext } from "./contexts/NavContext";
 import { useLogin } from "./contexts/UserContext";
 import { useRefreshTokenMutation } from "./generated/graphql";
-import { useCheckAuth } from "./hooks/useCheckAuth";
 /* import { useLogin } from "./contexts/UserContext";
 import { useCheckAuth } from "./hooks/useCheckAuth"; */
 import { useRouter } from "./hooks/useRouter";
@@ -44,8 +42,7 @@ function App() {
   const router = useRouter();
 
   // check authentication
-  const [refreshTokenMutation, { loading: refreshLoading }] =
-    useRefreshTokenMutation();
+  const [refreshTokenMutation] = useRefreshTokenMutation();
 
   const verifyUser = useCallback(async () => {
     const response = await refreshTokenMutation();
@@ -62,8 +59,6 @@ function App() {
   useLayoutEffect(() => {
     verifyUser();
   }, [verifyUser]);
-
-  const { loading: authLoading } = useCheckAuth();
   // sync login
   const syncLogin = useCallback((event) => {
     if (event.key === "login") {
@@ -124,18 +119,7 @@ function App() {
           <Route path="/create" element={<Create />} />
           <Route path="/watch/:slug" element={<Watch />} />
           <Route path="/search" element={<Search />} />
-          <Route
-            path="/"
-            element={
-              authLoading || refreshLoading ? (
-                <h1>
-                  <Spinner />
-                </h1>
-              ) : (
-                <Home />
-              )
-            }
-          />
+          <Route path="/" element={<Home />} />
         </Routes>
       </div>
     </div>

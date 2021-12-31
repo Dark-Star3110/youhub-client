@@ -1,13 +1,31 @@
 import { NetworkStatus } from "@apollo/client";
+import { useCallback, useEffect } from "react";
 import { Link } from "react-router-dom";
 import user_img from "../../assets/img/user.png";
+import { useLogin } from "../../contexts/UserContext";
 import { useVideosQuery } from "../../generated/graphql";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
 import SlickNav from "../SlickNav";
+import Spinner from "../Spinner";
 import styles from "./Home.module.scss";
 
-const limit = 4;
+const limit = 12;
 
 const Home = () => {
+  const { loading: authLoading } = useCheckAuth();
+
+  const {
+    setState: setUserState,
+    state: { checkPass },
+  } = useLogin();
+
+  useEffect(() => {
+    if (!checkPass)
+      setUserState((prev) => ({
+        ...prev,
+        checkPass: true,
+      }));
+  }, [checkPass, setUserState]);
   const dataFake = [
     {
       id: "17ZXlVzLb0toTe3dtO8q80DmVlnQz9R99",
@@ -183,7 +201,37 @@ const Home = () => {
     fetchMore({ variables: { cursor: data?.videos?.cursor } });
   };
 
-  const videos = data?.videos?.paginatedVideos; /*  || dataFake */
+  const handleScroll = useCallback(() => {
+    let condition: number = 0;
+    if (document.documentElement.scrollHeight < 1500) condition = 0.38;
+    else if (document.documentElement.scrollHeight < 2500) condition = 0.66;
+    else if (document.documentElement.scrollHeight < 3500) condition = 0.8;
+    else condition = 0.9;
+    if (
+      window.scrollY / document.documentElement.scrollHeight >= condition &&
+      data?.videos?.hasMore
+    ) {
+      if (!loading) {
+        fetchMore({ variables: { cursor: data?.videos?.cursor } });
+      }
+    }
+  }, [data?.videos?.cursor, fetchMore, data?.videos?.hasMore, loading]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+
+  const videos = data?.videos?.paginatedVideos || dataFake;
+
+  if (authLoading || (loading && !data?.videos))
+    return (
+      <h1>
+        <Spinner />
+      </h1>
+    );
 
   return (
     <div className={styles.home}>
@@ -232,6 +280,7 @@ const Home = () => {
           </Link>
         ))}
       </div>
+      {loadingMore && <Spinner />}
 
       {data?.videos?.hasMore && <button onClick={loadMore}>Load More</button>}
     </div>

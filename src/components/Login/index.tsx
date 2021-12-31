@@ -1,3 +1,4 @@
+import { Reference } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import {
   GoogleLoginResponse,
@@ -32,7 +33,8 @@ interface ISignupDataDefault {
 }
 
 const Login = () => {
-  useCheckAuth();
+  const { loading: authLoading } = useCheckAuth();
+
   // state
   const [mode, setMode] = useState<string>("");
   const [seen, setSeen] = useState<boolean>(false);
@@ -52,7 +54,11 @@ const Login = () => {
   const router = useRouter();
 
   // user context
-  const { setState: setUserState } = useLogin();
+  const {
+    setState: setUserState,
+    state: { checkPass },
+    cache,
+  } = useLogin();
   const { notify } = useContext(ToastContext);
 
   // login mutation
@@ -72,21 +78,32 @@ const Login = () => {
           accessToken: res_su.tokenId,
         },
       },
+      onCompleted: () => {
+        cache.modify({
+          fields: {
+            videos(existing) {
+              existing.paginatedVideos.forEach((video: Reference) => {
+                cache.evict({ id: video.__ref });
+              });
+            },
+          },
+        });
+        cache.evict({ fieldName: "videos" });
+      },
     });
 
     if (response.data?.login.success) {
-      setLoading(false);
       setUserState((preValues) => ({
         ...preValues,
         token: response.data?.login.token as string,
       }));
       window.localStorage.setItem("login", Date.now().toString());
-      notify("success", "dang nhap thanh cong");
-      router.navigate("/");
+      notify("success", "Đăng nhập thành công👌");
+      checkPass ? router.navigate(-1) : router.navigate(1);
     } else {
-      setLoading(false);
-      notify("error", "dang nhap that bai");
+      notify("error", "Có lỗi xảy ra, vui lòng thử lại!😍");
     }
+    setLoading(false);
   };
 
   const onFailure = (error: any) => {
@@ -112,9 +129,19 @@ const Login = () => {
           password: loginData.password,
         },
       },
+      onCompleted: () => {
+        cache.modify({
+          fields: {
+            videos(existing) {
+              existing.paginatedVideos.forEach((video: Reference) => {
+                cache.evict({ id: video.__ref });
+              });
+            },
+          },
+        });
+        cache.evict({ fieldName: "videos" });
+      },
     });
-
-    // check errors here
 
     if (response.data?.login.success) {
       setUserState((preValues) => ({
@@ -122,8 +149,15 @@ const Login = () => {
         token: response.data?.login.token as string,
       }));
       window.localStorage.setItem("login", Date.now().toString());
-      notify("success", "dang nhap thanh cong");
-      router.push("/");
+      notify("success", "Đăng nhập thành công👌");
+      checkPass ? router.navigate(-1) : router.navigate(1);
+    } else if (response.data?.login.code === 401) {
+      notify(
+        "error",
+        "Tài khoản hoặc mật khẩu không chính xác, vui lòng thử lại😒"
+      );
+    } else {
+      notify("error", "Có lỗi xảy ra, vui lòng thử lại!😂");
     }
     setLoading(false);
   };
@@ -152,6 +186,13 @@ const Login = () => {
     }
     setLoading(false);
   };
+
+  if (authLoading || (!authLoading && window.localStorage.getItem("login")))
+    return (
+      <h1>
+        <Spinner />
+      </h1>
+    );
 
   return (
     <div className={styles.container + " " + styles[mode]}>

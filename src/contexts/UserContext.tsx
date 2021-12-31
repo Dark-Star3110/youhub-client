@@ -13,6 +13,7 @@ import { Comment, User, Video } from "../generated/graphql";
 export interface State {
   token?: string;
   details?: User;
+  checkPass?: boolean;
 }
 
 export interface UserContextDefault {
@@ -70,7 +71,7 @@ const cache = new InMemoryCache({
   },
 });
 
-const initialState = {
+const initialState: UserContextDefault = {
   state: {},
   setState: () => {},
   socket,

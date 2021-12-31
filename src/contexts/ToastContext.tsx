@@ -23,7 +23,7 @@ const ToastContextProvider = ({ children }: ToastContextProps) => {
     if (type) {
       switch (type) {
         case "success":
-          toast.success(message);
+          toast.success(message, { autoClose: 1500 });
           break;
         case "warning":
           toast.warning(message);

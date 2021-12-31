@@ -3,8 +3,8 @@ fragment videoInfo on Video {
   title
   description
   commentable
+  voteStatus
   thumbnailUrl
-  size
   createdAt
   updatedAt
 }

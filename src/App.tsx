@@ -10,16 +10,20 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
+import EditVideo from "./components/EditVideo";
 import Explore from "./components/Explore";
 import ExtraNav from "./components/ExtraNav";
 import Home from "./components/Home";
 import Library from "./components/Library";
 import Login from "./components/Login";
+import Me from "./components/Me";
 import Navbar from "./components/Navbar";
+import NotFound from "./components/NotFound";
 import Search from "./components/Search";
 import Spinner from "./components/Spinner";
 import Subscriptions from "./components/Subscriptions";
 import TopBar from "./components/TopBar";
+import User from "./components/User";
 import Watch from "./components/Watch";
 import { ExtraNavContext } from "./contexts/ExtraNavContext";
 import { NavContext } from "./contexts/NavContext";
@@ -99,6 +103,8 @@ function App() {
       setDisplay("full");
     } else if (router.location.pathname.includes("/watch")) {
       setDisplay("watch");
+    } else if (router.location.pathname.includes("/me")) {
+      setDisplay("watch");
     } else {
       setDisplay("");
     }
@@ -124,6 +130,9 @@ function App() {
           <Route path="/create" element={<Create />} />
           <Route path="/watch/:slug" element={<Watch />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/user/:slug" element={<User />} />
+          <Route path="/edit/:slug" element={<EditVideo />} />
+          <Route path="/me" element={<Me />} />
           <Route
             path="/"
             element={
@@ -136,6 +145,7 @@ function App() {
               )
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
     </div>

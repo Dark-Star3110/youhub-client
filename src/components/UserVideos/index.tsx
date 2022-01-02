@@ -1,13 +1,8 @@
-import { NetworkStatus } from "@apollo/client";
-import { Link } from "react-router-dom";
+import styles from "./UserVideos.module.scss";
 import user_img from "../../assets/img/user.png";
-import { useVideosQuery } from "../../generated/graphql";
-import SlickNav from "../SlickNav";
-import styles from "./Home.module.scss";
+import { Link } from "react-router-dom";
 
-const limit = 4;
-
-const Home = () => {
+const UserVideos = () => {
   const dataFake = [
     {
       id: "17ZXlVzLb0toTe3dtO8q80DmVlnQz9R99",
@@ -170,26 +165,12 @@ const Home = () => {
       },
     },
   ];
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, loading, fetchMore, networkStatus } = useVideosQuery({
-    variables: {
-      limit,
-    },
-    notifyOnNetworkStatusChange: true,
-  });
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const loadingMore = networkStatus === NetworkStatus.fetchMore;
-
-  const loadMore = () => {
-    fetchMore({ variables: { cursor: data?.videos?.cursor } });
-  };
-
-  const videos = data?.videos?.paginatedVideos || dataFake; /*  || dataFake */
+  const videos = dataFake;
 
   return (
-    <div className={styles.home}>
-      <SlickNav />
+    <div className={styles["user-videos"]}>
+      <h3>Video tải lên</h3>
       <div className={styles.layout}>
         {videos?.map((video, index) => (
           <Link to={`/watch/${video.id}`} key={index}>
@@ -206,25 +187,10 @@ const Home = () => {
                 <h2>Xem ngay</h2>
               </div>
               <div className={styles["layout-content"]}>
-                <div className={styles["layout-content_img"]}>
-                  <img
-                    src={
-                      video.user.image_url ||
-                      "https://images6.alphacoders.com/311/thumbbig-311015.webp"
-                    }
-                    alt="user"
-                  />
-                </div>
                 <div className={styles["layout-content_inf"]}>
                   <h3 className={styles["layout-content_title"]}>
                     {video.title}
                   </h3>
-                  <h4 className={styles["layout-content_descript"]}>
-                    {video.description}
-                  </h4>
-                  <h4 className={styles["layout-content_autname"]}>
-                    {video.user.lastName + " " + video.user.firstName}
-                  </h4>
                   <time className={styles["layout-content_time"]}>
                     {video.createdAt}
                   </time>
@@ -234,10 +200,8 @@ const Home = () => {
           </Link>
         ))}
       </div>
-
-      {data?.videos?.hasMore && <button onClick={loadMore}>Load More</button>}
     </div>
   );
 };
 
-export default Home;
+export default UserVideos;

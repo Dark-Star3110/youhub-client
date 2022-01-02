@@ -21,12 +21,15 @@ const Video = ({ videoId }: VideoProps) => {
 
   return (
     <>
-      <iframe
-        title="Drive video player"
-        src={`https://drive.google.com/file/d/${videoId}/preview`}
-        allow="autoplay"
-        className={styles["primary-video"]}
-      ></iframe>
+      <div className={styles["primary-video"]}>
+        <iframe
+          title="Drive video player"
+          src={`https://drive.google.com/file/d/${videoId}/preview`}
+          allow="autoplay"
+          allowFullScreen
+          className={styles["primary-video__d"]}
+        ></iframe>
+      </div>
       <div className={styles["primary-video_inf"]}>
         <h3>This is Current video of Title</h3>
         <div className={styles["primary-video_control"]}>

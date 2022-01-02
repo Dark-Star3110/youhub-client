@@ -30,6 +30,7 @@ const Comment = ({ videoId }: CommentProps) => {
     notifyOnNetworkStatusChange: true,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [onCmtCreate, { loading: createLoading }] = useCreateCommentMutation();
 
   useEffect(() => {
@@ -154,7 +155,7 @@ const Comment = ({ videoId }: CommentProps) => {
   ];
 
   if (queryLoading) return <Spinner />;
-  const comments = data?.comments?.paginatedComments;
+  const comments = data?.comments?.paginatedComments || commentsFake;
   return (
     <div className={styles.Comment}>
       <h3>69 bình luận</h3>
@@ -178,7 +179,10 @@ const Comment = ({ videoId }: CommentProps) => {
             <div className={styles["comment-btn"]}>
               <button
                 className={styles["cancel-btn"]}
-                onClick={() => setShow(false)}
+                onClick={() => {
+                  setShow(false);
+                  setCommentValue("");
+                }}
               >
                 HỦY
               </button>

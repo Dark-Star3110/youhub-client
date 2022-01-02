@@ -1,0 +1,82 @@
+@import "../../styles/variable.scss";
+@import "../../styles/mixim.scss";
+
+.content {
+  min-height: 85vh;
+  @include center();
+  small {
+    color: #888;
+  }
+  flex-direction: column;
+  .form {
+    margin-top: 10px;
+    .form-item {
+      position: relative;
+      margin: 16px 0;
+      width: 876px;
+      .form-input {
+        border: 1px solid rgba(136, 136, 136, 0.363);
+        border-radius: 4px;
+        width: 100%;
+        height: 50px;
+        color: #fff;
+        font-size: 16px;
+        background-color: $black1-color;
+        padding: 0 20px;
+        transition: 0.25s ease;
+        &:focus {
+          border-color: #6a5af9;
+        }
+        &.desp {
+          height: 174px;
+          padding-top: 20px;
+        }
+      }
+      .form-label {
+        position: absolute;
+        top: 30%;
+        transform: translateY(-50%);
+        left: 21px;
+        font-size: 16px;
+        user-select: none;
+        color: #999;
+        pointer-events: none;
+        transition: all 0.25s ease;
+      }
+      .form-input:not(:placeholder-shown) + .form-label,
+      .form-input:focus + .form-label {
+        display: inline-block;
+        top: 0;
+        left: 11px;
+        padding: 0 10px;
+        background-color: $black1-color;
+        color: #6a5af9;
+      }
+    }
+  }
+  .btns {
+    padding: 20px 20px 0 0;
+    button {
+      border: none;
+      padding: 10px 20px;
+      color: #fff;
+      font-size: 14px;
+      background-color: $black1-color;
+      cursor: default;
+    }
+    .cancel-btn.active {
+      color: #3ea6ff;
+      cursor: pointer;
+    }
+    .save-btn {
+      background-color: #606060;
+      border-radius: 2px;
+      cursor: default;
+    }
+    .save-btn.active {
+      background-color: #3ea6ff;
+      color: #000;
+      cursor: pointer;
+    }
+  }
+}

@@ -121,6 +121,10 @@
         &:focus {
           border-color: #6a5af9;
         }
+        &.desp {
+          height: 174px;
+          padding: 20px 20px;
+        }
       }
       .form-label {
         position: absolute;
@@ -132,6 +136,9 @@
         color: #999;
         pointer-events: none;
         transition: all 0.25s ease;
+        &.desp {
+          top: 12%;
+        }
       }
       .form-input:not(:placeholder-shown) + .form-label,
       .form-input:focus + .form-label {

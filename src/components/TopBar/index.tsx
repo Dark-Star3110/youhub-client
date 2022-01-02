@@ -29,6 +29,7 @@ const TopBar = ({ type }: TopBarProps) => {
   const {
     state: { details },
     setState: setUserContext,
+    cache,
   } = useLogin();
 
   const [logoutMutation] = useLogoutMutation();
@@ -42,6 +43,7 @@ const TopBar = ({ type }: TopBarProps) => {
         details: undefined,
         token: undefined,
       }));
+      cache.evict({ fieldName: "me" });
       window.localStorage.setItem("logout", Date.now().toString());
       window.localStorage.removeItem("login");
 
@@ -124,12 +126,19 @@ const TopBar = ({ type }: TopBarProps) => {
                 <p>Quản lí tài khoản của bạn</p>
               </div>
             </div>
-            <div className={styles["user-info-item"]}>
-              <span className={styles["user-info-icon"]}>
-                <i className="fas fa-user-circle"></i>
-              </span>
-              <span className={styles["user-info-title"]}>Kênh của bạn</span>
-            </div>
+            <Link to={`user/${details.id}`}>
+              <div
+                className={styles["user-info-item"]}
+                onClick={() => {
+                  setShow(show === "user" ? "" : "user");
+                }}
+              >
+                <span className={styles["user-info-icon"]}>
+                  <i className="fas fa-user-circle"></i>
+                </span>
+                <span className={styles["user-info-title"]}>Kênh của bạn</span>
+              </div>
+            </Link>
             <div className={styles["user-info-item"]}>
               <span className={styles["user-info-icon"]}>
                 <i className="fas fa-donate"></i>

@@ -1,4 +1,6 @@
-// import Slider from "react-slick";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import GradientButton from "../GradientButton";
 
 import styles from "./SlickNav.module.scss";
@@ -15,15 +17,26 @@ const SlickNav = () => {
     "da xem",
     "de xuat moi",
   ];
-
-  const list = data.map((item, index) => {
-    return (
-      <div key={index} className={styles["slick-nav-item"]}>
-        <GradientButton text={item} />
-      </div>
-    );
-  });
-  return <div className={styles["slick-nav"]}>{list}</div>;
+  const settings = {
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    variableWidth: true,
+  };
+  return (
+    <div className={styles["slick-nav"]}>
+      <Slider {...settings}>
+        {data.map((item, index) => {
+          return (
+            <div key={index} className={styles["slick-nav-item"]}>
+              <GradientButton text={item} />
+            </div>
+          );
+        })}
+      </Slider>
+    </div>
+  );
 };
 
 export default SlickNav;

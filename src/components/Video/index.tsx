@@ -1,23 +1,101 @@
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "./Video.module.scss";
-import author_img from "../../assets/img/author.jpg";
+import {
+  Action,
+  useVideoQuery,
+  useVoteVideoMutation,
+  VoteType,
+} from "../../generated/graphql";
+import { ToastContext } from "../../contexts/ToastContext";
+import Spinner from "../Spinner";
+import { gql } from "@apollo/client";
+import { useLogin } from "../../contexts/UserContext";
 
 interface VideoProps {
   videoId: string;
 }
 
 const Video = ({ videoId }: VideoProps) => {
-  const [action, setAction] = useState("");
+  const {
+    cache,
+    state: { details },
+  } = useLogin();
+  const [action, setAction] = useState<"like" | "dislike" | "">("");
+  const [voteVideoMutation /* , { loading } */] = useVoteVideoMutation();
+  const { data: videoData, loading: queryLoading } = useVideoQuery({
+    variables: { id: videoId },
+    skip: !!!details,
+  });
 
-  const handleLike = () => {
+  const { notify } = useContext(ToastContext);
+
+  const handleLike = async () => {
     const newAction = action === "like" ? "" : "like";
-    setAction(newAction);
+    const response = await voteVideoMutation({
+      variables: {
+        action: newAction === "like" ? Action.Activate : Action.Disactivate,
+        type: VoteType.Like,
+        videoId,
+      },
+    });
+    if (response.data?.voteVideo.success) {
+      cache.writeFragment({
+        id: `Video:${videoId}`,
+        fragment: gql`
+          fragment VoteType on Video {
+            voteStatus
+          }
+        `,
+        data: {
+          voteStatus: newAction === "like" ? 1 : 0,
+        },
+      });
+    } else {
+      notify("error", "Something went wrong");
+    }
   };
 
-  const handleDisLike = () => {
+  const handleDisLike = async () => {
     const newAction = action === "dislike" ? "" : "dislike";
-    setAction(newAction);
+    const response = await voteVideoMutation({
+      variables: {
+        action: newAction === "dislike" ? Action.Activate : Action.Disactivate,
+        type: VoteType.Dislike,
+        videoId,
+      },
+    });
+    if (response.data?.voteVideo.success) {
+      cache.writeFragment({
+        id: `Video:${videoId}`,
+        fragment: gql`
+          fragment VoteType on Video {
+            voteStatus
+          }
+        `,
+        data: {
+          voteStatus: newAction === "dislike" ? -1 : 0,
+        },
+      });
+    } else {
+      notify("error", "Something went wrong");
+    }
   };
+
+  useEffect(() => {
+    if (videoData?.video)
+      videoData?.video?.voteStatus === 1
+        ? setAction("like")
+        : videoData?.video?.voteStatus === -1
+        ? setAction("dislike")
+        : setAction("");
+  }, [videoData?.video]);
+
+  if (queryLoading && !videoData?.video && !details)
+    return (
+      <h1>
+        <Spinner />
+      </h1>
+    );
 
   return (
     <>
@@ -30,10 +108,11 @@ const Video = ({ videoId }: VideoProps) => {
           className={styles["primary-video__d"]}
         ></iframe>
       </div>
+
       <div className={styles["primary-video_inf"]}>
-        <h3>This is Current video of Title</h3>
+        <h3>{videoData?.video?.title}</h3>
         <div className={styles["primary-video_control"]}>
-          <time>Đã tải lên vào 24 thg 12,2021</time>
+          <time>Đã tải lên vào {videoData?.video?.createdAt}</time>
           <div className={styles["primary-video_icon"]}>
             <div
               className={
@@ -78,10 +157,16 @@ const Video = ({ videoId }: VideoProps) => {
       <div className={styles["primary-video_author"]}>
         <div className={styles["primary-video_author__inf"]}>
           <div className={styles["primary-video_author__img"]}>
-            <img src={author_img} alt="author" />
+            <img
+              src={
+                videoData?.video?.user.image_url ||
+                "https://images6.alphacoders.com/311/thumbbig-311015.webp"
+              }
+              alt="author"
+            />
           </div>
           <div>
-            <h4>Author Name</h4>
+            <h4>{videoData?.video?.user.fullName}</h4>
             <small>69N người đăng ký</small>
           </div>
         </div>

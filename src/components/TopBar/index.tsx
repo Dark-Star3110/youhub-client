@@ -12,6 +12,8 @@ import { useLogoutMutation } from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
 import { ExtraNavContext } from "../../contexts/ExtraNavContext";
 import Spinner from "../Spinner";
+import { Reference } from "@apollo/client/cache";
+import { gql } from "@apollo/client";
 
 interface TopBarProps {
   type: string;
@@ -37,13 +39,31 @@ const TopBar = ({ type }: TopBarProps) => {
   const logoutHandler = async () => {
     const response = await logoutMutation();
     if (response.data?.logout) {
-      console.log("qua day");
       setUserContext((preValues) => ({
         ...preValues,
         details: undefined,
         token: undefined,
       }));
       cache.evict({ fieldName: "me" });
+      cache.modify({
+        fields: {
+          videos(existing) {
+            existing.paginatedVideos.forEach((video: Reference) => {
+              cache.writeFragment({
+                id: video.__ref,
+                fragment: gql`
+                  fragment VoteVideo on Video {
+                    voteStatus
+                  }
+                `,
+                data: {
+                  voteStatus: 0,
+                },
+              });
+            });
+          },
+        },
+      });
       window.localStorage.setItem("logout", Date.now().toString());
       window.localStorage.removeItem("login");
 

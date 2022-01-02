@@ -8,8 +8,10 @@ import sport_icon from "./../../assets/icon/sport.png";
 import user_img from "../../assets/img/user.png"; // rac
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
 
 const Explore = () => {
+  useCheckAuth();
   const data = [
     {
       id: "17ZXlVzLb0toTe3dtO8q80DmVlnQz9R99",

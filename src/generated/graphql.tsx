@@ -192,6 +192,8 @@ export type Query = {
   me?: Maybe<User>;
   video?: Maybe<Video>;
   videos?: Maybe<PaginatedVideos>;
+  videosVoted?: Maybe<PaginatedVideos>;
+  videosWatchLater?: Maybe<PaginatedVideos>;
 };
 
 
@@ -218,6 +220,21 @@ export type QueryVideosArgs = {
   query?: InputMaybe<Scalars['String']>;
   user?: InputMaybe<Array<Scalars['String']>>;
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryVideosVotedArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  type: Scalars['Float'];
+  userId: Scalars['String'];
+};
+
+
+export type QueryVideosWatchLaterArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  userId: Scalars['String'];
 };
 
 export type SignupInput = {
@@ -303,6 +320,7 @@ export type Video = {
   title: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   user: User;
+  voteStatus: Scalars['Int'];
 };
 
 export type VideoMutationResponse = MutationResponse & {
@@ -335,7 +353,7 @@ export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, banner_id?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
-export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any };
+export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any };
 
 export type CreateCommentMutationVariables = Exact<{
   videoId: Scalars['String'];
@@ -351,7 +369,7 @@ export type CreateVideoMutationVariables = Exact<{
 }>;
 
 
-export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   loginInput?: InputMaybe<LoginInput>;
@@ -378,6 +396,15 @@ export type SignupMutationVariables = Exact<{
 
 export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserMutationResponse', token?: string | null | undefined, code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
+export type VoteVideoMutationVariables = Exact<{
+  action: Action;
+  type: VoteType;
+  videoId: Scalars['ID'];
+}>;
+
+
+export type VoteVideoMutation = { __typename?: 'Mutation', voteVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+
 export type CommentQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -402,7 +429,7 @@ export type VideoQueryVariables = Exact<{
 }>;
 
 
-export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any } | null | undefined };
+export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } } | null | undefined };
 
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -415,7 +442,7 @@ export type VideosQueryVariables = Exact<{
 }>;
 
 
-export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, thumbnailUrl?: string | null | undefined, size: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
+export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
 
 export const CatagoryInfoFragmentDoc = gql`
     fragment catagoryInfo on Catagory {
@@ -468,8 +495,8 @@ export const VideoInfoFragmentDoc = gql`
   title
   description
   commentable
+  voteStatus
   thumbnailUrl
-  size
   createdAt
   updatedAt
 }
@@ -712,6 +739,45 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const VoteVideoDocument = gql`
+    mutation VoteVideo($action: Action!, $type: VoteType!, $videoId: ID!) {
+  voteVideo(action: $action, type: $type, videoId: $videoId) {
+    ...mutationStatuses
+    errors {
+      ...fieldError
+    }
+  }
+}
+    ${MutationStatusesFragmentDoc}
+${FieldErrorFragmentDoc}`;
+export type VoteVideoMutationFn = Apollo.MutationFunction<VoteVideoMutation, VoteVideoMutationVariables>;
+
+/**
+ * __useVoteVideoMutation__
+ *
+ * To run a mutation, you first call `useVoteVideoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useVoteVideoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [voteVideoMutation, { data, loading, error }] = useVoteVideoMutation({
+ *   variables: {
+ *      action: // value for 'action'
+ *      type: // value for 'type'
+ *      videoId: // value for 'videoId'
+ *   },
+ * });
+ */
+export function useVoteVideoMutation(baseOptions?: Apollo.MutationHookOptions<VoteVideoMutation, VoteVideoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<VoteVideoMutation, VoteVideoMutationVariables>(VoteVideoDocument, options);
+      }
+export type VoteVideoMutationHookResult = ReturnType<typeof useVoteVideoMutation>;
+export type VoteVideoMutationResult = Apollo.MutationResult<VoteVideoMutation>;
+export type VoteVideoMutationOptions = Apollo.BaseMutationOptions<VoteVideoMutation, VoteVideoMutationVariables>;
 export const CommentDocument = gql`
     query Comment($id: String!) {
   comment(id: $id) {
@@ -835,6 +901,12 @@ export const VideoDocument = gql`
     query Video($id: ID!) {
   video(id: $id) {
     ...videoInfo
+    user {
+      firstName
+      lastName
+      fullName
+      image_url
+    }
   }
 }
     ${VideoInfoFragmentDoc}`;

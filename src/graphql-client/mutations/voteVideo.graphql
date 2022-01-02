@@ -1,0 +1,8 @@
+mutation VoteVideo($action: Action!, $type: VoteType!, $videoId: ID!) {
+  voteVideo(action: $action, type: $type, videoId: $videoId) {
+    ...mutationStatuses
+    errors {
+      ...fieldError
+    }
+  }
+}

@@ -36,6 +36,7 @@ import { useRouter } from "./hooks/useRouter";
 import "./styles/App.scss";
 
 function App() {
+  const { loading } = useCheckAuth();
   // state
   const [display, setDisplay] = useState<string>("");
 
@@ -48,8 +49,7 @@ function App() {
   const router = useRouter();
 
   // check authentication
-  const [refreshTokenMutation, { loading: refreshLoading }] =
-    useRefreshTokenMutation();
+  const [refreshTokenMutation] = useRefreshTokenMutation();
 
   const verifyUser = useCallback(async () => {
     const response = await refreshTokenMutation();
@@ -66,8 +66,6 @@ function App() {
   useLayoutEffect(() => {
     verifyUser();
   }, [verifyUser]);
-
-  const { loading: authLoading } = useCheckAuth();
   // sync login
   const syncLogin = useCallback((event) => {
     if (event.key === "login") {
@@ -136,7 +134,7 @@ function App() {
           <Route
             path="/"
             element={
-              authLoading || refreshLoading ? (
+              loading ? (
                 <h1>
                   <Spinner />
                 </h1>

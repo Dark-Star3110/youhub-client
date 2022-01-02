@@ -1,11 +1,14 @@
 query Video($id: ID!) {
   video(id: $id) {
     ...videoInfo
+    commentable
+    voteStatus
     user {
       firstName
       lastName
       fullName
       image_url
+      numSubscribers
     }
   }
 }

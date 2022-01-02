@@ -52,6 +52,9 @@ const cache = new InMemoryCache({
         comments: {
           keyArgs: false,
           merge(existing, incoming) {
+            if (existing?.cursor === incoming?.cursor) {
+              return existing;
+            }
             let paginatedComments: Comment[] = [];
             if (existing && existing.paginatedComments) {
               paginatedComments = paginatedComments.concat(

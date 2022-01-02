@@ -5,6 +5,7 @@ import user_img from "../../assets/img/user.png";
 import { useLogin } from "../../contexts/UserContext";
 import { useVideosQuery } from "../../generated/graphql";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
+import { getStringToDate } from "../../utils/dateHelper";
 import SlickNav from "../SlickNav";
 import Spinner from "../Spinner";
 import styles from "./Home.module.scss";
@@ -272,7 +273,7 @@ const Home = () => {
                     {video.user.lastName + " " + video.user.firstName}
                   </h4>
                   <time className={styles["layout-content_time"]}>
-                    {video.createdAt}
+                    {getStringToDate(video.createdAt)}
                   </time>
                 </div>
               </div>

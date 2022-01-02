@@ -1,15 +1,17 @@
+import { gql } from "@apollo/client";
 import { useContext, useEffect, useState } from "react";
-import styles from "./Video.module.scss";
+import { ToastContext } from "../../contexts/ToastContext";
+import { useLogin } from "../../contexts/UserContext";
 import {
   Action,
   useVideoQuery,
   useVoteVideoMutation,
   VoteType,
 } from "../../generated/graphql";
-import { ToastContext } from "../../contexts/ToastContext";
+import { getDateFromString } from "../../utils/dateHelper";
+import { getNumToString } from "../../utils/numberHelper";
 import Spinner from "../Spinner";
-import { gql } from "@apollo/client";
-import { useLogin } from "../../contexts/UserContext";
+import styles from "./Video.module.scss";
 
 interface VideoProps {
   videoId: string;
@@ -109,7 +111,9 @@ const Video = ({ videoId }: VideoProps) => {
       <div className={styles["primary-video_inf"]}>
         <h3>{videoData?.video?.title}</h3>
         <div className={styles["primary-video_control"]}>
-          <time>Đã tải lên vào {videoData?.video?.createdAt}</time>
+          <time>
+            Đã tải lên vào {getDateFromString(videoData?.video?.createdAt)}
+          </time>
           <div className={styles["primary-video_icon"]}>
             <div
               className={
@@ -164,7 +168,10 @@ const Video = ({ videoId }: VideoProps) => {
           </div>
           <div>
             <h4>{videoData?.video?.user.fullName}</h4>
-            <small>69N người đăng ký</small>
+            <small>
+              {getNumToString(videoData?.video?.user.numSubscribers)} người đăng
+              ký
+            </small>
           </div>
         </div>
         <div className={styles.btn}>

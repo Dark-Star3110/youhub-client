@@ -84,18 +84,28 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: Scalars['Boolean'];
   createComment: CommentMutationResponse;
   createVideo: VideoMutationResponse;
   deleteVideo: VideoMutationResponse;
+  forgotPassword: Scalars['Boolean'];
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
+  onNotification: UserMutationResponse;
   refreshToken: UserMutationResponse;
   signup: UserMutationResponse;
+  subscribe: UserMutationResponse;
   updateComment: CommentMutationResponse;
   updateInfo: UserMutationResponse;
   updateVideo: VideoMutationResponse;
   voteVideo: VideoMutationResponse;
   watchLater: VideoMutationResponse;
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -116,14 +126,29 @@ export type MutationDeleteVideoArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationLoginArgs = {
   loginInput?: InputMaybe<LoginInput>;
   socialLogin?: InputMaybe<SocialLogin>;
 };
 
 
+export type MutationOnNotificationArgs = {
+  chanelId: Scalars['ID'];
+};
+
+
 export type MutationSignupArgs = {
   signupInput: SignupInput;
+};
+
+
+export type MutationSubscribeArgs = {
+  chanelId: Scalars['ID'];
 };
 
 
@@ -190,6 +215,7 @@ export type Query = {
   comments?: Maybe<PaginatedComments>;
   hello: Scalars['String'];
   me?: Maybe<User>;
+  user?: Maybe<User>;
   video?: Maybe<Video>;
   videos?: Maybe<PaginatedVideos>;
   videosVoted?: Maybe<PaginatedVideos>;
@@ -204,6 +230,11 @@ export type QueryCommentArgs = {
 
 export type QueryCommentsArgs = {
   getCmtInput: GetCommentInput;
+};
+
+
+export type QueryUserArgs = {
+  userId: Scalars['ID'];
 };
 
 
@@ -227,14 +258,12 @@ export type QueryVideosVotedArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
   type: Scalars['Float'];
-  userId: Scalars['String'];
 };
 
 
 export type QueryVideosWatchLaterArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  userId: Scalars['String'];
 };
 
 export type SignupInput = {
@@ -256,6 +285,12 @@ export enum Strategy {
   Google = 'GOOGLE',
   Local = 'LOCAL'
 }
+
+export type SubscribeStatus = {
+  __typename?: 'SubscribeStatus';
+  notification: Scalars['Boolean'];
+  status: Scalars['Boolean'];
+};
 
 export type UpdateCommentInput = {
   content: Scalars['String'];
@@ -288,8 +323,10 @@ export type User = {
   id: Scalars['ID'];
   image_url?: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
+  numSubscribers: Scalars['Int'];
   role: Scalars['String'];
   socialId?: Maybe<Scalars['String']>;
+  subscribeStatus: SubscribeStatus;
   subscribers?: Maybe<Array<User>>;
   updatedAt: Scalars['DateTime'];
   username?: Maybe<Scalars['String']>;
@@ -351,7 +388,7 @@ export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
-export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any };
+export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any };
 
 export type CreateCommentMutationVariables = Exact<{
   videoId: Scalars['String'];
@@ -367,7 +404,7 @@ export type CreateVideoMutationVariables = Exact<{
 }>;
 
 
-export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
 export type LoginMutationVariables = Exact<{
   loginInput?: InputMaybe<LoginInput>;
@@ -427,7 +464,7 @@ export type VideoQueryVariables = Exact<{
 }>;
 
 
-export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } } | null | undefined };
+export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number } } | null | undefined };
 
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -440,7 +477,7 @@ export type VideosQueryVariables = Exact<{
 }>;
 
 
-export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
+export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
 
 export const CatagoryInfoFragmentDoc = gql`
     fragment catagoryInfo on Catagory {
@@ -491,8 +528,6 @@ export const VideoInfoFragmentDoc = gql`
   id
   title
   description
-  commentable
-  voteStatus
   thumbnailUrl
   createdAt
   updatedAt
@@ -898,11 +933,14 @@ export const VideoDocument = gql`
     query Video($id: ID!) {
   video(id: $id) {
     ...videoInfo
+    commentable
+    voteStatus
     user {
       firstName
       lastName
       fullName
       image_url
+      numSubscribers
     }
   }
 }

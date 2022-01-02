@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import user_img from "../../assets/img/user.png";
 import { useLogin } from "../../contexts/UserContext";
 import {
@@ -7,6 +7,8 @@ import {
   useCommentsQuery,
   useCreateCommentMutation,
 } from "../../generated/graphql";
+import { getStringToDate } from "../../utils/dateHelper";
+import { getNumToString } from "../../utils/numberHelper";
 import Spinner from "../Spinner";
 import styles from "./Comment.module.scss";
 
@@ -15,6 +17,7 @@ interface CommentProps {
 }
 
 const Comment = ({ videoId }: CommentProps) => {
+  const [refresh, setRefresh] = useState(false);
   const [show, setShow] = useState(false);
   const [commentValue, setCommentValue] = useState("");
   const {
@@ -30,7 +33,7 @@ const Comment = ({ videoId }: CommentProps) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const [onCmtCreate, { loading: createLoading }] = useCreateCommentMutation();
+  const [onCmtCreate] = useCreateCommentMutation();
 
   useEffect(() => {
     socket.on("message", (comment) => {
@@ -69,6 +72,14 @@ const Comment = ({ videoId }: CommentProps) => {
     };
   }, [socket, cache]);
 
+  // refresh time update comment
+  const refreshHandler = useCallback(() => {
+    setRefresh((prev) => !prev);
+  }, []);
+  useEffect(() => {
+    setTimeout(refreshHandler, 1000 * 61 * 2);
+  }, [refresh, refreshHandler]);
+
   const handleCreateComment = async () => {
     const response = await onCmtCreate({
       variables: {
@@ -77,25 +88,6 @@ const Comment = ({ videoId }: CommentProps) => {
           content: commentValue,
         },
       },
-      /* update(cache, { data }) {
-        cache.modify({
-          fields: {
-            comments(existing) {
-              if (data?.createComment.success && data.createComment.comment) {
-                const cmtRef = cache.identify(data.createComment.comment);
-                return {
-                  ...existing,
-                  totalCount: existing.totalCount ? existing.totalCount + 1 : 1,
-                  paginatedComments: [
-                    { __ref: cmtRef },
-                    ...existing.paginatedComments,
-                  ],
-                };
-              }
-            },
-          },
-        });
-      }, */
     });
     if (response.data?.createComment.comment) {
       setCommentValue("");
@@ -157,7 +149,7 @@ const Comment = ({ videoId }: CommentProps) => {
   const comments = data?.comments?.paginatedComments;
   return (
     <div className={styles.Comment}>
-      <h3>69 bình luận</h3>
+      <h3>{getNumToString(data?.comments?.totalCount)} bình luận</h3>
       <div className={styles["comment-item"]}>
         <div className={styles["comment-item__img"]}>
           <img
@@ -205,7 +197,10 @@ const Comment = ({ videoId }: CommentProps) => {
           <div>
             <h3>
               {comment.user.lastName + " " + comment.user.firstName}{" "}
-              <small>{comment.createdAt}</small>
+              <small>
+                {getStringToDate(comment.updatedAt)}
+                {comment.createdAt !== comment.updatedAt && "(đã chỉnh sửa)"}
+              </small>
             </h3>
             <h4>{comment.content}</h4>
           </div>

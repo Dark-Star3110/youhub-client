@@ -1,18 +1,14 @@
-<<<<<<< HEAD
-import { useCheckAuth } from "../../hooks/useCheckAuth";
-
-const Subscriptions = () => {
-  useCheckAuth();
-=======
 import React from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import user_img from "../../assets/img/user.png";
+import { useCheckAuth } from "../../hooks/useCheckAuth";
 import styles from "./Subscriptions.module.scss";
 
 const LOGGED_ID = "1";
 
 const Subscriptions = () => {
+  useCheckAuth();
   const settings = {
     infinite: false,
     slidesToShow: 4,
@@ -24,25 +20,23 @@ const Subscriptions = () => {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
-    
-        }
+        },
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
-    
-        }
+        },
       },
       {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
-          slidesToScroll: 1
-        }
-      }
-    ]
+          slidesToScroll: 1,
+        },
+      },
+    ],
   };
   const sub_list = [
     {
@@ -330,9 +324,8 @@ const Subscriptions = () => {
           },
         },
       ],
-    }
+    },
   ];
->>>>>>> 0aca2c002a25c3bd3d8491ee0ff24965db062cce
   return (
     <div className={styles["subcritions"]}>
       {sub_list.map((channel, index) => {
@@ -360,7 +353,6 @@ const Subscriptions = () => {
                           <h2>Xem ngay</h2>
                         </div>
                         <div className={styles["layout-content"]}>
-                
                           <div className={styles["layout-content_inf"]}>
                             <h3 className={styles["layout-content_title"]}>
                               {video.title}
@@ -368,7 +360,7 @@ const Subscriptions = () => {
                             <h4 className={styles["layout-content_descript"]}>
                               {video.description}
                             </h4>
-                    
+
                             <time className={styles["layout-content_time"]}>
                               {video.createdAt}
                             </time>

@@ -2,23 +2,22 @@
 
 .slick-nav {
   position: fixed;
-  padding: 8px 0;
-  width: 200%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
   height: 60px;
   border-top: 1px solid $grey-color;
   border-bottom: 1px solid $grey-color;
   background-color: $black3-color;
-  overflow: hidden;
+  // overflow: hidden;
   z-index: 1;
   // overflow-x: scroll;
   // overflow-y: hidden;
+  .slick-track {
+    padding: 8px 0 !important;
+  }
   .slick-nav-item {
     width: fit-content;
-    display: flex;
-    justify-content: center;
+    padding: 9px 0;
+    // display: flex;
+    // justify-content: center;
     margin: 0 8px;
   }
 }

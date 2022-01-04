@@ -21,7 +21,7 @@ interface TopBarProps {
 
 const TopBar = ({ type }: TopBarProps) => {
   // state
-  const [show, setShow] = useState("");
+  const [show, setShow] = useState<"" | "create" | "user">("");
   const [searchInput, setSearchInput] = useState("");
 
   const router = useRouter();
@@ -64,7 +64,6 @@ const TopBar = ({ type }: TopBarProps) => {
           },
         },
       });
-
       window.localStorage.setItem("logout", Date.now().toString());
       window.localStorage.removeItem("login");
 
@@ -135,73 +134,97 @@ const TopBar = ({ type }: TopBarProps) => {
               />
             </div>
           </div>
-          <div className={styles["user-info"] + " " + styles["show-" + show]}>
-            <div className={styles["user-info-head"]}>
-              <img
-                className={styles["user-info-img"]}
-                src={details.image_url as string}
-                alt="user"
-              />
-              <div className={styles["user-info-head__title"]}>
-                <h3>{`${details.firstName} ${details.lastName}`}</h3>
-                <p>Quản lí tài khoản của bạn</p>
+          {show === "user" && (
+            <div className="fixed-wrapper" onClick={() => setShow("")}>
+              <div
+                className={styles["user-info"]}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className={styles["user-info-head"]}>
+                  <img
+                    className={styles["user-info-img"]}
+                    src={details.image_url as string}
+                    alt="user"
+                  />
+                  <div className={styles["user-info-head__title"]}>
+                    <h3>{`${details.firstName} ${details.lastName}`}</h3>
+                    <Link to="/me">
+                      <p>Quản lí tài khoản của bạn</p>
+                    </Link>
+                  </div>
+                </div>
+                <Link to={`user/${details.id}`}>
+                  <div
+                    className={styles["user-info-item"]}
+                    onClick={() => {
+                      setShow(show === "user" ? "" : "user");
+                    }}
+                  >
+                    <span className={styles["user-info-icon"]}>
+                      <i className="fas fa-user-circle"></i>
+                    </span>
+                    <span className={styles["user-info-title"]}>
+                      Kênh của bạn
+                    </span>
+                  </div>
+                </Link>
+                <div className={styles["user-info-item"]}>
+                  <span className={styles["user-info-icon"]}>
+                    <i className="fas fa-donate"></i>
+                  </span>
+                  <span className={styles["user-info-title"]}>
+                    Giao dịch và mua gói thành viên
+                  </span>
+                </div>
+                <div
+                  className={styles["user-info-item"]}
+                  onClick={logoutHandler}
+                >
+                  <span className={styles["user-info-icon"]}>
+                    <i className="fas fa-sign-out-alt"></i>
+                  </span>
+                  <span className={styles["user-info-title"]}>Đăng xuất</span>
+                </div>
               </div>
             </div>
-            <div className={styles["user-info-item"]}>
-              <span className={styles["user-info-icon"]}>
-                <i className="fas fa-user-circle"></i>
-              </span>
-              <span className={styles["user-info-title"]}>Kênh của bạn</span>
+          )}
+          {show === "create" && (
+            <div className="fixed-wrapper" onClick={() => setShow("")}>
+              <div
+                className={styles["video-create-menu"]}
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div
+                  className={styles["video-create-item"]}
+                  onClick={() => {
+                    setShow(show === "create" ? "" : "create");
+                  }}
+                >
+                  <Link to="/create">
+                    <span className={styles["video-create-icon"]}>
+                      <i className="far fa-file-video"></i>
+                    </span>
+                    <span className={styles["video-create-title"]}>
+                      Tải video lên
+                    </span>
+                  </Link>
+                </div>
+                <div
+                  className={styles["video-create-item"]}
+                  onClick={() => {
+                    setShow(show === "create" ? "" : "create");
+                  }}
+                >
+                  <span className={styles["video-create-icon"]}>
+                    <i className="fas fa-film"></i>
+                  </span>
+                  <span className={styles["video-create-title"]}>
+                    Phát trực tiếp
+                  </span>
+                </div>
+              </div>
             </div>
-            <div className={styles["user-info-item"]}>
-              <span className={styles["user-info-icon"]}>
-                <i className="fas fa-donate"></i>
-              </span>
-              <span className={styles["user-info-title"]}>
-                Giao dịch và mua gói thành viên
-              </span>
-            </div>
-            <div className={styles["user-info-item"]} onClick={logoutHandler}>
-              <span className={styles["user-info-icon"]}>
-                <i className="fas fa-sign-out-alt"></i>
-              </span>
-              <span className={styles["user-info-title"]}>Đăng xuất</span>
-            </div>
-          </div>
-          <div
-            className={
-              styles["video-create-menu"] + " " + styles["show-" + show]
-            }
-          >
-            <div
-              className={styles["video-create-item"]}
-              onClick={() => {
-                setShow(show === "create" ? "" : "create");
-              }}
-            >
-              <Link to="/create">
-                <span className={styles["video-create-icon"]}>
-                  <i className="far fa-file-video"></i>
-                </span>
-                <span className={styles["video-create-title"]}>
-                  Tải video lên
-                </span>
-              </Link>
-            </div>
-            <div
-              className={styles["video-create-item"]}
-              onClick={() => {
-                setShow(show === "create" ? "" : "create");
-              }}
-            >
-              <span className={styles["video-create-icon"]}>
-                <i className="fas fa-film"></i>
-              </span>
-              <span className={styles["video-create-title"]}>
-                Phát trực tiếp
-              </span>
-            </div>
-          </div>
+          )}
         </>
       ) : !window.localStorage.getItem("login") ? (
         <Link to="/login" className={styles["login-btn"]}>

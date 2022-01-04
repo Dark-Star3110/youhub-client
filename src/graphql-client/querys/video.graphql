@@ -4,11 +4,16 @@ query Video($id: ID!) {
     commentable
     voteStatus
     user {
+      id
       firstName
       lastName
       fullName
       image_url
       numSubscribers
+      subscribeStatus {
+        status
+        notification
+      }
     }
   }
 }

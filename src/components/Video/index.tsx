@@ -1,5 +1,6 @@
 import { gql } from "@apollo/client";
 import { useContext, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { ToastContext } from "../../contexts/ToastContext";
 import { useLogin } from "../../contexts/UserContext";
 import {
@@ -11,6 +12,7 @@ import {
 import { getDateFromString } from "../../utils/dateHelper";
 import { getNumToString } from "../../utils/numberHelper";
 import Spinner from "../Spinner";
+import SubscribeBtn from "../User/SubscribeBtn/SubscribeBtn";
 import styles from "./Video.module.scss";
 
 interface VideoProps {
@@ -99,15 +101,32 @@ const Video = ({ videoId }: VideoProps) => {
       </h1>
     );
 
+  /*   const test = `This video is made to entertain and satisfy viewers.
+  I don't own anything related to the background photo,
+  credits go to the respective owners of the audio and the photo.
+  #RADWIMPS #Nandemonaiya #なんでもないや
+  Nhạc trong video này
+  Tìm hiểu thêm
+  Bài hát
+  なんでもないや(movie ver.)
+  Nghệ sĩ
+  RADWIMPS
+  Bên cấp phép cho YouTube
+  ASCAP và 14 Hiệp hội bảo vệ quyền âm nhạc.` */
+  if (!videoData?.video) return <h1>Khong co video</h1>;
+
   return (
     <>
-      <iframe
-        title="Drive video player"
-        src={`https://drive.google.com/file/d/${videoId}/preview`}
-        allow="autoplay"
-        className={styles["primary-video"]}
-        allowFullScreen
-      ></iframe>
+      <div className={styles["primary-video"]}>
+        <iframe
+          title="Drive video player"
+          src={`https://drive.google.com/file/d/${videoId}/preview`}
+          allow="autoplay"
+          allowFullScreen
+          className={styles["primary-video__d"]}
+        ></iframe>
+      </div>
+
       <div className={styles["primary-video_inf"]}>
         <h3>{videoData?.video?.title}</h3>
         <div className={styles["primary-video_control"]}>
@@ -157,42 +176,37 @@ const Video = ({ videoId }: VideoProps) => {
 
       <div className={styles["primary-video_author"]}>
         <div className={styles["primary-video_author__inf"]}>
-          <div className={styles["primary-video_author__img"]}>
-            <img
-              src={
-                videoData?.video?.user.image_url ||
-                "https://images6.alphacoders.com/311/thumbbig-311015.webp"
-              }
-              alt="author"
-            />
-          </div>
+          <Link to={`/user/${videoData?.video?.user.id}`}>
+            <div className={styles["primary-video_author__img"]}>
+              <img
+                src={
+                  videoData?.video?.user.image_url ||
+                  "https://images6.alphacoders.com/311/thumbbig-311015.webp"
+                }
+                alt="author"
+              />
+            </div>
+          </Link>
           <div>
-            <h4>{videoData?.video?.user.fullName}</h4>
+            <Link to={`/user/${videoData?.video?.user.id}`}>
+              <h4 title={videoData?.video?.user.fullName || ""}>
+                {videoData?.video?.user.fullName}
+              </h4>
+            </Link>
             <small>
-              {getNumToString(videoData?.video?.user.numSubscribers)} người đăng
+              {getNumToString(videoData.video.user.numSubscribers)} người đăng
               ký
             </small>
           </div>
         </div>
-        <div className={styles.btn}>
-          <button className={styles["scr-btn"]}>ĐĂNG KÝ</button>
-        </div>
+        <SubscribeBtn
+          fullName={videoData.video.user.fullName as string}
+          subscribeStatus={videoData.video.user.subscribeStatus}
+          userId={videoData.video.user.id}
+        />
       </div>
       <div className={styles["primary-descript"]}>
-        <pre>
-          {`This video is made to entertain and satisfy viewers.
-I don't own anything related to the background photo,
-credits go to the respective owners of the audio and the photo.
-#RADWIMPS #Nandemonaiya #なんでもないや
-Nhạc trong video này
-Tìm hiểu thêm
-Bài hát
-なんでもないや(movie ver.)
-Nghệ sĩ
-RADWIMPS
-Bên cấp phép cho YouTube
-ASCAP và 14 Hiệp hội bảo vệ quyền âm nhạc.`}
-        </pre>
+        <pre>{videoData?.video?.description}</pre>
       </div>
     </>
   );

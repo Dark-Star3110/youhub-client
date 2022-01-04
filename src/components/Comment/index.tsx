@@ -33,7 +33,8 @@ const Comment = ({ videoId }: CommentProps) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const [onCmtCreate] = useCreateCommentMutation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [onCmtCreate, { loading: createLoading }] = useCreateCommentMutation();
 
   useEffect(() => {
     socket.on("message", (comment) => {
@@ -100,6 +101,7 @@ const Comment = ({ videoId }: CommentProps) => {
       id: "123",
       content: "Thích đứa cùng lớp mà k dám nói sợ nó chê mình xấu :((",
       createdAt: "24/12/2021",
+      updatedAt: "24/12/2021",
       user: {
         firstName: "user",
         lastName: "mr",
@@ -112,6 +114,7 @@ const Comment = ({ videoId }: CommentProps) => {
       content:
         "không thể tồn tại tình bạn thân giữa nam và nữ, mối quan hệ được kéo dài vì có một trong 2 người tồn tại tình yêu",
       createdAt: "24/12/2021",
+      updatedAt: "24/12/2021",
       user: {
         firstName: "user",
         lastName: "mr",
@@ -124,6 +127,7 @@ const Comment = ({ videoId }: CommentProps) => {
       content:
         "Đối với cô ấy tôi luôn là một người bạn tốt chứ không phải một người đặc biệt trong tim .... :v",
       createdAt: "24/12/2021",
+      updatedAt: "24/12/2021",
       user: {
         firstName: "user",
         lastName: "mr",
@@ -136,6 +140,7 @@ const Comment = ({ videoId }: CommentProps) => {
       content:
         "khoảng cách từ tình bạn thân đến tình yêu mong manh lắm! Vội vàng nói lời yêu để rồi ôm nỗi buồn riêng một mình ta",
       createdAt: "24/12/2021",
+      updatedAt: "24/12/2021",
       user: {
         firstName: "user",
         lastName: "mr",
@@ -146,7 +151,7 @@ const Comment = ({ videoId }: CommentProps) => {
   ];
 
   if (queryLoading) return <Spinner />;
-  const comments = data?.comments?.paginatedComments;
+  const comments = data?.comments?.paginatedComments || commentsFake;
   return (
     <div className={styles.Comment}>
       <h3>{getNumToString(data?.comments?.totalCount)} bình luận</h3>
@@ -170,7 +175,10 @@ const Comment = ({ videoId }: CommentProps) => {
             <div className={styles["comment-btn"]}>
               <button
                 className={styles["cancel-btn"]}
-                onClick={() => setShow(false)}
+                onClick={() => {
+                  setShow(false);
+                  setCommentValue("");
+                }}
               >
                 HỦY
               </button>

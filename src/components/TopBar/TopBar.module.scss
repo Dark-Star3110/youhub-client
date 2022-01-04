@@ -132,8 +132,10 @@
     }
   }
   .user-info {
-    display: none;
     @include menu_dropdown(0, 72px);
+    a {
+      color: $white-color;
+    }
     .user-info-head {
       display: flex;
       border-bottom: 1px solid #888;
@@ -168,11 +170,7 @@
       }
     }
   }
-  .user-info.show-user {
-    display: block;
-  }
   .video-create-menu {
-    display: none;
     @include menu_dropdown(60px, 28px);
     .video-create-item {
       width: 200px;

@@ -1,0 +1,61 @@
+@import "../../styles/variable.scss";
+@import "../../styles/mixim.scss";
+
+.modal {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  @include center;
+  z-index: 1;
+
+  .modal-container {
+    background-color: $black3-color;
+    min-width: 300px;
+    min-height: 140px;
+    max-width: calc(100% - 32px);
+    position: relative;
+    color: #aaaaaa;
+    border-radius: 3px;
+    @include center;
+    flex-direction: column;
+    align-items: flex-end;
+
+    .modal-content {
+      width: 100%;
+      flex-grow: 3;
+      border-bottom: 2px solid $grey1-color;
+      @include center;
+      flex-direction: column;
+      align-items: flex-start;
+      header {
+        margin: 8px 8px 0;
+        flex-grow: 1;
+        font-weight: 500;
+        font-size: 18px;
+      }
+      .modal-content__child {
+        margin: 0 8px;
+        flex-grow: 2;
+        @include center;
+      }
+    }
+    .modal-action {
+      flex-grow: 1;
+      margin-top: 8px;
+      text-transform: uppercase;
+      font-weight: 500;
+
+      span {
+        margin-right: 16px;
+        cursor: pointer;
+      }
+
+      span.text-type {
+        color: #3ea6ff;
+      }
+    }
+  }
+}

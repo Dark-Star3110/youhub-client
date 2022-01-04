@@ -138,6 +138,7 @@ export type MutationLoginArgs = {
 
 
 export type MutationOnNotificationArgs = {
+  action: Action;
   chanelId: Scalars['ID'];
 };
 
@@ -148,6 +149,7 @@ export type MutationSignupArgs = {
 
 
 export type MutationSubscribeArgs = {
+  action: Action;
   chanelId: Scalars['ID'];
 };
 
@@ -313,6 +315,7 @@ export type UpdateVideoInput = {
 
 export type User = {
   __typename?: 'User';
+  banner_url: Scalars['String'];
   chanelsSubscribe?: Maybe<Array<User>>;
   channelDecscription?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -386,7 +389,7 @@ type MutationStatuses_VideoMutationResponse_Fragment = { __typename?: 'VideoMuta
 
 export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_Fragment | MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
 
-export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
+export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
 export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any };
 
@@ -419,6 +422,14 @@ export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
 export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
+export type OnNotifyMutationVariables = Exact<{
+  chanelId: Scalars['ID'];
+  action: Action;
+}>;
+
+
+export type OnNotifyMutation = { __typename?: 'Mutation', onNotification: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
+
 export type RefreshTokenMutationVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -430,6 +441,14 @@ export type SignupMutationVariables = Exact<{
 
 
 export type SignupMutation = { __typename?: 'Mutation', signup: { __typename?: 'UserMutationResponse', token?: string | null | undefined, code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+
+export type SubscribeMutationVariables = Exact<{
+  chanelId: Scalars['ID'];
+  action: Action;
+}>;
+
+
+export type SubscribeMutation = { __typename?: 'Mutation', subscribe: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
 
 export type VoteVideoMutationVariables = Exact<{
   action: Action;
@@ -457,14 +476,21 @@ export type CommentsQuery = { __typename?: 'Query', comments?: { __typename?: 'P
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any } | null | undefined };
+
+export type UserQueryVariables = Exact<{
+  userId: Scalars['ID'];
+}>;
+
+
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } | null | undefined };
 
 export type VideoQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number } } | null | undefined };
+export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
 
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -477,7 +503,7 @@ export type VideosQueryVariables = Exact<{
 }>;
 
 
-export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
+export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined } }> } | null | undefined };
 
 export const CatagoryInfoFragmentDoc = gql`
     fragment catagoryInfo on Catagory {
@@ -516,7 +542,9 @@ export const UserInfoFragmentDoc = gql`
   lastName
   fullName
   channelDecscription
+  numSubscribers
   image_url
+  banner_url
   dateOfBirth
   role
   createdAt
@@ -696,6 +724,40 @@ export function useLogoutMutation(baseOptions?: Apollo.MutationHookOptions<Logou
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = Apollo.MutationResult<LogoutMutation>;
 export type LogoutMutationOptions = Apollo.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
+export const OnNotifyDocument = gql`
+    mutation OnNotify($chanelId: ID!, $action: Action!) {
+  onNotification(chanelId: $chanelId, action: $action) {
+    ...mutationStatuses
+  }
+}
+    ${MutationStatusesFragmentDoc}`;
+export type OnNotifyMutationFn = Apollo.MutationFunction<OnNotifyMutation, OnNotifyMutationVariables>;
+
+/**
+ * __useOnNotifyMutation__
+ *
+ * To run a mutation, you first call `useOnNotifyMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useOnNotifyMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [onNotifyMutation, { data, loading, error }] = useOnNotifyMutation({
+ *   variables: {
+ *      chanelId: // value for 'chanelId'
+ *      action: // value for 'action'
+ *   },
+ * });
+ */
+export function useOnNotifyMutation(baseOptions?: Apollo.MutationHookOptions<OnNotifyMutation, OnNotifyMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<OnNotifyMutation, OnNotifyMutationVariables>(OnNotifyDocument, options);
+      }
+export type OnNotifyMutationHookResult = ReturnType<typeof useOnNotifyMutation>;
+export type OnNotifyMutationResult = Apollo.MutationResult<OnNotifyMutation>;
+export type OnNotifyMutationOptions = Apollo.BaseMutationOptions<OnNotifyMutation, OnNotifyMutationVariables>;
 export const RefreshTokenDocument = gql`
     mutation RefreshToken {
   refreshToken {
@@ -771,6 +833,40 @@ export function useSignupMutation(baseOptions?: Apollo.MutationHookOptions<Signu
 export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
 export type SignupMutationResult = Apollo.MutationResult<SignupMutation>;
 export type SignupMutationOptions = Apollo.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
+export const SubscribeDocument = gql`
+    mutation Subscribe($chanelId: ID!, $action: Action!) {
+  subscribe(chanelId: $chanelId, action: $action) {
+    ...mutationStatuses
+  }
+}
+    ${MutationStatusesFragmentDoc}`;
+export type SubscribeMutationFn = Apollo.MutationFunction<SubscribeMutation, SubscribeMutationVariables>;
+
+/**
+ * __useSubscribeMutation__
+ *
+ * To run a mutation, you first call `useSubscribeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSubscribeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [subscribeMutation, { data, loading, error }] = useSubscribeMutation({
+ *   variables: {
+ *      chanelId: // value for 'chanelId'
+ *      action: // value for 'action'
+ *   },
+ * });
+ */
+export function useSubscribeMutation(baseOptions?: Apollo.MutationHookOptions<SubscribeMutation, SubscribeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SubscribeMutation, SubscribeMutationVariables>(SubscribeDocument, options);
+      }
+export type SubscribeMutationHookResult = ReturnType<typeof useSubscribeMutation>;
+export type SubscribeMutationResult = Apollo.MutationResult<SubscribeMutation>;
+export type SubscribeMutationOptions = Apollo.BaseMutationOptions<SubscribeMutation, SubscribeMutationVariables>;
 export const VoteVideoDocument = gql`
     mutation VoteVideo($action: Action!, $type: VoteType!, $videoId: ID!) {
   voteVideo(action: $action, type: $type, videoId: $videoId) {
@@ -929,6 +1025,45 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const UserDocument = gql`
+    query User($userId: ID!) {
+  user(userId: $userId) {
+    ...userInfo
+    subscribeStatus {
+      status
+      notification
+    }
+  }
+}
+    ${UserInfoFragmentDoc}`;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions: Apollo.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+      }
+export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
 export const VideoDocument = gql`
     query Video($id: ID!) {
   video(id: $id) {
@@ -936,11 +1071,16 @@ export const VideoDocument = gql`
     commentable
     voteStatus
     user {
+      id
       firstName
       lastName
       fullName
       image_url
       numSubscribers
+      subscribeStatus {
+        status
+        notification
+      }
     }
   }
 }
@@ -990,6 +1130,7 @@ export const VideosDocument = gql`
     paginatedVideos {
       ...videoInfo
       user {
+        id
         firstName
         lastName
         fullName

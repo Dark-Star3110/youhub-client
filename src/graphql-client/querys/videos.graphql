@@ -22,6 +22,7 @@ query Videos(
     paginatedVideos {
       ...videoInfo
       user {
+        id
         firstName
         lastName
         fullName

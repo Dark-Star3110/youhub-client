@@ -226,10 +226,9 @@ const Create = () => {
               </label>
             </div>
             <div className={styles["form-item"]}>
-              <input
-                type="text"
+              <textarea
                 id="desciption"
-                className={styles["form-input"]}
+                className={styles["form-input"] + " " + styles["desp"]}
                 value={inputValue.description}
                 onChange={(e) =>
                   setInputValue((pre) => ({
@@ -239,7 +238,10 @@ const Create = () => {
                 }
                 placeholder=" "
               />
-              <label htmlFor="desciption" className={styles["form-label"]}>
+              <label
+                htmlFor="desciption"
+                className={styles["form-label"] + " " + styles["desp"]}
+              >
                 Mô tả{" "}
                 <small>
                   (giúp người xem nắm được thông tin về video của bạn)

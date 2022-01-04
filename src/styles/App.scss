@@ -15,17 +15,17 @@ html {
 ::-webkit-scrollbar {
   width: 10px;
   height: 0;
-  border-radius:5px; 
+  border-radius: 5px;
 }
 
 /* Track */
 ::-webkit-scrollbar-track {
-  background: $black3-color; 
+  background: $black3-color;
 }
- 
+
 /* Handle */
 ::-webkit-scrollbar-thumb {
-  background: rgb(110, 109, 109) ; 
+  background: rgb(110, 109, 109);
   border-radius: 5px;
 }
 
@@ -179,4 +179,14 @@ h1 {
   .App.active.full {
     width: 100%;
   }
+}
+
+.fixed-wrapper {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: transparent;
+  z-index: 2;
 }

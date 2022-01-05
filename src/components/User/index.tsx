@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import banner from "../../assets/img/banner.jpg";
 import { useLogin } from "../../contexts/UserContext";
 import { useUserQuery } from "../../generated/graphql";
@@ -25,11 +25,21 @@ const User = () => {
 
   const {
     state: { details },
+    cache,
   } = useLogin();
   const { data, loading } = useUserQuery({
     variables: { userId },
     skip: !!window.localStorage.getItem("login") && !details,
   });
+
+  useEffect(() => {
+    return () => {
+      if (data?.user) {
+        cache.evict({ id: `User:${data.user.id}` });
+        cache.evict({ fieldName: "videoUser" });
+      }
+    };
+  }, [cache, data?.user]);
 
   const handleClick = (e: React.MouseEvent) => {
     const left = (e.target as HTMLSpanElement).offsetLeft;
@@ -60,7 +70,7 @@ const User = () => {
             </div>
             <div className={styles["user__name"]}>
               <h2>{user.firstName + " " + user.lastName}</h2>
-              <small>{getNumToString(user.numSubscribers)} Người đăng ký</small>
+              <small>{getNumToString(user.numSubscribers)} người đăng ký</small>
             </div>
           </div>
           <SubscribeBtn

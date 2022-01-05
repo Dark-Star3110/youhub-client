@@ -128,6 +128,12 @@ const SubscribeBtn = ({
           >
             ĐÃ ĐĂNG KÝ
           </button>
+          {showMenu && (
+            <div
+              className="fixed-wrapper"
+              onClick={() => setShowMenu(false)}
+            ></div>
+          )}
           <div
             className={styles["notify-icon"]}
             onClick={() => setShowMenu((prev) => !prev)}
@@ -140,37 +146,39 @@ const SubscribeBtn = ({
               )}
             </div>
             {showMenu && (
-              <div
-                className={styles["notify-menu"]}
-                onClick={(e) => e.stopPropagation()}
-              >
+              <>
                 <div
-                  className={clsx(
-                    styles["notify-on"],
-                    styles["notify-menu-item"],
-                    subscribeStatus.notification
-                      ? styles["activate"]
-                      : undefined
-                  )}
-                  onClick={handleOnNotification}
+                  className={styles["notify-menu"]}
+                  onClick={(e) => e.stopPropagation()}
                 >
-                  <i className="far fa-bell fa-lg"></i>
-                  <span>Tất cả</span>
+                  <div
+                    className={clsx(
+                      styles["notify-on"],
+                      styles["notify-menu-item"],
+                      subscribeStatus.notification
+                        ? styles["activate"]
+                        : undefined
+                    )}
+                    onClick={handleOnNotification}
+                  >
+                    <i className="far fa-bell fa-lg"></i>
+                    <span>Tất cả</span>
+                  </div>
+                  <div
+                    className={clsx(
+                      styles["notify-off"],
+                      styles["notify-menu-item"],
+                      !subscribeStatus.notification
+                        ? styles["activate"]
+                        : undefined
+                    )}
+                    onClick={handleOffNotification}
+                  >
+                    <i className="far fa-bell-slash fa-lg"></i>
+                    <span>Không nhận thông báo</span>
+                  </div>
                 </div>
-                <div
-                  className={clsx(
-                    styles["notify-off"],
-                    styles["notify-menu-item"],
-                    !subscribeStatus.notification
-                      ? styles["activate"]
-                      : undefined
-                  )}
-                  onClick={handleOffNotification}
-                >
-                  <i className="far fa-bell-slash fa-lg"></i>
-                  <span>Không nhận thông báo</span>
-                </div>
-              </div>
+              </>
             )}
           </div>
         </div>

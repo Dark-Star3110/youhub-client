@@ -1,0 +1,13 @@
+query UserVideos($limit: Int!, $userId: String!, $cursor: String) {
+  videoUser(limit: $limit, userId: $userId, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedVideos {
+      ...videoInfo
+      user {
+        fullName
+      }
+    }
+  }
+}

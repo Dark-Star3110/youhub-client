@@ -215,10 +215,12 @@ export type Query = {
   __typename?: 'Query';
   comment?: Maybe<Comment>;
   comments?: Maybe<PaginatedComments>;
+  find?: Maybe<PaginatedVideos>;
   hello: Scalars['String'];
   me?: Maybe<User>;
   user?: Maybe<User>;
   video?: Maybe<Video>;
+  videoUser?: Maybe<PaginatedVideos>;
   videos?: Maybe<PaginatedVideos>;
   videosVoted?: Maybe<PaginatedVideos>;
   videosWatchLater?: Maybe<PaginatedVideos>;
@@ -235,6 +237,13 @@ export type QueryCommentsArgs = {
 };
 
 
+export type QueryFindArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  query: Scalars['String'];
+};
+
+
 export type QueryUserArgs = {
   userId: Scalars['ID'];
 };
@@ -245,14 +254,16 @@ export type QueryVideoArgs = {
 };
 
 
-export type QueryVideosArgs = {
-  catagory?: InputMaybe<Array<Scalars['String']>>;
-  catagoryId?: InputMaybe<Scalars['String']>;
+export type QueryVideoUserArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  query?: InputMaybe<Scalars['String']>;
-  user?: InputMaybe<Array<Scalars['String']>>;
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryVideosArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -473,6 +484,15 @@ export type CommentsQueryVariables = Exact<{
 
 export type CommentsQuery = { __typename?: 'Query', comments?: { __typename?: 'PaginatedComments', totalCount: number, cursor: any, hasMore: boolean, paginatedComments: Array<{ __typename?: 'Comment', id: string, content: string, createdAt: any, updatedAt: any, user: { __typename?: 'User', firstName: string, lastName: string, image_url?: string | null | undefined } }> } | null | undefined };
 
+export type FindQueryVariables = Exact<{
+  cursor?: InputMaybe<Scalars['String']>;
+  query: Scalars['String'];
+  limit: Scalars['Int'];
+}>;
+
+
+export type FindQuery = { __typename?: 'Query', find?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', fullName?: string | null | undefined } }> } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -485,6 +505,15 @@ export type UserQueryVariables = Exact<{
 
 export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } | null | undefined };
 
+export type UserVideosQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  userId: Scalars['String'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type UserVideosQuery = { __typename?: 'Query', videoUser?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', fullName?: string | null | undefined } }> } | null | undefined };
+
 export type VideoQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
@@ -495,11 +524,6 @@ export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video',
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  user?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  catagoryId?: InputMaybe<Scalars['String']>;
-  catagory?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  query?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -991,6 +1015,51 @@ export function useCommentsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<C
 export type CommentsQueryHookResult = ReturnType<typeof useCommentsQuery>;
 export type CommentsLazyQueryHookResult = ReturnType<typeof useCommentsLazyQuery>;
 export type CommentsQueryResult = Apollo.QueryResult<CommentsQuery, CommentsQueryVariables>;
+export const FindDocument = gql`
+    query Find($cursor: String, $query: String!, $limit: Int!) {
+  find(cursor: $cursor, query: $query, limit: $limit) {
+    totalCount
+    cursor
+    hasMore
+    paginatedVideos {
+      ...videoInfo
+      user {
+        fullName
+      }
+    }
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useFindQuery__
+ *
+ * To run a query within a React component, call `useFindQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFindQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFindQuery({
+ *   variables: {
+ *      cursor: // value for 'cursor'
+ *      query: // value for 'query'
+ *      limit: // value for 'limit'
+ *   },
+ * });
+ */
+export function useFindQuery(baseOptions: Apollo.QueryHookOptions<FindQuery, FindQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FindQuery, FindQueryVariables>(FindDocument, options);
+      }
+export function useFindLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindQuery, FindQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FindQuery, FindQueryVariables>(FindDocument, options);
+        }
+export type FindQueryHookResult = ReturnType<typeof useFindQuery>;
+export type FindLazyQueryHookResult = ReturnType<typeof useFindLazyQuery>;
+export type FindQueryResult = Apollo.QueryResult<FindQuery, FindQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -1064,6 +1133,51 @@ export function useUserLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserQ
 export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
 export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
 export type UserQueryResult = Apollo.QueryResult<UserQuery, UserQueryVariables>;
+export const UserVideosDocument = gql`
+    query UserVideos($limit: Int!, $userId: String!, $cursor: String) {
+  videoUser(limit: $limit, userId: $userId, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedVideos {
+      ...videoInfo
+      user {
+        fullName
+      }
+    }
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useUserVideosQuery__
+ *
+ * To run a query within a React component, call `useUserVideosQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserVideosQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserVideosQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      userId: // value for 'userId'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useUserVideosQuery(baseOptions: Apollo.QueryHookOptions<UserVideosQuery, UserVideosQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<UserVideosQuery, UserVideosQueryVariables>(UserVideosDocument, options);
+      }
+export function useUserVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UserVideosQuery, UserVideosQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<UserVideosQuery, UserVideosQueryVariables>(UserVideosDocument, options);
+        }
+export type UserVideosQueryHookResult = ReturnType<typeof useUserVideosQuery>;
+export type UserVideosLazyQueryHookResult = ReturnType<typeof useUserVideosLazyQuery>;
+export type UserVideosQueryResult = Apollo.QueryResult<UserVideosQuery, UserVideosQueryVariables>;
 export const VideoDocument = gql`
     query Video($id: ID!) {
   video(id: $id) {
@@ -1114,16 +1228,8 @@ export type VideoQueryHookResult = ReturnType<typeof useVideoQuery>;
 export type VideoLazyQueryHookResult = ReturnType<typeof useVideoLazyQuery>;
 export type VideoQueryResult = Apollo.QueryResult<VideoQuery, VideoQueryVariables>;
 export const VideosDocument = gql`
-    query Videos($limit: Int!, $cursor: String, $userId: String, $user: [String!], $catagoryId: String, $catagory: [String!], $query: String) {
-  videos(
-    limit: $limit
-    cursor: $cursor
-    userId: $userId
-    user: $user
-    catagoryId: $catagoryId
-    catagory: $catagory
-    query: $query
-  ) {
+    query Videos($limit: Int!, $cursor: String) {
+  videos(limit: $limit, cursor: $cursor) {
     totalCount
     cursor
     hasMore
@@ -1155,11 +1261,6 @@ export const VideosDocument = gql`
  *   variables: {
  *      limit: // value for 'limit'
  *      cursor: // value for 'cursor'
- *      userId: // value for 'userId'
- *      user: // value for 'user'
- *      catagoryId: // value for 'catagoryId'
- *      catagory: // value for 'catagory'
- *      query: // value for 'query'
  *   },
  * });
  */

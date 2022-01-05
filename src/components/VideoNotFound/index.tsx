@@ -1,15 +1,15 @@
 import { Link } from "react-router-dom";
-import userNotFound from "../../../assets/img/user-not-found.png";
-import styles from "./UserNotFound.module.scss";
+import styles from "./VideoNotFound.module.scss";
+import videoNotFound from "../../assets/img/video-not-found.png";
 
-const UserNotFound = () => {
+const VideoNotFound = () => {
   return (
     <div className={styles["wrapper"]}>
       <div className={styles["item"]}>
-        <img src={userNotFound} alt="userNotFound" />
+        <img src={videoNotFound} alt="video-not-found" />
       </div>
       <div className={styles["item"]}>
-        <h2>Người dùng này hiện không tồn tại trên hệ thống</h2>
+        <h2>Video này không còn hoạt động</h2>
       </div>
       <div className={styles["item"]}>
         <Link to="/">
@@ -20,4 +20,4 @@ const UserNotFound = () => {
   );
 };
 
-export default UserNotFound;
+export default VideoNotFound;

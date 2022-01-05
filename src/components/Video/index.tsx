@@ -5,31 +5,28 @@ import { ToastContext } from "../../contexts/ToastContext";
 import { useLogin } from "../../contexts/UserContext";
 import {
   Action,
-  useVideoQuery,
   useVoteVideoMutation,
+  Video as VideoType,
   VoteType,
 } from "../../generated/graphql";
 import { getDateFromString } from "../../utils/dateHelper";
 import { getNumToString } from "../../utils/numberHelper";
-import Spinner from "../Spinner";
+import Comment from "../Comment";
 import SubscribeBtn from "../User/SubscribeBtn/SubscribeBtn";
 import styles from "./Video.module.scss";
 
 interface VideoProps {
-  videoId: string;
+  videoData: VideoType;
 }
 
-const Video = ({ videoId }: VideoProps) => {
-  const {
-    cache,
-    state: { details },
-  } = useLogin();
+const Video = ({ videoData: video }: VideoProps) => {
+  const { cache } = useLogin();
   const [action, setAction] = useState<"like" | "dislike" | "">("");
   const [voteVideoMutation /* , { loading } */] = useVoteVideoMutation();
-  const { data: videoData, loading: queryLoading } = useVideoQuery({
-    variables: { id: videoId },
-    skip: !!!details,
-  });
+  // const { data: videoData, loading: queryLoading } = useVideoQuery({
+  //   variables: { id: video },
+  //   skip: !!!details,
+  // });
 
   const { notify } = useContext(ToastContext);
 
@@ -39,12 +36,12 @@ const Video = ({ videoId }: VideoProps) => {
       variables: {
         action: newAction === "like" ? Action.Activate : Action.Disactivate,
         type: VoteType.Like,
-        videoId,
+        videoId: video.id,
       },
     });
     if (response.data?.voteVideo.success) {
       cache.writeFragment({
-        id: `Video:${videoId}`,
+        id: `Video:${video.id}`,
         fragment: gql`
           fragment VoteType on Video {
             voteStatus
@@ -65,12 +62,12 @@ const Video = ({ videoId }: VideoProps) => {
       variables: {
         action: newAction === "dislike" ? Action.Activate : Action.Disactivate,
         type: VoteType.Dislike,
-        videoId,
+        videoId: video.id,
       },
     });
     if (response.data?.voteVideo.success) {
       cache.writeFragment({
-        id: `Video:${videoId}`,
+        id: `Video:${video.id}`,
         fragment: gql`
           fragment VoteType on Video {
             voteStatus
@@ -86,20 +83,13 @@ const Video = ({ videoId }: VideoProps) => {
   };
 
   useEffect(() => {
-    if (videoData?.video)
-      videoData?.video?.voteStatus === 1
+    if (video)
+      video.voteStatus === 1
         ? setAction("like")
-        : videoData?.video?.voteStatus === -1
+        : video?.voteStatus === -1
         ? setAction("dislike")
         : setAction("");
-  }, [videoData?.video]);
-
-  if (queryLoading && !videoData?.video && !details)
-    return (
-      <h1>
-        <Spinner />
-      </h1>
-    );
+  }, [video]);
 
   /*   const test = `This video is made to entertain and satisfy viewers.
   I don't own anything related to the background photo,
@@ -113,14 +103,13 @@ const Video = ({ videoId }: VideoProps) => {
   RADWIMPS
   Bên cấp phép cho YouTube
   ASCAP và 14 Hiệp hội bảo vệ quyền âm nhạc.` */
-  if (!videoData?.video) return <h1>Khong co video</h1>;
 
   return (
     <>
       <div className={styles["primary-video"]}>
         <iframe
           title="Drive video player"
-          src={`https://drive.google.com/file/d/${videoId}/preview`}
+          src={`https://drive.google.com/file/d/${video.id}/preview`}
           allow="autoplay"
           allowFullScreen
           className={styles["primary-video__d"]}
@@ -128,11 +117,9 @@ const Video = ({ videoId }: VideoProps) => {
       </div>
 
       <div className={styles["primary-video_inf"]}>
-        <h3>{videoData?.video?.title}</h3>
+        <h3>{video.title}</h3>
         <div className={styles["primary-video_control"]}>
-          <time>
-            Đã tải lên vào {getDateFromString(videoData?.video?.createdAt)}
-          </time>
+          <time>Đã tải lên vào {getDateFromString(video.createdAt)}</time>
           <div className={styles["primary-video_icon"]}>
             <div
               className={
@@ -176,11 +163,11 @@ const Video = ({ videoId }: VideoProps) => {
 
       <div className={styles["primary-video_author"]}>
         <div className={styles["primary-video_author__inf"]}>
-          <Link to={`/user/${videoData?.video?.user.id}`}>
+          <Link to={`/user/${video.user.id}`}>
             <div className={styles["primary-video_author__img"]}>
               <img
                 src={
-                  videoData?.video?.user.image_url ||
+                  video.user.image_url ||
                   "https://images6.alphacoders.com/311/thumbbig-311015.webp"
                 }
                 alt="author"
@@ -188,26 +175,29 @@ const Video = ({ videoId }: VideoProps) => {
             </div>
           </Link>
           <div>
-            <Link to={`/user/${videoData?.video?.user.id}`}>
-              <h4 title={videoData?.video?.user.fullName || ""}>
-                {videoData?.video?.user.fullName}
-              </h4>
+            <Link to={`/user/${video.user.id}`}>
+              <h4 title={video.user.fullName || ""}>{video.user.fullName}</h4>
             </Link>
             <small>
-              {getNumToString(videoData.video.user.numSubscribers)} người đăng
-              ký
+              {getNumToString(video.user.numSubscribers)} người đăng ký
             </small>
           </div>
         </div>
         <SubscribeBtn
-          fullName={videoData.video.user.fullName as string}
-          subscribeStatus={videoData.video.user.subscribeStatus}
-          userId={videoData.video.user.id}
+          fullName={video.user.fullName as string}
+          subscribeStatus={video.user.subscribeStatus}
+          userId={video.user.id}
         />
       </div>
       <div className={styles["primary-descript"]}>
-        <pre>{videoData?.video?.description}</pre>
+        <pre>{video.description}</pre>
       </div>
+
+      {video.commentable ? (
+        <Comment videoId={video.id} />
+      ) : (
+        <h2>Video này đã được tắt bình luận</h2>
+      )}
     </>
   );
 };

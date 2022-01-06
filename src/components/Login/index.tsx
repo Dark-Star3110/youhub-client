@@ -5,6 +5,7 @@ import {
   GoogleLoginResponseOffline,
   useGoogleLogin,
 } from "react-google-login";
+import { Link } from "react-router-dom";
 import LogImg from "../../assets/img/log.svg";
 import RegisImg from "../../assets/img/register.svg";
 import { ToastContext } from "../../contexts/ToastContext";
@@ -199,12 +200,12 @@ const Login = () => {
       <div className={styles["forms-container"]}>
         <div className={styles["signin-signup"]}>
           <form action="#" className={styles["sign-in-form"]}>
-            <h2 className={styles["title"]}>Sign up</h2>
+            <h2 className={styles["title"]}>Đăng nhập</h2>
             <div className={styles["input-field"]}>
               <i className="fas fa-user"></i>
               <input
                 type="text"
-                placeholder="Username"
+                placeholder="Tài khoản"
                 value={loginData.username}
                 onChange={(e) =>
                   setLoginData((pre) => ({ ...pre, username: e.target.value }))
@@ -215,7 +216,7 @@ const Login = () => {
               <i className="fas fa-lock"></i>
               <input
                 type={seen ? "text" : "password"}
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 value={loginData.password}
                 onChange={(e) =>
                   setLoginData((pre) => ({ ...pre, password: e.target.value }))
@@ -241,14 +242,14 @@ const Login = () => {
               )}
               <input
                 type="submit"
-                value={loading ? "logining" : "login"}
+                value={loading ? "logining" : "đăng nhập"}
                 className={styles.btn}
                 onClick={!loading ? handleLoginSubmit : undefined}
               />
             </div>
-            <p className={styles["social-text"]}>
-              Or Sign in with social platforms
-            </p>
+            <Link to="/forgot" className={styles["social-text"]}>
+              Quên mật khẩu?
+            </Link>
             <div className={styles["social-media"]}>
               <span className={styles["social-icon"]}>
                 <i className="fab fa-facebook-f"></i>
@@ -268,12 +269,12 @@ const Login = () => {
             </div>
           </form>
           <form action="#" className={styles["sign-up-form"]}>
-            <h2 className={styles.title}>Sign in</h2>
+            <h2 className={styles.title}>Đăng ký</h2>
             <div className={styles["input-field"]}>
               <i className="fas fa-user"></i>
               <input
                 type="text"
-                placeholder="Username"
+                placeholder="Tài khoản"
                 value={signupData.username}
                 onChange={(e) =>
                   setSignupData((pre) => ({ ...pre, username: e.target.value }))
@@ -284,7 +285,7 @@ const Login = () => {
               <i className="fas fa-lock"></i>
               <input
                 type={seen ? "text" : "password"}
-                placeholder="Password"
+                placeholder="Mật khẩu"
                 value={signupData.password}
                 onChange={(e) =>
                   setSignupData((pre) => ({ ...pre, password: e.target.value }))
@@ -307,7 +308,7 @@ const Login = () => {
                 <i className="fas fa-file-signature"></i>
                 <input
                   type="text"
-                  placeholder="First name"
+                  placeholder="Họ"
                   value={signupData.firstName}
                   onChange={(e) =>
                     setSignupData((pre) => ({
@@ -321,7 +322,7 @@ const Login = () => {
                 <i className="fas fa-file-signature"></i>
                 <input
                   type="text"
-                  placeholder="Last name"
+                  placeholder="Tên"
                   value={signupData.lastName}
                   onChange={(e) =>
                     setSignupData((pre) => ({
@@ -352,7 +353,7 @@ const Login = () => {
               <input
                 type="submit"
                 className={styles.btn}
-                value="Sign up"
+                value="Đăng ký"
                 onClick={!loading ? handleSignupSubmit : undefined}
               />
             </div>
@@ -372,7 +373,7 @@ const Login = () => {
               className={styles.btn + " " + styles.transparent}
               onClick={() => setMode("sign-up-mode")}
             >
-              Sign up
+              Đăng ký
             </button>
           </div>
           <img src={LogImg} className={styles.image} alt="" />
@@ -388,7 +389,7 @@ const Login = () => {
               className={styles.btn + " " + styles.transparent}
               onClick={() => setMode("")}
             >
-              Sign in
+              Đăng nhập
             </button>
           </div>
           <img src={RegisImg} className={styles.image} alt="" />

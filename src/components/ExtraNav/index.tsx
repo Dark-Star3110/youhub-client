@@ -49,7 +49,7 @@ const ExtraNav = () => {
           </Link>
         </li>
         <li onClick={() => toggleExtraNav()}>
-          <Link to="/library">
+          <Link to="/library/playlist">
             <span className="icon">
               <i className="far fa-play-circle"></i>
             </span>

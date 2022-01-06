@@ -1,0 +1,79 @@
+@import "../../styles/variable.scss";
+@import "../../styles/mixim.scss";
+.change-pass {
+  width: 100%;
+  min-height: 100vh;
+  @include center();
+  .overlayer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba($color: #000000, $alpha: 0.4);
+  }
+  .form {
+    position: absolute;
+    background-color: #fff;
+    color: #000;
+    text-align: center;
+    padding: 20px;
+    margin: 0 10px;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    width: 60vmin;
+    h2 {
+      font-size: 1.75em;
+    }
+    h4 {
+      font-size: 1.2em;
+      color: rgb(80, 78, 78);
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+    .alert-error {
+      width: 100%;
+      background-color: #fad6db;
+      color: #965861;
+      padding: 16px 0;
+      font-size: 16px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .alert-success {
+      width: 100%;
+      height: 100%;
+      background-color: #d4eddb;
+      color: #6b977e;
+      padding: 16px 10px;
+      font-size: 16px;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .form-input {
+      border: 2px solid #efeeef;
+      border-radius: 4px;
+      width: 100%;
+      height: 50px;
+      font-size: 16px;
+      background-color: #fff;
+      padding: 0 20px;
+      margin: 10px 0;
+    }
+    .submit-btn {
+      width: 100%;
+      background-color: #6633ff;
+      border: none;
+      outline: none;
+      height: 50px;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 10px 0;
+      &:hover {
+        background-color: #6a5af9;
+      }
+    }
+  }
+}

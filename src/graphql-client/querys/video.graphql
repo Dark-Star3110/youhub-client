@@ -2,6 +2,7 @@ query Video($id: ID!) {
   video(id: $id) {
     ...videoInfo
     commentable
+    numUsersLiked
     voteStatus
     user {
       id

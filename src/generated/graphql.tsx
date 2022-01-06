@@ -519,7 +519,7 @@ export type VideoQueryVariables = Exact<{
 }>;
 
 
-export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
+export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, numUsersLiked?: number | null | undefined, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
 
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1183,6 +1183,7 @@ export const VideoDocument = gql`
   video(id: $id) {
     ...videoInfo
     commentable
+    numUsersLiked
     voteStatus
     user {
       id

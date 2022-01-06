@@ -1,12 +1,11 @@
-import { gql } from "@apollo/client";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ToastContext } from "../../contexts/ToastContext";
-import { useLogin } from "../../contexts/UserContext";
 import {
   Action,
   useVoteVideoMutation,
   Video as VideoType,
+  VideoDocument,
   VoteType,
 } from "../../generated/graphql";
 import { getDateFromString } from "../../utils/dateHelper";
@@ -20,7 +19,6 @@ interface VideoProps {
 }
 
 const Video = ({ videoData: video }: VideoProps) => {
-  const { cache } = useLogin();
   const [action, setAction] = useState<"like" | "dislike" | "">("");
   const [voteVideoMutation /* , { loading } */] = useVoteVideoMutation();
   // const { data: videoData, loading: queryLoading } = useVideoQuery({
@@ -38,20 +36,9 @@ const Video = ({ videoData: video }: VideoProps) => {
         type: VoteType.Like,
         videoId: video.id,
       },
+      refetchQueries: [{ query: VideoDocument, variables: { id: video.id } }],
     });
-    if (response.data?.voteVideo.success) {
-      cache.writeFragment({
-        id: `Video:${video.id}`,
-        fragment: gql`
-          fragment VoteType on Video {
-            voteStatus
-          }
-        `,
-        data: {
-          voteStatus: newAction === "like" ? 1 : 0,
-        },
-      });
-    } else {
+    if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
     }
   };
@@ -64,20 +51,9 @@ const Video = ({ videoData: video }: VideoProps) => {
         type: VoteType.Dislike,
         videoId: video.id,
       },
+      refetchQueries: [{ query: VideoDocument, variables: { id: video.id } }],
     });
-    if (response.data?.voteVideo.success) {
-      cache.writeFragment({
-        id: `Video:${video.id}`,
-        fragment: gql`
-          fragment VoteType on Video {
-            voteStatus
-          }
-        `,
-        data: {
-          voteStatus: newAction === "dislike" ? -1 : 0,
-        },
-      });
-    } else {
+    if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
     }
   };
@@ -134,7 +110,9 @@ const Video = ({ videoData: video }: VideoProps) => {
               <span>
                 <i className="far fa-thumbs-up"></i>
               </span>
-              <span>THÍCH</span>
+              <span>
+                {getNumToString(video.numUsersLiked as number | undefined)}
+              </span>
             </div>
             <div
               className={

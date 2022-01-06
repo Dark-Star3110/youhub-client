@@ -26,6 +26,9 @@
     h4 {
       font-weight: 450;
     }
+    h3 {
+      font-size: 17px;
+    }
     .comment-input {
       flex: 1;
       .comment-input_control {
@@ -61,5 +64,20 @@
         }
       }
     }
+  }
+}
+
+.no-comment {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.show-more {
+  margin-bottom: 42px;
+  &:hover {
+    text-decoration: underline;
+    color: #3ea6ff;
+    cursor: pointer;
   }
 }

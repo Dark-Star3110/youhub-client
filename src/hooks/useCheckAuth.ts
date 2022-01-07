@@ -24,8 +24,10 @@ export const useCheckAuth = () => {
       !userState.details &&
       router.pathname !== "/login" &&
       router.pathname !== "/" &&
-      router.pathname.indexOf("/user") === -1 &&
-      !window.localStorage.getItem("login")
+      !window.localStorage.getItem("login") &&
+      router.pathname !== "/forgot" &&
+      !router.pathname.includes("/user") &&
+      !router.pathname.includes("/change-password")
     )
       router.push("/login");
 

@@ -8,11 +8,13 @@ import {
 import { Route, Routes } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ChangePass from "./components/ChangePass";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
 import EditVideo from "./components/EditVideo";
 import Explore from "./components/Explore";
 import ExtraNav from "./components/ExtraNav";
+import Forgot from "./components/Forgot";
 import Home from "./components/Home";
 import Library from "./components/Library";
 import Login from "./components/Login";
@@ -63,7 +65,7 @@ function App() {
   }, [setUserContext, refreshTokenMutation]);
 
   useLayoutEffect(() => {
-    verifyUser();
+    verifyUser(); /*  */
   }, [verifyUser]);
   // sync login
   const syncLogin = useCallback((event) => {
@@ -96,11 +98,17 @@ function App() {
   // effect
   useEffect(() => {
     // console.log(router.location.pathname);
-    if (router.location.pathname === "/login") {
+    if (
+      router.location.pathname === "/login" ||
+      router.location.pathname === "/forgot" ||
+      router.location.pathname.includes("/change-password")
+    ) {
       setDisplay("full");
-    } else if (router.location.pathname.includes("/watch")) {
-      setDisplay("watch");
-    } else if (router.location.pathname.includes("/me")) {
+    } else if (
+      router.location.pathname.includes("/watch") ||
+      router.location.pathname.includes("/me") ||
+      router.location.pathname.includes("/library")
+    ) {
       setDisplay("watch");
     } else {
       setDisplay("");
@@ -121,7 +129,7 @@ function App() {
         <Routes>
           <Route path="/explore" element={<Explore />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
-          <Route path="/library" element={<Library />} />
+          <Route path="/library/:slug" element={<Library />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/login" element={<Login />} />
           <Route path="/create" element={<Create />} />
@@ -130,6 +138,8 @@ function App() {
           <Route path="/user/:slug" element={<User />} />
           <Route path="/edit/:slug" element={<EditVideo />} />
           <Route path="/me" element={<Me />} />
+          <Route path="/forgot" element={<Forgot />} />
+          <Route path="/change-password" element={<ChangePass />} />
           <Route
             path="/"
             element={

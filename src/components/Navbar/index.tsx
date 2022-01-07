@@ -47,7 +47,7 @@ const Navbar = () => {
           </Link>
         </li>
         <li>
-          <Link to="/library">
+          <Link to="/library/playlist">
             <span className={styles.icon}>
               <i className="far fa-play-circle"></i>
             </span>

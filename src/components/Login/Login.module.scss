@@ -156,6 +156,10 @@
 .social-text {
   padding: 0.7rem 0;
   font-size: 1rem;
+  color: #fb970a;
+  &:hover {
+    color: #ffa763;
+  }
 }
 
 .social-media {

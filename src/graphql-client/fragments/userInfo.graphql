@@ -8,7 +8,7 @@ fragment userInfo on User {
   fullName
   channelDecscription
   image_url
-  banner_id
+  banner_url
   dateOfBirth
   role
   createdAt

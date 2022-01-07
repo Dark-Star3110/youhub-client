@@ -217,7 +217,7 @@ const Me = () => {
                           <img src={img2} alt="file" />
                         ) : (
                           <img
-                            src={(details.banner_id as string) || banner_icon}
+                            src={(details.banner_url as string) || banner_icon}
                             alt="user"
                           />
                         )}

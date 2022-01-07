@@ -84,18 +84,29 @@ export type LoginInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  changePassword: Scalars['Boolean'];
   createComment: CommentMutationResponse;
   createVideo: VideoMutationResponse;
   deleteVideo: VideoMutationResponse;
+  forgotPassword: Scalars['Boolean'];
   login: UserMutationResponse;
   logout: Scalars['Boolean'];
+  onNotification: UserMutationResponse;
   refreshToken: UserMutationResponse;
   signup: UserMutationResponse;
+  subscribe: UserMutationResponse;
   updateComment: CommentMutationResponse;
   updateInfo: UserMutationResponse;
   updateVideo: VideoMutationResponse;
+  voteComment: CommentMutationResponse;
   voteVideo: VideoMutationResponse;
   watchLater: VideoMutationResponse;
+};
+
+
+export type MutationChangePasswordArgs = {
+  newPassword: Scalars['String'];
+  token: Scalars['String'];
 };
 
 
@@ -116,14 +127,31 @@ export type MutationDeleteVideoArgs = {
 };
 
 
+export type MutationForgotPasswordArgs = {
+  email: Scalars['String'];
+};
+
+
 export type MutationLoginArgs = {
   loginInput?: InputMaybe<LoginInput>;
   socialLogin?: InputMaybe<SocialLogin>;
 };
 
 
+export type MutationOnNotificationArgs = {
+  action: Action;
+  chanelId: Scalars['ID'];
+};
+
+
 export type MutationSignupArgs = {
   signupInput: SignupInput;
+};
+
+
+export type MutationSubscribeArgs = {
+  action: Action;
+  chanelId: Scalars['ID'];
 };
 
 
@@ -141,6 +169,13 @@ export type MutationUpdateInfoArgs = {
 export type MutationUpdateVideoArgs = {
   updateVideoInput: UpdateVideoInput;
   videoId: Scalars['ID'];
+};
+
+
+export type MutationVoteCommentArgs = {
+  action: Scalars['String'];
+  commentId: Scalars['ID'];
+  type: VoteType;
 };
 
 
@@ -188,9 +223,12 @@ export type Query = {
   __typename?: 'Query';
   comment?: Maybe<Comment>;
   comments?: Maybe<PaginatedComments>;
+  find?: Maybe<PaginatedVideos>;
   hello: Scalars['String'];
   me?: Maybe<User>;
+  user?: Maybe<User>;
   video?: Maybe<Video>;
+  videoUser?: Maybe<PaginatedVideos>;
   videos?: Maybe<PaginatedVideos>;
   videosVoted?: Maybe<PaginatedVideos>;
   videosWatchLater?: Maybe<PaginatedVideos>;
@@ -207,19 +245,33 @@ export type QueryCommentsArgs = {
 };
 
 
+export type QueryFindArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  query: Scalars['String'];
+};
+
+
+export type QueryUserArgs = {
+  userId: Scalars['ID'];
+};
+
+
 export type QueryVideoArgs = {
   id: Scalars['ID'];
 };
 
 
-export type QueryVideosArgs = {
-  catagory?: InputMaybe<Array<Scalars['String']>>;
-  catagoryId?: InputMaybe<Scalars['String']>;
+export type QueryVideoUserArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  query?: InputMaybe<Scalars['String']>;
-  user?: InputMaybe<Array<Scalars['String']>>;
   userId?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryVideosArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -227,14 +279,12 @@ export type QueryVideosVotedArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
   type: Scalars['Float'];
-  userId: Scalars['String'];
 };
 
 
 export type QueryVideosWatchLaterArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  userId: Scalars['String'];
 };
 
 export type SignupInput = {
@@ -256,6 +306,12 @@ export enum Strategy {
   Google = 'GOOGLE',
   Local = 'LOCAL'
 }
+
+export type SubscribeStatus = {
+  __typename?: 'SubscribeStatus';
+  notification: Scalars['Boolean'];
+  status: Scalars['Boolean'];
+};
 
 export type UpdateCommentInput = {
   content: Scalars['String'];
@@ -279,7 +335,7 @@ export type UpdateVideoInput = {
 
 export type User = {
   __typename?: 'User';
-  banner_id?: Maybe<Scalars['String']>;
+  banner_url: Scalars['String'];
   chanelsSubscribe?: Maybe<Array<User>>;
   channelDecscription?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
@@ -290,8 +346,11 @@ export type User = {
   id: Scalars['ID'];
   image_url?: Maybe<Scalars['String']>;
   lastName: Scalars['String'];
+  numSubscribers: Scalars['Int'];
+  numVideo: Scalars['Int'];
   role: Scalars['String'];
   socialId?: Maybe<Scalars['String']>;
+  subscribeStatus: SubscribeStatus;
   subscribers?: Maybe<Array<User>>;
   updatedAt: Scalars['DateTime'];
   username?: Maybe<Scalars['String']>;
@@ -351,9 +410,17 @@ type MutationStatuses_VideoMutationResponse_Fragment = { __typename?: 'VideoMuta
 
 export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_Fragment | MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
 
-export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, banner_id?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
+export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any };
 
 export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any };
+
+export type ChangePasswordMutationVariables = Exact<{
+  token: Scalars['String'];
+  newPassword: Scalars['String'];
+}>;
+
+
+export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: boolean };
 
 export type CreateCommentMutationVariables = Exact<{
   videoId: Scalars['String'];
@@ -370,6 +437,13 @@ export type CreateVideoMutationVariables = Exact<{
 
 
 export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, commentable: boolean, voteStatus: number, thumbnailUrl?: string | null | undefined, createdAt: any, updatedAt: any } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+
+export type ForgotPasswordMutationVariables = Exact<{
+  email: Scalars['String'];
+}>;
+
+
+export type ForgotPasswordMutation = { __typename?: 'Mutation', forgotPassword: boolean };
 
 export type LoginMutationVariables = Exact<{
   loginInput?: InputMaybe<LoginInput>;
@@ -422,7 +496,7 @@ export type CommentsQuery = { __typename?: 'Query', comments?: { __typename?: 'P
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, banner_id?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, socialId?: string | null | undefined, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: any, updatedAt: any } | null | undefined };
 
 export type VideoQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -434,11 +508,6 @@ export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video',
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
   cursor?: InputMaybe<Scalars['String']>;
-  userId?: InputMaybe<Scalars['String']>;
-  user?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  catagoryId?: InputMaybe<Scalars['String']>;
-  catagory?: InputMaybe<Array<Scalars['String']> | Scalars['String']>;
-  query?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -482,7 +551,7 @@ export const UserInfoFragmentDoc = gql`
   fullName
   channelDecscription
   image_url
-  banner_id
+  banner_url
   dateOfBirth
   role
   createdAt
@@ -501,6 +570,38 @@ export const VideoInfoFragmentDoc = gql`
   updatedAt
 }
     `;
+export const ChangePasswordDocument = gql`
+    mutation ChangePassword($token: String!, $newPassword: String!) {
+  changePassword(token: $token, newPassword: $newPassword)
+}
+    `;
+export type ChangePasswordMutationFn = Apollo.MutationFunction<ChangePasswordMutation, ChangePasswordMutationVariables>;
+
+/**
+ * __useChangePasswordMutation__
+ *
+ * To run a mutation, you first call `useChangePasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useChangePasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [changePasswordMutation, { data, loading, error }] = useChangePasswordMutation({
+ *   variables: {
+ *      token: // value for 'token'
+ *      newPassword: // value for 'newPassword'
+ *   },
+ * });
+ */
+export function useChangePasswordMutation(baseOptions?: Apollo.MutationHookOptions<ChangePasswordMutation, ChangePasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ChangePasswordMutation, ChangePasswordMutationVariables>(ChangePasswordDocument, options);
+      }
+export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
+export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
+export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreateCommentDocument = gql`
     mutation CreateComment($videoId: String!, $createCommentInput: CreateCommentInput!, $parentCommentId: String) {
   createComment(
@@ -595,6 +696,37 @@ export function useCreateVideoMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateVideoMutationHookResult = ReturnType<typeof useCreateVideoMutation>;
 export type CreateVideoMutationResult = Apollo.MutationResult<CreateVideoMutation>;
 export type CreateVideoMutationOptions = Apollo.BaseMutationOptions<CreateVideoMutation, CreateVideoMutationVariables>;
+export const ForgotPasswordDocument = gql`
+    mutation ForgotPassword($email: String!) {
+  forgotPassword(email: $email)
+}
+    `;
+export type ForgotPasswordMutationFn = Apollo.MutationFunction<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
+
+/**
+ * __useForgotPasswordMutation__
+ *
+ * To run a mutation, you first call `useForgotPasswordMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useForgotPasswordMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [forgotPasswordMutation, { data, loading, error }] = useForgotPasswordMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *   },
+ * });
+ */
+export function useForgotPasswordMutation(baseOptions?: Apollo.MutationHookOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ForgotPasswordMutation, ForgotPasswordMutationVariables>(ForgotPasswordDocument, options);
+      }
+export type ForgotPasswordMutationHookResult = ReturnType<typeof useForgotPasswordMutation>;
+export type ForgotPasswordMutationResult = Apollo.MutationResult<ForgotPasswordMutation>;
+export type ForgotPasswordMutationOptions = Apollo.BaseMutationOptions<ForgotPasswordMutation, ForgotPasswordMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($loginInput: LoginInput, $socialLogin: SocialLogin) {
   login(loginInput: $loginInput, socialLogin: $socialLogin) {
@@ -939,16 +1071,8 @@ export type VideoQueryHookResult = ReturnType<typeof useVideoQuery>;
 export type VideoLazyQueryHookResult = ReturnType<typeof useVideoLazyQuery>;
 export type VideoQueryResult = Apollo.QueryResult<VideoQuery, VideoQueryVariables>;
 export const VideosDocument = gql`
-    query Videos($limit: Int!, $cursor: String, $userId: String, $user: [String!], $catagoryId: String, $catagory: [String!], $query: String) {
-  videos(
-    limit: $limit
-    cursor: $cursor
-    userId: $userId
-    user: $user
-    catagoryId: $catagoryId
-    catagory: $catagory
-    query: $query
-  ) {
+    query Videos($limit: Int!, $cursor: String) {
+  videos(limit: $limit, cursor: $cursor) {
     totalCount
     cursor
     hasMore
@@ -979,11 +1103,6 @@ export const VideosDocument = gql`
  *   variables: {
  *      limit: // value for 'limit'
  *      cursor: // value for 'cursor'
- *      userId: // value for 'userId'
- *      user: // value for 'user'
- *      catagoryId: // value for 'catagoryId'
- *      catagory: // value for 'catagory'
- *      query: // value for 'query'
  *   },
  * });
  */

@@ -1,21 +1,5 @@
-query Videos(
-  $limit: Int!
-  $cursor: String
-  $userId: String
-  $user: [String!]
-  $catagoryId: String
-  $catagory: [String!]
-  $query: String
-) {
-  videos(
-    limit: $limit
-    cursor: $cursor
-    userId: $userId
-    user: $user
-    catagoryId: $catagoryId
-    catagory: $catagory
-    query: $query
-  ) {
+query Videos($limit: Int!, $cursor: String) {
+  videos(limit: $limit, cursor: $cursor) {
     totalCount
     cursor
     hasMore

@@ -35,7 +35,7 @@ const User = () => {
       {details ? (
         <>
           <div className={styles.banner}>
-            <img src={(details.banner_id as string) ?? banner} alt="" />
+            <img src={(details.banner_url as string) ?? banner} alt="" />
           </div>
           <div className={styles.controls}>
             <div className={styles["user"]}>

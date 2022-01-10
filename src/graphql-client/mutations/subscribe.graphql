@@ -1,0 +1,5 @@
+mutation Subscribe($chanelId: ID!, $action: Action!) {
+  subscribe(chanelId: $chanelId, action: $action) {
+    ...mutationStatuses
+  }
+}

@@ -32,8 +32,6 @@ import { NavContext } from "./contexts/NavContext";
 import { useLogin } from "./contexts/UserContext";
 import { useRefreshTokenMutation } from "./generated/graphql";
 import { useCheckAuth } from "./hooks/useCheckAuth";
-/* import { useLogin } from "./contexts/UserContext";
-import { useCheckAuth } from "./hooks/useCheckAuth"; */
 import { useRouter } from "./hooks/useRouter";
 import "./styles/App.scss";
 
@@ -56,6 +54,7 @@ function App() {
   const verifyUser = useCallback(async () => {
     const response = await refreshTokenMutation();
     const token = response.data?.refreshToken.token as string | undefined;
+    if (!token) window.localStorage.removeItem("login");
     setUserContext(function (preValues) {
       return {
         ...preValues,
@@ -66,7 +65,7 @@ function App() {
   }, [setUserContext, refreshTokenMutation]);
 
   useLayoutEffect(() => {
-    verifyUser();
+    verifyUser(); /*  */
   }, [verifyUser]);
   // sync login
   const syncLogin = useCallback((event) => {

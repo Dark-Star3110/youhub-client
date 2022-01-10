@@ -2,17 +2,14 @@
 
 .slick-nav {
   position: fixed;
+  width: 2000px;
+  display: flex;
   height: 60px;
   border-top: 1px solid $grey-color;
   border-bottom: 1px solid $grey-color;
   background-color: $black3-color;
   // overflow: hidden;
-  z-index: 1;
-  // overflow-x: scroll;
-  // overflow-y: hidden;
-  .slick-track {
-    padding: 8px 0 !important;
-  }
+  z-index: 2;
   .slick-nav-item {
     width: fit-content;
     padding: 9px 0;

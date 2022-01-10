@@ -6,6 +6,7 @@ query Videos($limit: Int!, $cursor: String) {
     paginatedVideos {
       ...videoInfo
       user {
+        id
         firstName
         lastName
         fullName

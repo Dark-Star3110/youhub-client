@@ -1,0 +1,9 @@
+query User($userId: ID!) {
+  user(userId: $userId) {
+    ...userInfo
+    subscribeStatus {
+      status
+      notification
+    }
+  }
+}

@@ -2,8 +2,6 @@ fragment videoInfo on Video {
   id
   title
   description
-  commentable
-  voteStatus
   thumbnailUrl
   createdAt
   updatedAt

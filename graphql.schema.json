@@ -2368,18 +2368,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "banner_id",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null,
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "channelDecscription",
             "description": null,
             "type": {
@@ -2416,7 +2404,7 @@
             "deprecationReason": null
           },
           {
-            "name": "image_url",
+            "name": "imageId",
             "description": null,
             "type": {
               "kind": "SCALAR",

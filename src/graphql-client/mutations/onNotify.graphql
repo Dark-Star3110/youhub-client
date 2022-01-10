@@ -1,0 +1,5 @@
+mutation OnNotify($chanelId: ID!, $action: Action!) {
+  onNotification(chanelId: $chanelId, action: $action) {
+    ...mutationStatuses
+  }
+}

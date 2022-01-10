@@ -35,6 +35,14 @@ const cache = new InMemoryCache({
         videos: {
           keyArgs: false,
           merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
+
             let paginatedVideos: Video[] = [];
             if (existing && existing.paginatedVideos) {
               paginatedVideos = paginatedVideos.concat(
@@ -52,6 +60,13 @@ const cache = new InMemoryCache({
         comments: {
           keyArgs: false,
           merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
             let paginatedComments: Comment[] = [];
             if (existing && existing.paginatedComments) {
               paginatedComments = paginatedComments.concat(
@@ -64,6 +79,31 @@ const cache = new InMemoryCache({
               );
             }
             return { ...incoming, paginatedComments: paginatedComments };
+          },
+        },
+        videoUser: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
+
+            let paginatedVideos: Video[] = [];
+            if (existing && existing.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                existing.paginatedVideos
+              );
+            }
+            if (incoming && incoming.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                incoming.paginatedVideos
+              );
+            }
+            return { ...incoming, paginatedVideos };
           },
         },
       },

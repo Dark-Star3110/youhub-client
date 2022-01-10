@@ -1,40 +1,39 @@
-import Slider from "react-slick";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
+import { useContext } from "react";
+import { ToastContext } from "../../contexts/ToastContext";
 import GradientButton from "../GradientButton";
 
 import styles from "./SlickNav.module.scss";
 
 const SlickNav = () => {
   const data = [
-    "tat ca",
-    "danh sach ket hop",
-    "am nhac",
-    "hoat hinh",
-    "tro choi phieu luu",
-    "bong da",
-    "moi tai len gan day",
-    "da xem",
-    "de xuat moi",
+    "tất cả",
+    "danh sách kết hợp",
+    "âm nhạc",
+    "hoạt hình",
+    "trò chơi phiêu lưu",
+    "bóng đá",
+    "mới tải lên gần đây",
+    "đã xem",
+    "đề xuất mới",
   ];
-  const settings = {
-    infinite: true,
-    speed: 500,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    variableWidth: true,
-  };
+  const { notify } = useContext(ToastContext);
   return (
     <div className={styles["slick-nav"]}>
-      <Slider {...settings}>
-        {data.map((item, index) => {
-          return (
-            <div key={index} className={styles["slick-nav-item"]}>
-              <GradientButton text={item} />
-            </div>
-          );
-        })}
-      </Slider>
+      {data.map((item, index) => {
+        return (
+          <div key={index} className={styles["slick-nav-item"]}>
+            <GradientButton
+              text={item}
+              onClick={() =>
+                notify(
+                  "info",
+                  "Mấy nút này chỉ để cho đẹp 🤗, mời bạn sang khám phá để trải nghiệm chức năng này 🙃🙃"
+                )
+              }
+            />
+          </div>
+        );
+      })}
     </div>
   );
 };

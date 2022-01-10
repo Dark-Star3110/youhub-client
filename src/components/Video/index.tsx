@@ -1,31 +1,30 @@
 import { useContext, useEffect, useState } from "react";
-import styles from "./Video.module.scss";
+import { Link } from "react-router-dom";
+import { ToastContext } from "../../contexts/ToastContext";
 import {
   Action,
-  useVideoQuery,
   useVoteVideoMutation,
+  Video as VideoType,
+  VideoDocument,
   VoteType,
 } from "../../generated/graphql";
-import { ToastContext } from "../../contexts/ToastContext";
-import Spinner from "../Spinner";
-import { gql } from "@apollo/client";
-import { useLogin } from "../../contexts/UserContext";
+import { getDateFromString } from "../../utils/dateHelper";
+import { getNumToString } from "../../utils/numberHelper";
+import Comment from "../Comment";
+import SubscribeBtn from "../User/SubscribeBtn/SubscribeBtn";
+import styles from "./Video.module.scss";
 
 interface VideoProps {
-  videoId: string;
+  videoData: VideoType;
 }
 
-const Video = ({ videoId }: VideoProps) => {
-  const {
-    cache,
-    state: { details },
-  } = useLogin();
+const Video = ({ videoData: video }: VideoProps) => {
   const [action, setAction] = useState<"like" | "dislike" | "">("");
   const [voteVideoMutation /* , { loading } */] = useVoteVideoMutation();
-  const { data: videoData, loading: queryLoading } = useVideoQuery({
-    variables: { id: videoId },
-    skip: !!!details,
-  });
+  // const { data: videoData, loading: queryLoading } = useVideoQuery({
+  //   variables: { id: video },
+  //   skip: !!!details,
+  // });
 
   const { notify } = useContext(ToastContext);
 
@@ -35,22 +34,11 @@ const Video = ({ videoId }: VideoProps) => {
       variables: {
         action: newAction === "like" ? Action.Activate : Action.Disactivate,
         type: VoteType.Like,
-        videoId,
+        videoId: video.id,
       },
+      refetchQueries: [{ query: VideoDocument, variables: { id: video.id } }],
     });
-    if (response.data?.voteVideo.success) {
-      cache.writeFragment({
-        id: `Video:${videoId}`,
-        fragment: gql`
-          fragment VoteType on Video {
-            voteStatus
-          }
-        `,
-        data: {
-          voteStatus: newAction === "like" ? 1 : 0,
-        },
-      });
-    } else {
+    if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
     }
   };
@@ -61,48 +49,43 @@ const Video = ({ videoId }: VideoProps) => {
       variables: {
         action: newAction === "dislike" ? Action.Activate : Action.Disactivate,
         type: VoteType.Dislike,
-        videoId,
+        videoId: video.id,
       },
+      refetchQueries: [{ query: VideoDocument, variables: { id: video.id } }],
     });
-    if (response.data?.voteVideo.success) {
-      cache.writeFragment({
-        id: `Video:${videoId}`,
-        fragment: gql`
-          fragment VoteType on Video {
-            voteStatus
-          }
-        `,
-        data: {
-          voteStatus: newAction === "dislike" ? -1 : 0,
-        },
-      });
-    } else {
+    if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
     }
   };
 
   useEffect(() => {
-    if (videoData?.video)
-      videoData?.video?.voteStatus === 1
+    if (video)
+      video.voteStatus === 1
         ? setAction("like")
-        : videoData?.video?.voteStatus === -1
+        : video?.voteStatus === -1
         ? setAction("dislike")
         : setAction("");
-  }, [videoData?.video]);
+  }, [video]);
 
-  if (queryLoading && !videoData?.video && !details)
-    return (
-      <h1>
-        <Spinner />
-      </h1>
-    );
+  /*   const test = `This video is made to entertain and satisfy viewers.
+  I don't own anything related to the background photo,
+  credits go to the respective owners of the audio and the photo.
+  #RADWIMPS #Nandemonaiya #なんでもないや
+  Nhạc trong video này
+  Tìm hiểu thêm
+  Bài hát
+  なんでもないや(movie ver.)
+  Nghệ sĩ
+  RADWIMPS
+  Bên cấp phép cho YouTube
+  ASCAP và 14 Hiệp hội bảo vệ quyền âm nhạc.` */
 
   return (
     <>
       <div className={styles["primary-video"]}>
         <iframe
           title="Drive video player"
-          src={`https://drive.google.com/file/d/${videoId}/preview`}
+          src={`https://drive.google.com/file/d/${video.id}/preview`}
           allow="autoplay"
           allowFullScreen
           className={styles["primary-video__d"]}
@@ -110,9 +93,9 @@ const Video = ({ videoId }: VideoProps) => {
       </div>
 
       <div className={styles["primary-video_inf"]}>
-        <h3>{videoData?.video?.title}</h3>
+        <h3>{video.title}</h3>
         <div className={styles["primary-video_control"]}>
-          <time>Đã tải lên vào {videoData?.video?.createdAt}</time>
+          <time>Đã tải lên vào {getDateFromString(video.createdAt)}</time>
           <div className={styles["primary-video_icon"]}>
             <div
               className={
@@ -127,7 +110,9 @@ const Video = ({ videoId }: VideoProps) => {
               <span>
                 <i className="far fa-thumbs-up"></i>
               </span>
-              <span>THÍCH</span>
+              <span>
+                {getNumToString(video.numUsersLiked as number | undefined)}
+              </span>
             </div>
             <div
               className={
@@ -156,40 +141,41 @@ const Video = ({ videoId }: VideoProps) => {
 
       <div className={styles["primary-video_author"]}>
         <div className={styles["primary-video_author__inf"]}>
-          <div className={styles["primary-video_author__img"]}>
-            <img
-              src={
-                videoData?.video?.user.image_url ||
-                "https://images6.alphacoders.com/311/thumbbig-311015.webp"
-              }
-              alt="author"
-            />
-          </div>
+          <Link to={`/user/${video.user.id}`}>
+            <div className={styles["primary-video_author__img"]}>
+              <img
+                src={
+                  video.user.image_url ||
+                  "https://images6.alphacoders.com/311/thumbbig-311015.webp"
+                }
+                alt="author"
+              />
+            </div>
+          </Link>
           <div>
-            <h4>{videoData?.video?.user.fullName}</h4>
-            <small>69N người đăng ký</small>
+            <Link to={`/user/${video.user.id}`}>
+              <h4 title={video.user.fullName || ""}>{video.user.fullName}</h4>
+            </Link>
+            <small>
+              {getNumToString(video.user.numSubscribers)} người đăng ký
+            </small>
           </div>
         </div>
-        <div className={styles.btn}>
-          <button className={styles["scr-btn"]}>ĐĂNG KÝ</button>
-        </div>
+        <SubscribeBtn
+          fullName={video.user.fullName as string}
+          subscribeStatus={video.user.subscribeStatus}
+          userId={video.user.id}
+        />
       </div>
       <div className={styles["primary-descript"]}>
-        <pre>
-          {`This video is made to entertain and satisfy viewers.
-I don't own anything related to the background photo,
-credits go to the respective owners of the audio and the photo.
-#RADWIMPS #Nandemonaiya #なんでもないや
-Nhạc trong video này
-Tìm hiểu thêm
-Bài hát
-なんでもないや(movie ver.)
-Nghệ sĩ
-RADWIMPS
-Bên cấp phép cho YouTube
-ASCAP và 14 Hiệp hội bảo vệ quyền âm nhạc.`}
-        </pre>
+        <pre>{video.description}</pre>
       </div>
+
+      {video.commentable ? (
+        <Comment videoId={video.id} />
+      ) : (
+        <h2>Video này đã được tắt bình luận</h2>
+      )}
     </>
   );
 };

@@ -1,11 +1,13 @@
 import { Reference } from "@apollo/client";
 import { useEffect } from "react";
 import { useLogin } from "../../contexts/UserContext";
+import { useVideoQuery, Video as VideoType } from "../../generated/graphql";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
-import Comment from "../Comment";
+import Spinner from "../Spinner";
 import Video from "../Video";
 import VideoConcern from "../VideoConcern";
+import VideoNotFound from "../VideoNotFound";
 import styles from "./Watch.module.scss";
 
 const Watch = () => {
@@ -16,6 +18,10 @@ const Watch = () => {
   const { socket, cache } = useLogin();
 
   const videoId = router.query.slug as string;
+
+  const {
+    state: { details },
+  } = useLogin();
 
   useEffect(() => {
     if (videoId) {
@@ -37,11 +43,24 @@ const Watch = () => {
     };
   }, [socket, videoId, cache]);
 
+  const { data: videoData, loading: queryLoading } = useVideoQuery({
+    variables: { id: videoId },
+    skip: !!!details,
+  });
+
+  if (!details || (details && queryLoading))
+    return (
+      <h1>
+        <Spinner />
+      </h1>
+    );
+
+  if (!videoData?.video && details && !queryLoading) return <VideoNotFound />;
+
   return (
     <div className={styles.watch}>
       <div className={styles["primary"]}>
-        <Video videoId={videoId} />
-        <Comment videoId={videoId} />
+        <Video videoData={videoData?.video as VideoType} />
       </div>
       <div className={styles["secondary"]}>
         <VideoConcern />

@@ -9,7 +9,7 @@
   bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
   @include center;
-  z-index: 2;
+  z-index: 9;
 
   .modal-container {
     background-color: $black3-color;

@@ -1,0 +1,11 @@
+mutation UpdateComment(
+  $updateCommentInput: UpdateCommentInput!
+  $commentId: String!
+) {
+  updateComment(
+    updateCommentInput: $updateCommentInput
+    commentId: $commentId
+  ) {
+    ...mutationStatuses
+  }
+}

@@ -1,4 +1,3 @@
-import { Reference } from "@apollo/client";
 import { useEffect } from "react";
 import { useLogin } from "../../contexts/UserContext";
 import { useVideoQuery, Video as VideoType } from "../../generated/graphql";
@@ -30,15 +29,6 @@ const Watch = () => {
     return () => {
       socket.emit("leave-room", videoId);
       // clear cache comment paginated
-      cache.modify({
-        fields: {
-          comments(existing) {
-            existing.paginatedComments.forEach((comment: Reference) => {
-              cache.evict({ id: comment.__ref });
-            });
-          },
-        },
-      });
       cache.evict({ fieldName: "comments" });
     };
   }, [socket, videoId, cache]);

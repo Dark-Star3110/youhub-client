@@ -1,4 +1,5 @@
 @import "../../styles/variable.scss";
+@import "../../styles/mixim.scss";
 
 .Comment {
   display: flex;
@@ -8,6 +9,7 @@
     display: flex;
     margin: 16px 0;
     .comment-item__img {
+      position: relative;
       width: 50px;
       height: 50px;
       margin-right: 16px;
@@ -17,17 +19,68 @@
         object-fit: cover;
         border-radius: 50%;
       }
+      .comment-item__reactIcon {
+        position: absolute;
+        right: -4px;
+        bottom: -6px;
+        width: 18px;
+        height: 18px;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+        span {
+          position: absolute;
+          right: 14px;
+          bottom: -8px;
+          font-size: 12px;
+        }
+      }
     }
-    small {
-      color: $grey1-color;
-      font-weight: 400;
-      font-size: 12px;
-    }
-    h4 {
-      font-weight: 450;
-    }
-    h3 {
-      font-size: 17px;
+    .comment-item__info {
+      flex: 1;
+      transition: 0.5s;
+      small {
+        color: $grey1-color;
+        font-weight: 400;
+        font-size: 12px;
+      }
+      h4 {
+        font-weight: 450;
+      }
+      h3 {
+        font-size: 17px;
+      }
+      input {
+        width: 100%;
+        border: none;
+        background-color: $black1-color;
+        color: $white-color;
+        font-size: 16px;
+        border-bottom: 2px solid $black3-color;
+        margin-bottom: 20px;
+        margin-top: 10px;
+      }
+      .control {
+        float: right;
+        button {
+          border: none;
+          padding: 10px 20px;
+          color: #fff;
+          font-size: 14px;
+          background-color: $black1-color;
+        }
+        .cancel-btn {
+          cursor: pointer;
+        }
+        .save-btn {
+          background-color: $grey2-color;
+          border-radius: 2px;
+          cursor: pointer;
+          background-color: #3ea6ff;
+        }
+      }
     }
     .comment-input {
       flex: 1;
@@ -61,6 +114,79 @@
           background-color: #3ea6ff;
           color: #000;
           cursor: pointer;
+        }
+      }
+    }
+    .navigation {
+      margin-left: 10px;
+      position: relative;
+      bottom: 3px;
+      width: 20px;
+      height: 36px;
+      background-color: #fff;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.5s;
+      @include center();
+      &.active {
+        width: 130px;
+        span {
+          width: 28px;
+          height: 28px;
+          transition: 0.5s;
+          pointer-events: initial;
+          i {
+            color: #fff;
+            font-size: 0.95em;
+          }
+          &:nth-child(1) {
+            transform: translateY(0) translateX(-40px);
+          }
+          &:nth-child(3) {
+            transform: translateY(0) translateX(40px);
+          }
+          &:hover {
+            &:nth-child(1) {
+              background-color: #fc4173;
+              border: 2px solid #222327;
+              i {
+                color: #222327;
+              }
+            }
+            &:nth-child(2) {
+              background-color: #6ebafc;
+              border: 2px solid #222327;
+              i {
+                color: #222327;
+              }
+            }
+            &:nth-child(3) {
+              background-color: #f65033;
+              border: 2px solid #222327;
+              i {
+                color: #222327;
+              }
+            }
+          }
+        }
+      }
+      span {
+        position: absolute;
+        width: 5px;
+        height: 5px;
+        background-color: #222327;
+        border-radius: 50%;
+        transition: 0.5s;
+        pointer-events: none;
+        @include center();
+        i {
+          font-size: 0em;
+        }
+        &:nth-child(1) {
+          transform: translateY(-8px);
+        }
+        &:nth-child(3) {
+          transform: translateY(8px);
         }
       }
     }

@@ -1,11 +1,12 @@
+import { gql } from "@apollo/client";
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ToastContext } from "../../contexts/ToastContext";
+import { useLogin } from "../../contexts/UserContext";
 import {
   Action,
   useVoteVideoMutation,
   Video as VideoType,
-  VideoDocument,
   VoteType,
 } from "../../generated/graphql";
 import { getDateFromString } from "../../utils/dateHelper";
@@ -25,7 +26,7 @@ const Video = ({ videoData: video }: VideoProps) => {
   //   variables: { id: video },
   //   skip: !!!details,
   // });
-
+  const { cache } = useLogin();
   const { notify } = useContext(ToastContext);
 
   const handleLike = async () => {
@@ -36,10 +37,26 @@ const Video = ({ videoData: video }: VideoProps) => {
         type: VoteType.Like,
         videoId: video.id,
       },
-      refetchQueries: [{ query: VideoDocument, variables: { id: video.id } }],
     });
     if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
+    } else {
+      cache.writeFragment({
+        id: `Video:${video.id}`,
+        fragment: gql`
+          fragment VideoUpdate on Video {
+            numUsersLiked
+            voteStatus
+          }
+        `,
+        data: {
+          numUsersLiked:
+            newAction === "like"
+              ? (video.numUsersLiked as number) + 1
+              : (video.numUsersLiked as number) - 1,
+          voteStatus: newAction === "like" ? 1 : 0,
+        },
+      });
     }
   };
 
@@ -51,10 +68,26 @@ const Video = ({ videoData: video }: VideoProps) => {
         type: VoteType.Dislike,
         videoId: video.id,
       },
-      refetchQueries: [{ query: VideoDocument, variables: { id: video.id } }],
     });
     if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
+    } else {
+      cache.writeFragment({
+        id: `Video:${video.id}`,
+        fragment: gql`
+          fragment VideoUpdate on Video {
+            numUsersLiked
+            voteStatus
+          }
+        `,
+        data: {
+          numUsersLiked:
+            newAction === "dislike" && action === "like"
+              ? (video.numUsersLiked as number) - 1
+              : (video.numUsersLiked as number),
+          voteStatus: newAction === "dislike" ? -1 : 0,
+        },
+      });
     }
   };
 
@@ -165,10 +198,11 @@ const Video = ({ videoData: video }: VideoProps) => {
           fullName={video.user.fullName as string}
           subscribeStatus={video.user.subscribeStatus}
           userId={video.user.id}
+          numSubscribers={video.user.numSubscribers}
         />
       </div>
       <div className={styles["primary-descript"]}>
-        <pre>{video.description}</pre>
+        <p>{video.description}</p>
       </div>
 
       {video.commentable ? (

@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import Slider from "react-slick";
 import user_img from "../../assets/img/user.png";

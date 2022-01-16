@@ -8,8 +8,8 @@ import {
   useCommentsQuery,
   useCreateCommentMutation,
 } from "../../generated/graphql";
-import { getStringToDate } from "../../utils/dateHelper";
 import { getNumToString } from "../../utils/numberHelper";
+import CommentItem from "../CommentItem";
 import Spinner from "../Spinner";
 import styles from "./Comment.module.scss";
 
@@ -29,6 +29,7 @@ const Comment = ({ videoId }: CommentProps) => {
 
   const {
     data,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     loading: queryLoading,
     fetchMore,
     networkStatus,
@@ -104,7 +105,12 @@ const Comment = ({ videoId }: CommentProps) => {
   };
 
   const comments = data?.comments?.paginatedComments;
-  return (
+
+  return !comments && queryLoading ? (
+    <div style={{ marginTop: "48px" }}>
+      <Spinner />
+    </div>
+  ) : (
     <div className={styles.Comment}>
       <h3>{getNumToString(data?.comments?.totalCount)} bình luận</h3>
       <div className={styles["comment-item"]}>
@@ -149,29 +155,20 @@ const Comment = ({ videoId }: CommentProps) => {
           )}
         </div>
       </div>
-      {!comments && (
+      {(!comments || comments.length <= 0) && (
         <div className={styles["no-comment"]}>
           <h3>Chưa có bình luận</h3>
         </div>
       )}
       {comments?.map((comment) => (
-        <div className={styles["comment-item"]} key={comment.id}>
-          <div className={styles["comment-item__img"]}>
-            <img src={comment.user.image_url as string} alt="user" />
-          </div>
-          <div>
-            <h3>
-              {comment.user.lastName + " " + comment.user.firstName}{" "}
-              <small>
-                {getStringToDate(comment.updatedAt)}
-                {comment.createdAt !== comment.updatedAt && "(đã chỉnh sửa)"}
-              </small>
-            </h3>
-            <h4>{comment.content}</h4>
-          </div>
-        </div>
+        <CommentItem id={comment.id} key={comment.id} />
       ))}
-      {data?.comments?.hasMore && (
+      {loadingMore && (
+        <div style={{ margin: "16px 0" }}>
+          <Spinner />
+        </div>
+      )}
+      {data?.comments?.hasMore && !loadingMore && (
         <div
           onClick={() =>
             fetchMore({
@@ -189,7 +186,6 @@ const Comment = ({ videoId }: CommentProps) => {
           Hiển thị thêm bình luận
         </div>
       )}
-      {loadingMore && <Spinner />}
     </div>
   );
 };

@@ -4,12 +4,7 @@ query Comments($getCmtInput: GetCommentInput!) {
     cursor
     hasMore
     paginatedComments {
-      ...commentInfo
-      user {
-        firstName
-        lastName
-        image_url
-      }
+      id
     }
   }
 }

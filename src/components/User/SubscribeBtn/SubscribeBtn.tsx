@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import clsx from "clsx";
 import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
@@ -6,7 +7,6 @@ import { useLogin } from "../../../contexts/UserContext";
 import {
   Action,
   useOnNotifyMutation,
-  UserDocument,
   useSubscribeMutation,
 } from "../../../generated/graphql";
 import { useRouter } from "../../../hooks/useRouter";
@@ -20,15 +20,18 @@ interface SubscribeBtnProps {
     notification: boolean;
   };
   fullName?: string;
+  numSubscribers: number;
 }
 
 const SubscribeBtn = ({
   userId,
   subscribeStatus,
   fullName,
+  numSubscribers,
 }: SubscribeBtnProps) => {
   const {
     state: { details },
+    cache,
   } = useLogin();
   const router = useRouter();
   const { notify } = useContext(ToastContext);
@@ -48,12 +51,32 @@ const SubscribeBtn = ({
         chanelId: userId,
         action: Action.Activate,
       },
-      refetchQueries: [{ query: UserDocument, variables: { userId } }],
     });
 
     if (!response.data?.subscribe.success)
       notify("error", "Có lỗi xảy ra. Vui lòng thử lại!");
-    else notify("success", "Đã đăng ký kênh");
+    else {
+      notify("success", "Đã đăng ký kênh");
+      cache.writeFragment({
+        id: `User:${userId}`,
+        fragment: gql`
+          fragment UserUnSub on User {
+            numSubscribers
+            subscribeStatus {
+              status
+              notification
+            }
+          }
+        `,
+        data: {
+          numSubscribers: numSubscribers + 1,
+          subscribeStatus: {
+            status: true,
+            notification: false,
+          },
+        },
+      });
+    }
   };
 
   const handleUnsubscribeClick = async () => {
@@ -62,12 +85,30 @@ const SubscribeBtn = ({
         chanelId: userId,
         action: Action.Disactivate,
       },
-      refetchQueries: [{ query: UserDocument, variables: { userId } }],
     });
 
     if (!response.data?.subscribe.success)
       notify("error", "Có lỗi xảy ra. Vui lòng thử lại!");
-    else notify("success", "Đã huỷ đăng ký kênh");
+    else {
+      notify("success", "Đã huỷ đăng ký kênh");
+      cache.writeFragment({
+        id: `User:${userId}`,
+        fragment: gql`
+          fragment UserUnSub on User {
+            numSubscribers
+            subscribeStatus {
+              status
+            }
+          }
+        `,
+        data: {
+          numSubscribers: numSubscribers - 1,
+          subscribeStatus: {
+            status: false,
+          },
+        },
+      });
+    }
     setWantUnSub(false);
     setShowMenu(false);
   };
@@ -79,7 +120,6 @@ const SubscribeBtn = ({
           chanelId: userId,
           action: Action.Activate,
         },
-        refetchQueries: [{ query: UserDocument, variables: { userId } }],
       });
 
       if (!response.data?.onNotification.success) {
@@ -87,6 +127,21 @@ const SubscribeBtn = ({
       } else {
         setShowMenu(false);
         notify("success", "Đã bật thông báo");
+        cache.writeFragment({
+          id: `User:${userId}`,
+          fragment: gql`
+            fragment UserUnSub on User {
+              subscribeStatus {
+                notification
+              }
+            }
+          `,
+          data: {
+            subscribeStatus: {
+              notification: true,
+            },
+          },
+        });
       }
     }
   };
@@ -98,7 +153,6 @@ const SubscribeBtn = ({
           chanelId: userId,
           action: Action.Disactivate,
         },
-        refetchQueries: [{ query: UserDocument, variables: { userId } }],
       });
 
       if (!response.data?.onNotification.success) {
@@ -106,6 +160,21 @@ const SubscribeBtn = ({
       } else {
         setShowMenu(false);
         notify("success", "Đã tắt thông báo");
+        cache.writeFragment({
+          id: `User:${userId}`,
+          fragment: gql`
+            fragment UserUnSub on User {
+              subscribeStatus {
+                notification
+              }
+            }
+          `,
+          data: {
+            subscribeStatus: {
+              notification: false,
+            },
+          },
+        });
       }
     }
   };

@@ -96,8 +96,38 @@
 .primary-descript {
   padding: 0 0 16px 66px;
   border-bottom: 2px solid $black3-color;
-  pre {
-    max-width: 100%;
+  p {
     font-size: 16px;
+  }
+}
+
+// responsive
+@media (min-width: 1016px) and (max-width: 1240px) {
+  .primary-video {
+    height: 60vh;
+  }
+}
+
+@media (min-width: 757px) and (max-width: 890px) {
+  .primary-video {
+    height: 58vh;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 756px) {
+  .primary-video {
+    height: 54vh;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 640px) {
+  .primary-video {
+    height: 48vh;
+  }
+}
+
+@media (max-width: 480px) {
+  .primary-video {
+    height: 36vh;
   }
 }

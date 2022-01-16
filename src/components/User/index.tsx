@@ -77,6 +77,7 @@ const User = () => {
             userId={userId}
             subscribeStatus={user.subscribeStatus}
             fullName={user.fullName as string}
+            numSubscribers={user.numSubscribers}
           />
         </div>
         <div className={styles.menu}>

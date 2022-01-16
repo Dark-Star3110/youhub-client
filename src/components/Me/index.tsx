@@ -15,6 +15,8 @@ const Me = () => {
 
   // state
   const [isChange, setIsChange] = useState(false);
+  const [isAvaChange, setAvaChange] = useState(false);
+  const [isBannerChange, setBannerChange] = useState(false);
   const [tab, setTab] = useState("videos");
   const [pgStyle, setPgStyle] = useState({
     left: 0,
@@ -54,7 +56,7 @@ const Me = () => {
       reader.readAsDataURL(files[0]);
 
       setFileImg(file);
-      setIsChange(true);
+      setAvaChange(true);
     }
   };
   // banner
@@ -75,7 +77,7 @@ const Me = () => {
       reader.readAsDataURL(files[0]);
 
       setFileImg(file);
-      setIsChange(true);
+      setBannerChange(true);
     }
   };
 
@@ -165,7 +167,7 @@ const Me = () => {
             </div>
             {tab === "videos" && (
               <div className={styles["content"]}>
-                <MeVideos />
+                <MeVideos userId={details.id} />
               </div>
             )}
 
@@ -193,15 +195,18 @@ const Me = () => {
                         và có kích thước tối đa 4 MB. Hãy dùng tệp PNG hoặc JPG
                         (không dùng ảnh động)
                       </small>
-                      <label htmlFor="img_url">
-                        <h3>THAY ĐỔI</h3>
-                      </label>
-                      <input
-                        type="file"
-                        onChange={handleChooseImg1}
-                        id="img_url"
-                        hidden
-                      />
+                      <div className={styles.control}>
+                        <label htmlFor="img_url">
+                          <h3>THAY ĐỔI</h3>
+                        </label>
+                        <input
+                          type="file"
+                          onChange={handleChooseImg1}
+                          id="img_url"
+                          hidden
+                        />
+                        <button disabled={!isAvaChange}>LƯU</button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -229,15 +234,18 @@ const Me = () => {
                         hãy dùng ảnh có độ phân giải tối thiểu 2048 x 1152 pixel
                         và có kích thước tối đa 6 MB.
                       </small>
-                      <label htmlFor="banner_url">
-                        <h3>TẢI LÊN</h3>
-                      </label>
-                      <input
-                        type="file"
-                        id="banner_url"
-                        onChange={handleChooseImg2}
-                        hidden
-                      />
+                      <div className={styles.control}>
+                        <label htmlFor="banner_url">
+                          <h3>TẢI LÊN</h3>
+                        </label>
+                        <input
+                          type="file"
+                          id="banner_url"
+                          onChange={handleChooseImg2}
+                          hidden
+                        />
+                        <button disabled={!isBannerChange}>LƯU</button>
+                      </div>
                     </div>
                   </div>
                 </div>

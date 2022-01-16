@@ -229,7 +229,7 @@ const Create = () => {
               <textarea
                 id="desciption"
                 className={styles["form-input"] + " " + styles["desp"]}
-                value={inputValue.description}
+                value={inputValue.description ?? ""}
                 onChange={(e) =>
                   setInputValue((pre) => ({
                     ...pre,

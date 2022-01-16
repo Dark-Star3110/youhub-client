@@ -1,4 +1,4 @@
-query UserVideos($limit: Int!, $userId: String!, $cursor: String) {
+query UserVideos($limit: Int!, $userId: ID!, $cursor: String) {
   videoUser(limit: $limit, userId: $userId, cursor: $cursor) {
     totalCount
     cursor

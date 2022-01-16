@@ -252,9 +252,6 @@ const LibraryVideos = ({ slug }: LibraryVideosProps) => {
                   <h3 className={styles["layout-content_title"]}>
                     {video.title}
                   </h3>
-                  <h4 className={styles["layout-content_descript"]}>
-                    {video.description}
-                  </h4>
                   <h4 className={styles["layout-content_autname"]}>
                     {video.user.lastName + " " + video.user.firstName}
                   </h4>

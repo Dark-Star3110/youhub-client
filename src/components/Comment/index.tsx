@@ -8,8 +8,8 @@ import {
   useCommentsQuery,
   useCreateCommentMutation,
 } from "../../generated/graphql";
-import { getStringToDate } from "../../utils/dateHelper";
 import { getNumToString } from "../../utils/numberHelper";
+import CommentItem from "../CommentItem";
 import Spinner from "../Spinner";
 import styles from "./Comment.module.scss";
 
@@ -105,6 +105,7 @@ const Comment = ({ videoId }: CommentProps) => {
   };
 
   const comments = data?.comments?.paginatedComments;
+
   return (
     <div className={styles.Comment}>
       <h3>{getNumToString(data?.comments?.totalCount)} bình luận</h3>
@@ -156,21 +157,7 @@ const Comment = ({ videoId }: CommentProps) => {
         </div>
       )}
       {comments?.map((comment) => (
-        <div className={styles["comment-item"]} key={comment.id}>
-          <div className={styles["comment-item__img"]}>
-            <img src={comment.user.image_url as string} alt="user" />
-          </div>
-          <div>
-            <h3>
-              {comment.user.lastName + " " + comment.user.firstName}{" "}
-              <small>
-                {getStringToDate(comment.updatedAt)}
-                {comment.createdAt !== comment.updatedAt && "(đã chỉnh sửa)"}
-              </small>
-            </h3>
-            <h4>{comment.content}</h4>
-          </div>
-        </div>
+        <CommentItem id={comment.id} key={comment.id} />
       ))}
       {data?.comments?.hasMore && (
         <div

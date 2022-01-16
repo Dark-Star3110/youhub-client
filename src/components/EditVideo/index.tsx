@@ -49,7 +49,7 @@ const EditVideo = () => {
           <textarea
             id="desciption"
             className={styles["form-input"] + " " + styles["desp"]}
-            value={inputValue.description}
+            value={inputValue.description ?? ""}
             onChange={(e) => {
               setIsChange(true);
               setInputValue((pre) => ({

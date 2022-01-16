@@ -1,12 +1,17 @@
-query Find($cursor: String, $query: String!, $limit: Int!) {
-  find(cursor: $cursor, query: $query, limit: $limit) {
+query Find($query: String!, $limit: Int!, $cursor: String) {
+  find(query: $query, limit: $limit, cursor: $cursor) {
     totalCount
     cursor
     hasMore
     paginatedVideos {
       ...videoInfo
       user {
+        id
+        firstName
+        lastName
         fullName
+        image_url
+        role
       }
     }
   }

@@ -11,6 +11,7 @@ query Videos($limit: Int!, $cursor: String) {
         lastName
         fullName
         image_url
+        role
       }
     }
   }

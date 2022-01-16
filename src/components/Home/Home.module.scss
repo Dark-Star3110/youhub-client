@@ -1,3 +1,4 @@
+@import "../../styles/variable.scss";
 .home {
   position: relative;
   top: 60px;
@@ -90,12 +91,55 @@
         .layout-content_descript {
           color: #888;
         }
-        .layout-content_autname {
-          color: #888;
-          font-weight: 200;
+        .layout-content_footer {
+          display: flex;
+          justify-content: space-between;
+
+          .layout-content_autname {
+            color: #888;
+            font-weight: 200;
+          }
+          .layout-content_time {
+            color: #888;
+          }
+          .layout-control {
+            display: none;
+            color: #fff;
+            cursor: pointer;
+            position: relative;
+            padding-left: 10px;
+            .videos-control__menu {
+              position: absolute;
+              top: 24px;
+              right: -10px;
+              width: 150px;
+              margin-top: 4px;
+              background-color: #333;
+              z-index: 1;
+              .menu-item {
+                color: #fff;
+                width: 150px;
+                padding: 8px 36px 8px 16px;
+                cursor: pointer;
+                .menu-icon {
+                  font-size: 20px;
+                  margin-right: 16px;
+                }
+                .menu-title {
+                  font-size: 14px;
+                  font-weight: 500;
+                }
+                &:hover {
+                  background-color: $black4-color;
+                }
+              }
+            }
+          }
         }
-        .layout-content_time {
-          color: #888;
+      }
+      &:hover {
+        .layout-control {
+          display: block !important;
         }
       }
     }

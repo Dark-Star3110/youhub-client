@@ -1,5 +1,5 @@
 import { NetworkStatus } from "@apollo/client";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useLogin } from "../../contexts/UserContext";
 import { useVideosQuery } from "../../generated/graphql";
@@ -13,6 +13,7 @@ import styles from "./Home.module.scss";
 const limit = 12;
 
 const Home = () => {
+  const [videoSelected, setVideoSelected] = useState("");
   const { loading: authLoading } = useCheckAuth();
 
   const router = useRouter();
@@ -80,19 +81,21 @@ const Home = () => {
       <SlickNav />
       <div className={styles.layout}>
         {videos?.map((video, index) => (
-          <Link to={`/watch/${video.id}`} key={index}>
+          <div key={video.id}>
             <div className={styles["layout-item"]}>
-              <div className={styles["layout-img-container"]}>
-                <img
-                  src={
-                    video.thumbnailUrl ||
-                    "https://images6.alphacoders.com/311/thumbbig-311015.webp"
-                  }
-                  alt="img"
-                  className={styles["layout-img"]}
-                />
-                <h2>Xem ngay</h2>
-              </div>
+              <Link to={`/watch/${video.id}`} key={index}>
+                <div className={styles["layout-img-container"]}>
+                  <img
+                    src={
+                      video.thumbnailUrl ||
+                      "https://images6.alphacoders.com/311/thumbbig-311015.webp"
+                    }
+                    alt="img"
+                    className={styles["layout-img"]}
+                  />
+                  <h2>Xem ngay</h2>
+                </div>
+              </Link>
               <div className={styles["layout-content"]}>
                 <div
                   className={styles["layout-content_img"]}
@@ -113,29 +116,62 @@ const Home = () => {
                 </div>
                 <div className={styles["layout-content_inf"]}>
                   <h3 className={styles["layout-content_title"]}>
-                    {video.title}
+                    {video.title.length > 50
+                      ? video.title.slice(0, 50) + "..."
+                      : video.title}
                   </h3>
-                  <h4 className={styles["layout-content_descript"]}>
-                    {video.description}
-                  </h4>
-                  <h4
-                    className={styles["layout-content_autname"]}
-                    title={video.user.fullName || ""}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      router.navigate(`/user/${video.user.id}`);
-                    }}
-                  >
-                    {video.user.fullName}
-                  </h4>
-                  <time className={styles["layout-content_time"]}>
-                    {getStringToDate(video.createdAt)}
-                  </time>
+                  <div className={styles["layout-content_footer"]}>
+                    <div>
+                      <h4
+                        className={styles["layout-content_autname"]}
+                        title={video.user.fullName || ""}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          router.navigate(`/user/${video.user.id}`);
+                        }}
+                      >
+                        {video.user.firstName + " " + video.user.lastName}
+                      </h4>
+                      <time className={styles["layout-content_time"]}>
+                        {getStringToDate(video.createdAt)}
+                      </time>
+                    </div>
+                    <div
+                      className={styles["layout-control"]}
+                      onClick={() => {
+                        setVideoSelected((pre) => {
+                          return video.id === pre ? "" : video.id;
+                        });
+                      }}
+                    >
+                      <i className="fas fa-ellipsis-v"></i>
+                      {video.id === videoSelected && (
+                        <div className={styles["videos-control__menu"]}>
+                          <div className={styles["menu-item"]}>
+                            <span className={styles["menu-icon"]}>
+                              <i className="far fa-clock"></i>
+                            </span>
+                            <span className={styles["menu-title"]}>
+                              Xem sau
+                            </span>
+                          </div>
+                          {video.user.role === "ADMIN" && (
+                            <div className={styles["menu-item"]}>
+                              <span className={styles["menu-icon"]}>
+                                <i className="fas fa-trash-alt"></i>
+                              </span>
+                              <span className={styles["menu-title"]}>Xóa</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </Link>
+          </div>
         ))}
       </div>
       {loadingMore && <Spinner />}

@@ -139,12 +139,30 @@
         }
         .text {
           width: 55%;
-          label {
-            h3 {
-              font-size: 16px;
+          .control {
+            display: flex;
+            label {
+              h3 {
+                font-size: 16px;
+                font-weight: 500;
+                margin: 20px 0;
+                color: #3ea6ff;
+              }
+              margin-right: 20px;
+            }
+            button[disabled] {
+              color: rgba(255, 255, 255, 0.795);
+              cursor: default;
+            }
+            button {
+              font-size: 15px;
               font-weight: 500;
               margin: 20px 0;
               color: #3ea6ff;
+              background-color: #282828;
+              border: none;
+              outline: none;
+              padding-top: 3px;
             }
           }
         }

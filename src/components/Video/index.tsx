@@ -168,7 +168,7 @@ const Video = ({ videoData: video }: VideoProps) => {
         />
       </div>
       <div className={styles["primary-descript"]}>
-        <pre>{video.description}</pre>
+        <p>{video.description}</p>
       </div>
 
       {video.commentable ? (

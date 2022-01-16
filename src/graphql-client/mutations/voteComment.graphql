@@ -1,0 +1,12 @@
+mutation VoteComment(
+  $action: String!
+  $type: VoteType!
+  $voteCommentCommentId2: ID!
+) {
+  voteComment(action: $action, type: $type, commentId: $voteCommentCommentId2) {
+    ...mutationStatuses
+    errors {
+      ...fieldError
+    }
+  }
+}

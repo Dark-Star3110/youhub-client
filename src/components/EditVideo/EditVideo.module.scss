@@ -3,6 +3,8 @@
 
 .content {
   min-height: 85vh;
+  // width: 80vmin;
+  padding: 0 10px;
   @include center();
   small {
     color: #888;
@@ -13,7 +15,7 @@
     .form-item {
       position: relative;
       margin: 16px 0;
-      width: 876px;
+      width: 95vmin;
       .form-input {
         border: 1px solid rgba(136, 136, 136, 0.363);
         border-radius: 4px;

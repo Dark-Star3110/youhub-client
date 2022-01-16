@@ -5,7 +5,10 @@ query Comments($getCmtInput: GetCommentInput!) {
     hasMore
     paginatedComments {
       ...commentInfo
+      numUsersLiked
+      voteStatus
       user {
+        id
         firstName
         lastName
         image_url

@@ -39,7 +39,7 @@ const Me = () => {
   // avatar
   const handleChooseImg1 = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
+    if (files && files.length > 0) {
       const file = files[0];
       if (file.type.indexOf("image/") === -1) {
         notify("warning", "định dạng file không hợp lệ");
@@ -60,7 +60,7 @@ const Me = () => {
   // banner
   const handleChooseImg2 = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files) {
+    if (files && files.length > 0) {
       const file = files[0];
       if (file.type.indexOf("image/") === -1) {
         notify("warning", "định dạng file không hợp lệ");

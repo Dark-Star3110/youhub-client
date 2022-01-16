@@ -54,7 +54,8 @@ function App() {
   const verifyUser = useCallback(async () => {
     const response = await refreshTokenMutation();
     const token = response.data?.refreshToken.token as string | undefined;
-    if (!token) window.localStorage.removeItem("login");
+    if (!response.data?.refreshToken.token)
+      window.localStorage.removeItem("login");
     setUserContext(function (preValues) {
       return {
         ...preValues,

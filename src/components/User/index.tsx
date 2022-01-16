@@ -118,7 +118,7 @@ const User = () => {
             <div className="intro-statistic">
               <h4>Thống kê</h4>
               <h4>Đã tham gia vào {getDateFromString(user.createdAt)}</h4>
-              <h4>69 videos</h4>
+              <h4>{user.numVideo} videos</h4>
             </div>
           </div>
         )}

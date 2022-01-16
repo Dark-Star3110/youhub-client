@@ -2,7 +2,6 @@ fragment userInfo on User {
   id
   username
   email
-  socialId
   firstName
   lastName
   fullName

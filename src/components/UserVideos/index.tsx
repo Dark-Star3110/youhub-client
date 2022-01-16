@@ -50,6 +50,10 @@ const UserVideos: React.FC<UserVideosProps> = ({ userId }) => {
     };
   }, [handleScroll]);
 
+  if (!data?.videoUser && loading) {
+    return <Spinner />;
+  }
+
   if (!data?.videoUser) return <h2>Không có video nào được tải lên</h2>;
 
   return (

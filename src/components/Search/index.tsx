@@ -14,7 +14,7 @@ const Search = () => {
   const { data, loading, fetchMore, networkStatus } = useFindQuery({
     variables: {
       query: key as string,
-      limit: 12,
+      limit: 1,
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -56,6 +56,8 @@ const Search = () => {
         <Spinner />
       </h1>
     );
+
+  if (!loading && !data?.find) return <h2>Không có kết quả</h2>;
 
   return (
     <div className={styles.container}>

@@ -1,6 +1,6 @@
 export const getStringToDate = (value: string): string => {
   const time = new Date(value);
-  const diff = Date.now() - time.getTime();
+  const diff = Date.now() - (time.getTime() - 7 * 60 * 60 * 1000);
   const diff_min = Math.floor(diff / (60 * 1000));
   // console.log(t);
 

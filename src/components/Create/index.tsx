@@ -13,7 +13,8 @@ const serverPort = "http://localhost:8000/video/upload";
 const Create = () => {
   useCheckAuth();
   const {
-    state: { token },
+    state: { token, details },
+    socket,
   } = useLogin();
   const [fileVideo, setFileVideo] = useState<File>();
   const [fileImg, setFileImg] = useState<File>();
@@ -104,6 +105,11 @@ const Create = () => {
         if (res_graph.data?.createVideo.video) {
           setLoading(false);
           notify("success", "đăng video thành công");
+          socket.emit(
+            "upload-video",
+            details?.id,
+            res_graph.data?.createVideo.video.id
+          );
           setTimeout(() => router.push("/"), 1000);
         } else {
           setLoading(false);

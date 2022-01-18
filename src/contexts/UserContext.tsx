@@ -91,6 +91,30 @@ const cache = new InMemoryCache({
                 return existing;
               }
             }
+            let paginatedVideos: Video[] = [];
+            if (existing && existing.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                existing.paginatedVideos
+              );
+            }
+            if (incoming && incoming.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                incoming.paginatedVideos
+              );
+            }
+            return { ...incoming, paginatedVideos };
+          },
+        },
+        find: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
 
             let paginatedVideos: Video[] = [];
             if (existing && existing.paginatedVideos) {

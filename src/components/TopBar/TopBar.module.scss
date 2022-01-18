@@ -118,6 +118,17 @@
     .create-btn,
     .noti-btn {
       position: relative;
+
+      .noti-num {
+        @include center;
+        position: absolute;
+        top: -8px;
+        right: 2px;
+        width: 18px;
+        height: 18px;
+        border-radius: 100rem;
+        background-color: red;
+      }
     }
     .create-btn::before {
       @include bottom_tail("tạo video");

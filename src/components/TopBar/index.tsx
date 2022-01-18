@@ -1,47 +1,46 @@
-import {
-  ChangeEvent,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { ExtraNavContext } from "../../contexts/ExtraNavContext";
 import { NavContext } from "../../contexts/NavContext";
-
+import { ToastContext } from "../../contexts/ToastContext";
+import { useLogin } from "../../contexts/UserContext";
+import {
+  useLogoutMutation,
+  useNotificationLazyQuery,
+} from "../../generated/graphql";
+import { useRouter } from "../../hooks/useRouter";
+import Notify from "../Notify";
+import Spinner from "../Spinner";
 //use micro
 // import SpeechRecognition, {
 //   useSpeechRecognition,
 // } from "react-speech-recognition";
 import styles from "./TopBar.module.scss";
-import { useLogin } from "../../contexts/UserContext";
-import { useLogoutMutation, useVideosQuery } from "../../generated/graphql";
-import { useRouter } from "../../hooks/useRouter";
-import { ExtraNavContext } from "../../contexts/ExtraNavContext";
-import Spinner from "../Spinner";
-import { Reference } from "@apollo/client/cache";
-import { gql, NetworkStatus } from "@apollo/client";
-import { getStringToDate } from "../../utils/dateHelper";
 
 interface TopBarProps {
   type: string;
 }
-const limit = 12;
 
 const TopBar = ({ type }: TopBarProps) => {
   // let notiInfo;
   // state
   const [show, setShow] = useState<"" | "create" | "user" | "noti">("");
   const [searchInput, setSearchInput] = useState("");
+  const [numNoti, setNumNoti] = useState<number>(0);
 
   const router = useRouter();
   // context
   const { toggleNav } = useContext(NavContext);
   const { toggleExtraNav } = useContext(ExtraNavContext);
+  const { notify } = useContext(ToastContext);
   const {
     state: { details },
     setState: setUserContext,
     cache,
+    socket,
   } = useLogin();
+
+  const [notiQuery] = useNotificationLazyQuery();
 
   const [logoutMutation] = useLogoutMutation();
 
@@ -53,30 +52,12 @@ const TopBar = ({ type }: TopBarProps) => {
         details: undefined,
         token: undefined,
       }));
-      cache.evict({ fieldName: "me" });
-      cache.modify({
-        fields: {
-          videos(existing) {
-            existing.paginatedVideos.forEach((video: Reference) => {
-              cache.writeFragment({
-                id: video.__ref,
-                fragment: gql`
-                  fragment VoteVideo on Video {
-                    voteStatus
-                  }
-                `,
-                data: {
-                  voteStatus: 0,
-                },
-              });
-            });
-          },
-        },
-      });
+      await cache.reset();
       window.localStorage.setItem("logout", Date.now().toString());
       window.localStorage.removeItem("login");
-
       router.push("/");
+    } else {
+      notify("error", "Có lỗi xảy ra, vui lòng thử lại!😌");
     }
     // check error here
   };
@@ -85,55 +66,53 @@ const TopBar = ({ type }: TopBarProps) => {
     setSearchInput(e.target.value);
   };
 
-  // noti 👀 ======================================================
-  // lay tam video home 😃
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { data, loading, fetchMore, networkStatus } = useVideosQuery({
-    variables: {
-      limit,
-    },
-    notifyOnNetworkStatusChange: true,
-  });
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const loadingMore = networkStatus === NetworkStatus.fetchMore;
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const loadMore = () => {
-    fetchMore({ variables: { cursor: data?.videos?.cursor } });
-  };
-
-  const handleScroll = useCallback(() => {
-    let condition: number = 0;
-    if (document.documentElement.scrollHeight < 1500) condition = 0.38;
-    else if (document.documentElement.scrollHeight < 2500) condition = 0.66;
-    else if (document.documentElement.scrollHeight < 3500) condition = 0.8;
-    else condition = 0.9;
-    if (
-      window.scrollY / document.documentElement.scrollHeight >= condition &&
-      data?.videos?.hasMore
-    ) {
-      if (!loading) {
-        fetchMore({ variables: { cursor: data?.videos?.cursor } });
-      }
+  useEffect(() => {
+    if (details?.id) {
+      socket.emit("get-num-noti", details.id);
     }
-  }, [data?.videos?.cursor, fetchMore, data?.videos?.hasMore, loading]);
+  }, [socket, details?.id]);
 
   useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, [handleScroll]);
+    socket.once("return-num-noti", (numNoti: number) => {
+      setNumNoti(numNoti);
+    });
+  }, [socket]);
 
-  const videos = data?.videos?.paginatedVideos;
-
-  if (loading && !data?.videos)
-    return (
-      <h1>
-        <Spinner />
-      </h1>
-    );
+  useEffect(() => {
+    socket.on("notify", async (notiId: string) => {
+      const response = await notiQuery({
+        variables: { id: notiId },
+      });
+      console.log(response);
+      if (!response.data || !response.data.notification) return;
+      else {
+        cache.modify({
+          fields: {
+            notifications(existing) {
+              const refNoti = `Notification:${response.data?.notification?._id}`;
+              if (!existing)
+                return {
+                  totalCount: 1,
+                  cursor: 1,
+                  hasMore: false,
+                  paginatedNotification: [{ __ref: refNoti }],
+                };
+              else
+                return {
+                  ...existing,
+                  totalCount: existing.totalCount + 1,
+                  paginatedNotification: [
+                    { __ref: refNoti },
+                    ...existing.paginatedNotification,
+                  ],
+                };
+            },
+          },
+        });
+        setNumNoti((prev) => prev + 1);
+      }
+    });
+  }, [socket, notiQuery, cache]);
 
   return (
     <div className={styles.topbar}>
@@ -188,6 +167,8 @@ const TopBar = ({ type }: TopBarProps) => {
               className={styles["noti-btn"]}
               onClick={() => {
                 setShow(show === "noti" ? "" : "noti");
+                setNumNoti(0);
+                socket.emit("read-notify", details.id);
               }}
             >
               <i
@@ -198,6 +179,9 @@ const TopBar = ({ type }: TopBarProps) => {
                   " far fa-bell"
                 }
               ></i>
+              {numNoti > 0 && (
+                <div className={styles["noti-num"]}>{numNoti}</div>
+              )}
             </div>
             <div
               className={styles["user-item-img"]}
@@ -305,33 +289,7 @@ const TopBar = ({ type }: TopBarProps) => {
           )}
           {show === "noti" && (
             <div className="fixed-wrapper" onClick={() => setShow("")}>
-              <div className={styles["noti-menu"]}>
-                <h3>Thông báo</h3>
-                {videos?.map((video) => (
-                  <Link to={`video/${video.id}`} key={video.id}>
-                    <div className={styles["noti-item"]}>
-                      <div className={styles["noti-item__authorImg"]}>
-                        <img
-                          src={video.user.image_url as string}
-                          alt={video.user.fullName as string}
-                        />
-                      </div>
-                      <div className={styles["noti-item__content"]}>
-                        <h4>
-                          {video.user.fullName} đã vừa tải lên: {video.title}{" "}
-                        </h4>
-                        <small>{getStringToDate(video.createdAt)}</small>
-                      </div>
-                      <div className={styles["noti-item__videoImg"]}>
-                        <img
-                          src={video.thumbnailUrl as string}
-                          alt={video.title}
-                        />
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
+              <Notify />
             </div>
           )}
         </>

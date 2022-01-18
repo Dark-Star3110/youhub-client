@@ -89,6 +89,7 @@ export type Mutation = {
   changePassword: Scalars['Boolean'];
   createComment: CommentMutationResponse;
   createVideo: VideoMutationResponse;
+  deleteComment: CommentMutationResponse;
   deleteVideo: VideoMutationResponse;
   forgotPassword: Scalars['Boolean'];
   login: UserMutationResponse;
@@ -114,13 +115,18 @@ export type MutationChangePasswordArgs = {
 
 export type MutationCreateCommentArgs = {
   createCommentInput: CreateCommentInput;
-  parentCommentId?: InputMaybe<Scalars['String']>;
+  parentCommentId?: InputMaybe<Scalars['ID']>;
   videoId: Scalars['ID'];
 };
 
 
 export type MutationCreateVideoArgs = {
   createVideoInput: CreateVideoInput;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  commentId: Scalars['ID'];
 };
 
 
@@ -158,7 +164,7 @@ export type MutationSubscribeArgs = {
 
 
 export type MutationUpdateCommentArgs = {
-  commentId: Scalars['String'];
+  commentId: Scalars['ID'];
   updateCommentInput: UpdateCommentInput;
 };
 
@@ -199,11 +205,32 @@ export type MutationResponse = {
   success: Scalars['Boolean'];
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  _id: Scalars['ID'];
+  avatar_url?: Maybe<Scalars['String']>;
+  commentId?: Maybe<Scalars['String']>;
+  content: Scalars['String'];
+  createdAt: Scalars['String'];
+  readed: Scalars['Boolean'];
+  thumnail?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+  videoId?: Maybe<Scalars['String']>;
+};
+
 export type PaginatedComments = PaginatedResponse & {
   __typename?: 'PaginatedComments';
   cursor: Scalars['DateTime'];
   hasMore: Scalars['Boolean'];
   paginatedComments: Array<Comment>;
+  totalCount: Scalars['Float'];
+};
+
+export type PaginatedNotification = {
+  __typename?: 'PaginatedNotification';
+  cursor: Scalars['Int'];
+  hasMore: Scalars['Boolean'];
+  paginatedNotification: Array<Notification>;
   totalCount: Scalars['Float'];
 };
 
@@ -228,6 +255,8 @@ export type Query = {
   find?: Maybe<PaginatedVideos>;
   hello: Scalars['String'];
   me?: Maybe<User>;
+  notification?: Maybe<Notification>;
+  notifications?: Maybe<PaginatedNotification>;
   user?: Maybe<User>;
   video?: Maybe<Video>;
   videoUser?: Maybe<PaginatedVideos>;
@@ -251,6 +280,17 @@ export type QueryFindArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
   query: Scalars['String'];
+};
+
+
+export type QueryNotificationArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryNotificationsArgs = {
+  cursor?: InputMaybe<Scalars['Int']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -404,6 +444,8 @@ export type CommentInfoFragment = { __typename?: 'Comment', id: string, content:
 
 export type FieldErrorFragment = { __typename?: 'FieldError', type: string, error: string };
 
+export type NotificationInfoFragment = { __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string };
+
 type MutationStatuses_CommentMutationResponse_Fragment = { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
 type MutationStatuses_UserMutationResponse_Fragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined };
@@ -427,7 +469,7 @@ export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: 
 export type CreateCommentMutationVariables = Exact<{
   videoId: Scalars['ID'];
   createCommentInput: CreateCommentInput;
-  parentCommentId?: InputMaybe<Scalars['String']>;
+  parentCommentId?: InputMaybe<Scalars['ID']>;
 }>;
 
 
@@ -490,7 +532,7 @@ export type SubscribeMutation = { __typename?: 'Mutation', subscribe: { __typena
 
 export type UpdateCommentMutationVariables = Exact<{
   updateCommentInput: UpdateCommentInput;
-  commentId: Scalars['String'];
+  commentId: Scalars['ID'];
 }>;
 
 
@@ -542,6 +584,21 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string } | null | undefined };
 
+export type NotificationQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type NotificationQuery = { __typename?: 'Query', notification?: { __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string } | null | undefined };
+
+export type NotificationsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type NotificationsQuery = { __typename?: 'Query', notifications?: { __typename?: 'PaginatedNotification', totalCount: number, cursor: number, hasMore: boolean, paginatedNotification: Array<{ __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string }> } | null | undefined };
+
 export type UserQueryVariables = Exact<{
   userId: Scalars['ID'];
 }>;
@@ -591,6 +648,19 @@ export const FieldErrorFragmentDoc = gql`
     fragment fieldError on FieldError {
   type
   error
+}
+    `;
+export const NotificationInfoFragmentDoc = gql`
+    fragment notificationInfo on Notification {
+  _id
+  type
+  videoId
+  commentId
+  readed
+  content
+  avatar_url
+  thumnail
+  createdAt
 }
     `;
 export const MutationStatusesFragmentDoc = gql`
@@ -661,7 +731,7 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreateCommentDocument = gql`
-    mutation CreateComment($videoId: ID!, $createCommentInput: CreateCommentInput!, $parentCommentId: String) {
+    mutation CreateComment($videoId: ID!, $createCommentInput: CreateCommentInput!, $parentCommentId: ID) {
   createComment(
     videoId: $videoId
     createCommentInput: $createCommentInput
@@ -998,7 +1068,7 @@ export type SubscribeMutationHookResult = ReturnType<typeof useSubscribeMutation
 export type SubscribeMutationResult = Apollo.MutationResult<SubscribeMutation>;
 export type SubscribeMutationOptions = Apollo.BaseMutationOptions<SubscribeMutation, SubscribeMutationVariables>;
 export const UpdateCommentDocument = gql`
-    mutation UpdateComment($updateCommentInput: UpdateCommentInput!, $commentId: String!) {
+    mutation UpdateComment($updateCommentInput: UpdateCommentInput!, $commentId: ID!) {
   updateComment(updateCommentInput: $updateCommentInput, commentId: $commentId) {
     ...mutationStatuses
   }
@@ -1276,6 +1346,82 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const NotificationDocument = gql`
+    query Notification($id: ID!) {
+  notification(id: $id) {
+    ...notificationInfo
+  }
+}
+    ${NotificationInfoFragmentDoc}`;
+
+/**
+ * __useNotificationQuery__
+ *
+ * To run a query within a React component, call `useNotificationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useNotificationQuery(baseOptions: Apollo.QueryHookOptions<NotificationQuery, NotificationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NotificationQuery, NotificationQueryVariables>(NotificationDocument, options);
+      }
+export function useNotificationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotificationQuery, NotificationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NotificationQuery, NotificationQueryVariables>(NotificationDocument, options);
+        }
+export type NotificationQueryHookResult = ReturnType<typeof useNotificationQuery>;
+export type NotificationLazyQueryHookResult = ReturnType<typeof useNotificationLazyQuery>;
+export type NotificationQueryResult = Apollo.QueryResult<NotificationQuery, NotificationQueryVariables>;
+export const NotificationsDocument = gql`
+    query Notifications($limit: Int!, $cursor: Int) {
+  notifications(limit: $limit, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedNotification {
+      ...notificationInfo
+    }
+  }
+}
+    ${NotificationInfoFragmentDoc}`;
+
+/**
+ * __useNotificationsQuery__
+ *
+ * To run a query within a React component, call `useNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useNotificationsQuery(baseOptions: Apollo.QueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, options);
+      }
+export function useNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, options);
+        }
+export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQuery>;
+export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
+export type NotificationsQueryResult = Apollo.QueryResult<NotificationsQuery, NotificationsQueryVariables>;
 export const UserDocument = gql`
     query User($userId: ID!) {
   user(userId: $userId) {

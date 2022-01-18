@@ -43,7 +43,11 @@ function App() {
   // context
   const { action } = useContext(NavContext);
   const { Eaction, toggleExtraNav } = useContext(ExtraNavContext);
-  const { setState: setUserContext } = useLogin();
+  const {
+    state: { details },
+    setState: setUserContext,
+    socket,
+  } = useLogin();
 
   // location
   const router = useRouter();
@@ -62,12 +66,13 @@ function App() {
         token,
       };
     });
-    setTimeout(verifyUser, 10 * 60 * 1000);
+    setTimeout(verifyUser, 14 * 60 * 1000);
   }, [setUserContext, refreshTokenMutation]);
 
   useLayoutEffect(() => {
     verifyUser(); /*  */
   }, [verifyUser]);
+
   // sync login
   const syncLogin = useCallback((event) => {
     if (event.key === "login") {
@@ -115,6 +120,13 @@ function App() {
       setDisplay("");
     }
   }, [router.location.pathname]);
+
+  useEffect(() => {
+    socket.emit("online", details?.id);
+    return () => {
+      socket.emit("offline", details?.id);
+    };
+  }, [socket, details?.id]);
 
   return (
     <div className="container">

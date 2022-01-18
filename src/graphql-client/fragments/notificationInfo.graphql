@@ -1,0 +1,11 @@
+fragment notificationInfo on Notification {
+  _id
+  type
+  videoId
+  commentId
+  readed
+  content
+  avatar_url
+  thumnail
+  createdAt
+}

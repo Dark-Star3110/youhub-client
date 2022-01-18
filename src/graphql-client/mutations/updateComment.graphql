@@ -1,6 +1,6 @@
 mutation UpdateComment(
   $updateCommentInput: UpdateCommentInput!
-  $commentId: String!
+  $commentId: ID!
 ) {
   updateComment(
     updateCommentInput: $updateCommentInput

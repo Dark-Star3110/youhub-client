@@ -89,6 +89,7 @@ export type Mutation = {
   changePassword: Scalars['Boolean'];
   createComment: CommentMutationResponse;
   createVideo: VideoMutationResponse;
+  deleteComment: CommentMutationResponse;
   deleteVideo: VideoMutationResponse;
   forgotPassword: Scalars['Boolean'];
   login: UserMutationResponse;
@@ -114,13 +115,18 @@ export type MutationChangePasswordArgs = {
 
 export type MutationCreateCommentArgs = {
   createCommentInput: CreateCommentInput;
-  parentCommentId?: InputMaybe<Scalars['String']>;
+  parentCommentId?: InputMaybe<Scalars['ID']>;
   videoId: Scalars['ID'];
 };
 
 
 export type MutationCreateVideoArgs = {
   createVideoInput: CreateVideoInput;
+};
+
+
+export type MutationDeleteCommentArgs = {
+  commentId: Scalars['ID'];
 };
 
 
@@ -158,7 +164,7 @@ export type MutationSubscribeArgs = {
 
 
 export type MutationUpdateCommentArgs = {
-  commentId: Scalars['String'];
+  commentId: Scalars['ID'];
   updateCommentInput: UpdateCommentInput;
 };
 
@@ -199,11 +205,32 @@ export type MutationResponse = {
   success: Scalars['Boolean'];
 };
 
+export type Notification = {
+  __typename?: 'Notification';
+  _id: Scalars['ID'];
+  avatar_url?: Maybe<Scalars['String']>;
+  commentId?: Maybe<Scalars['String']>;
+  content: Scalars['String'];
+  createdAt: Scalars['String'];
+  readed: Scalars['Boolean'];
+  thumnail?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+  videoId?: Maybe<Scalars['String']>;
+};
+
 export type PaginatedComments = PaginatedResponse & {
   __typename?: 'PaginatedComments';
   cursor: Scalars['DateTime'];
   hasMore: Scalars['Boolean'];
   paginatedComments: Array<Comment>;
+  totalCount: Scalars['Float'];
+};
+
+export type PaginatedNotification = {
+  __typename?: 'PaginatedNotification';
+  cursor: Scalars['Int'];
+  hasMore: Scalars['Boolean'];
+  paginatedNotification: Array<Notification>;
   totalCount: Scalars['Float'];
 };
 
@@ -228,6 +255,8 @@ export type Query = {
   find?: Maybe<PaginatedVideos>;
   hello: Scalars['String'];
   me?: Maybe<User>;
+  notification?: Maybe<Notification>;
+  notifications?: Maybe<PaginatedNotification>;
   user?: Maybe<User>;
   video?: Maybe<Video>;
   videoUser?: Maybe<PaginatedVideos>;
@@ -251,6 +280,17 @@ export type QueryFindArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
   query: Scalars['String'];
+};
+
+
+export type QueryNotificationArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryNotificationsArgs = {
+  cursor?: InputMaybe<Scalars['Int']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -293,7 +333,7 @@ export type SignupInput = {
   dateOfBirth?: InputMaybe<Scalars['DateTime']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
-  lastName?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
 };
@@ -427,7 +467,7 @@ export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: 
 export type CreateCommentMutationVariables = Exact<{
   videoId: Scalars['ID'];
   createCommentInput: CreateCommentInput;
-  parentCommentId?: InputMaybe<Scalars['String']>;
+  parentCommentId?: InputMaybe<Scalars['ID']>;
 }>;
 
 
@@ -490,7 +530,7 @@ export type SubscribeMutation = { __typename?: 'Mutation', subscribe: { __typena
 
 export type UpdateCommentMutationVariables = Exact<{
   updateCommentInput: UpdateCommentInput;
-  commentId: Scalars['String'];
+  commentId: Scalars['ID'];
 }>;
 
 
@@ -661,7 +701,7 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const CreateCommentDocument = gql`
-    mutation CreateComment($videoId: ID!, $createCommentInput: CreateCommentInput!, $parentCommentId: String) {
+    mutation CreateComment($videoId: ID!, $createCommentInput: CreateCommentInput!, $parentCommentId: ID) {
   createComment(
     videoId: $videoId
     createCommentInput: $createCommentInput
@@ -998,7 +1038,7 @@ export type SubscribeMutationHookResult = ReturnType<typeof useSubscribeMutation
 export type SubscribeMutationResult = Apollo.MutationResult<SubscribeMutation>;
 export type SubscribeMutationOptions = Apollo.BaseMutationOptions<SubscribeMutation, SubscribeMutationVariables>;
 export const UpdateCommentDocument = gql`
-    mutation UpdateComment($updateCommentInput: UpdateCommentInput!, $commentId: String!) {
+    mutation UpdateComment($updateCommentInput: UpdateCommentInput!, $commentId: ID!) {
   updateComment(updateCommentInput: $updateCommentInput, commentId: $commentId) {
     ...mutationStatuses
   }

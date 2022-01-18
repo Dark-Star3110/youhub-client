@@ -11,6 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ChangePass from "./components/ChangePass";
 import Contact from "./components/Contact";
 import Create from "./components/Create";
+import Donante from "./components/Donate";
 import EditVideo from "./components/EditVideo";
 import Explore from "./components/Explore";
 import ExtraNav from "./components/ExtraNav";
@@ -141,6 +142,7 @@ function App() {
           <Route path="/me" element={<Me />} />
           <Route path="/forgot" element={<Forgot />} />
           <Route path="/change-password" element={<ChangePass />} />
+          <Route path="/donate" element={<Donante />} />
           <Route
             path="/"
             element={

@@ -246,14 +246,21 @@ const TopBar = ({ type }: TopBarProps) => {
                     </span>
                   </div>
                 </Link>
-                <div className={styles["user-info-item"]}>
-                  <span className={styles["user-info-icon"]}>
-                    <i className="fas fa-donate"></i>
-                  </span>
-                  <span className={styles["user-info-title"]}>
-                    Giao dịch và mua gói thành viên
-                  </span>
-                </div>
+                <Link to="/donate">
+                  <div
+                    className={styles["user-info-item"]}
+                    onClick={() => {
+                      setShow(show === "user" ? "" : "user");
+                    }}
+                  >
+                    <span className={styles["user-info-icon"]}>
+                      <i className="fas fa-donate"></i>
+                    </span>
+                    <span className={styles["user-info-title"]}>
+                      Giao dịch và mua gói thành viên
+                    </span>
+                  </div>
+                </Link>
                 <div
                   className={styles["user-info-item"]}
                   onClick={logoutHandler}
@@ -308,8 +315,12 @@ const TopBar = ({ type }: TopBarProps) => {
               <div className={styles["noti-menu"]}>
                 <h3>Thông báo</h3>
                 {videos?.map((video) => (
-                  <Link to={`video/${video.id}`} key={video.id}>
-                    <div className={styles["noti-item"]}>
+                  <Link to={`watch/${video.id}`} key={video.id}>
+                    <div
+                      className={styles["noti-item"]}
+                      onClick={() => console.log("click")}
+                    >
+                      <div className={styles["noti-item__status"]}></div>
                       <div className={styles["noti-item__authorImg"]}>
                         <img
                           src={video.user.image_url as string}

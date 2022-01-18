@@ -1,7 +1,7 @@
 mutation CreateComment(
   $videoId: ID!
   $createCommentInput: CreateCommentInput!
-  $parentCommentId: String
+  $parentCommentId: ID
 ) {
   createComment(
     videoId: $videoId

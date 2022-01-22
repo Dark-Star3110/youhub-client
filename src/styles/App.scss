@@ -100,7 +100,8 @@ body {
 }
 
 .App.full,
-.App.watch {
+.App.watch,
+.App.active.watch {
   transition: 0s;
   width: 100%;
   left: 0;

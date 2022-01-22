@@ -1,0 +1,5 @@
+mutation UpdateUserInfo($updateInput: UpdateUserInfoInput!) {
+  updateInfo(updateInput: $updateInput) {
+    ...mutationStatuses
+  }
+}

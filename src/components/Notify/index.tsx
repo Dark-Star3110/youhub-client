@@ -1,3 +1,4 @@
+import { gql } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { useLogin } from "../../contexts/UserContext";
 import { useNotificationsQuery } from "../../generated/graphql";
@@ -8,7 +9,10 @@ import styles from "./Notify.module.scss";
 const Notify = () => {
   const {
     state: { details },
+    socket,
+    cache,
   } = useLogin();
+
   const { data, loading } = useNotificationsQuery({
     variables: {
       limit: 10,
@@ -25,7 +29,7 @@ const Notify = () => {
       );
     else
       return (
-        <div className={styles["noti-menu"]}>
+        <div className={styles["noti-menu"] + " " + styles["noti-none"]}>
           <h2>Không có thông báo</h2>
         </div>
       );
@@ -35,7 +39,26 @@ const Notify = () => {
       <h3>Thông báo</h3>
       {data.notifications.paginatedNotification.map((noti) => (
         <Link to={`watch/${noti.videoId}`} key={noti._id}>
-          <div className={styles["noti-item"]}>
+          <div
+            className={styles["noti-item"]}
+            onClick={() => {
+              console.log(noti._id);
+
+              socket.emit("read-one-notify", noti._id);
+              cache.writeFragment({
+                id: `Notification:${noti._id}`,
+                fragment: gql`
+                  fragment notificationInfo on Notification {
+                    readed
+                  }
+                `,
+                data: { readed: true },
+              });
+            }}
+          >
+            {!noti.readed && (
+              <div className={styles["noti-item__status"]}></div>
+            )}
             <div className={styles["noti-item__authorImg"]}>
               <img src={noti.avatar_url as string} alt="user" />
             </div>

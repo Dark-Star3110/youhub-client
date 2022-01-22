@@ -3,6 +3,7 @@ import { ToastContext } from "../../contexts/ToastContext";
 import {
   Action,
   useCommentQuery,
+  useDeleteCommentMutation,
   useUpdateCommentMutation,
   useVoteCommentMutation,
   VoteType,
@@ -41,12 +42,30 @@ const CommentItem = ({ id }: CommentItemProps) => {
     },
   });
   const comment = data?.comment;
+  const { notify } = useContext(ToastContext);
+
+  // delete Comment
+  const [deleteCommentMutation] = useDeleteCommentMutation();
+  const handleDeleteCmt = async () => {
+    const response = await deleteCommentMutation({
+      variables: { commentId: comment?.id as string },
+    });
+    if (response.data?.deleteComment.success) {
+      notify("success", "xóa bình luận thành công 🙂");
+      cache.evict({ id: `Comment:${cmtSelected}` });
+      cache.modify({
+        fields: {
+          comments(existing) {
+            return { ...existing, totalCount: existing.totalCount - 1 };
+          },
+        },
+      });
+    }
+  };
 
   // like comment =================================================
   const [action, setAction] = useState<"like" | "dislike" | "">("");
   const [voteCommentMutation /* , { loading } */] = useVoteCommentMutation();
-
-  const { notify } = useContext(ToastContext);
 
   const handleLike = async () => {
     const newAction = action === "like" ? "" : "like";
@@ -252,13 +271,15 @@ const CommentItem = ({ id }: CommentItemProps) => {
                 <i className="fas fa-heart-broken"></i>
               </span>
             )}
-            <span>
-              {comment.user.id === details?.id ? (
+            {comment.user.id === details?.id ? (
+              <span onClick={handleDeleteCmt}>
                 <i className="far fa-trash-alt"></i>
-              ) : (
+              </span>
+            ) : (
+              <span>
                 <i className="far fa-comment-dots"></i>
-              )}
-            </span>
+              </span>
+            )}
           </div>
         </div>
       )}

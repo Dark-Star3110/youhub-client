@@ -223,6 +223,14 @@
             background-color: #282828;
             color: #6a5af9;
           }
+          &.form-half {
+            display: flex;
+            justify-content: space-between;
+            .form-item__half {
+              position: relative;
+              width: 48%;
+            }
+          }
         }
       }
     }

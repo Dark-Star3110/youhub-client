@@ -12,9 +12,9 @@ import { useRouter } from "../../hooks/useRouter";
 import Notify from "../Notify";
 import Spinner from "../Spinner";
 //use micro
-// import SpeechRecognition, {
-//   useSpeechRecognition,
-// } from "react-speech-recognition";
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 import styles from "./TopBar.module.scss";
 
 interface TopBarProps {
@@ -23,6 +23,9 @@ interface TopBarProps {
 
 const TopBar = ({ type }: TopBarProps) => {
   // let notiInfo;
+  // voice search
+  const { transcript, listening, browserSupportsSpeechRecognition } =
+    useSpeechRecognition();
   // state
   const [show, setShow] = useState<"" | "create" | "user" | "noti">("");
   const [searchInput, setSearchInput] = useState("");
@@ -114,6 +117,20 @@ const TopBar = ({ type }: TopBarProps) => {
     });
   }, [socket, notiQuery, cache]);
 
+  // voice search
+  useEffect(() => {
+    if (!browserSupportsSpeechRecognition) {
+      notify("error", "Trình duyệt bạn sử dụng không hỗ trợ chức năng này");
+    }
+    if (listening) {
+      setSearchInput(transcript);
+    }
+    if (!listening && transcript !== "") {
+      notify("success", "nghe rồi con điz 🤡");
+      SpeechRecognition.stopListening();
+    }
+  }, [browserSupportsSpeechRecognition, listening, transcript, notify]);
+
   return (
     <div className={styles.topbar}>
       {type === "watch" ? (
@@ -137,7 +154,10 @@ const TopBar = ({ type }: TopBarProps) => {
             <i className="fas fa-search"></i>
           </button>
         </Link>
-        <span className={styles.voice}>
+        <span
+          className={styles.voice}
+          onClick={async () => await SpeechRecognition.startListening()}
+        >
           <i className="fas fa-microphone"></i>
         </span>
       </div>
@@ -168,7 +188,7 @@ const TopBar = ({ type }: TopBarProps) => {
               onClick={() => {
                 setShow(show === "noti" ? "" : "noti");
                 setNumNoti(0);
-                socket.emit("read-notify", details.id);
+                // socket.emit("read-notify", details.id);
               }}
             >
               <i
@@ -235,14 +255,21 @@ const TopBar = ({ type }: TopBarProps) => {
                     </span>
                   </div>
                 </Link>
-                <div className={styles["user-info-item"]}>
-                  <span className={styles["user-info-icon"]}>
-                    <i className="fas fa-donate"></i>
-                  </span>
-                  <span className={styles["user-info-title"]}>
-                    Giao dịch và mua gói thành viên
-                  </span>
-                </div>
+                <Link to="/donate">
+                  <div
+                    className={styles["user-info-item"]}
+                    onClick={() => {
+                      setShow(show === "user" ? "" : "user");
+                    }}
+                  >
+                    <span className={styles["user-info-icon"]}>
+                      <i className="fas fa-donate"></i>
+                    </span>
+                    <span className={styles["user-info-title"]}>
+                      Giao dịch và mua gói thành viên
+                    </span>
+                  </div>
+                </Link>
                 <div
                   className={styles["user-info-item"]}
                   onClick={logoutHandler}
@@ -280,6 +307,10 @@ const TopBar = ({ type }: TopBarProps) => {
                   className={styles["video-create-item"]}
                   onClick={() => {
                     setShow(show === "create" ? "" : "create");
+                    notify(
+                      "warning",
+                      "Vì đã hết hạn deadline nên chức năng này sẽ được phát triển trong tương lai 😭"
+                    );
                   }}
                 >
                   <span className={styles["video-create-icon"]}>

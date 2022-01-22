@@ -118,13 +118,13 @@ const Create = () => {
           );
           setTimeout(() => router.push("/"), 1000);
         } else {
-          setLoading(false);
           notify("error", "có lỗi xảy ra vui lòng thử lại!");
+          setLoading(false);
         }
       } catch (e) {
         console.log(e);
-        setLoading(false);
         notify("error", "có lỗi xảy ra vui lòng thử lại!");
+        setLoading(false);
       }
     }
   };
@@ -179,46 +179,6 @@ const Create = () => {
           <i className="fas fa-cloud-upload-alt"></i>
           <p>Chọn file để tải lên</p>
         </label>
-        {fileVideo && percent !== 100 && (
-          <section className={styles["progress-area"]}>
-            <li className={styles["row"]}>
-              <i className="fas fa-file-video"></i>
-              <div className={styles["content"]}>
-                <div className={styles["details"]}>
-                  <span
-                    className={styles["name"]}
-                  >{`${fileVideo?.name} ~ uploading`}</span>
-                  <span className={styles["percent"]}>{`${percent}%`}</span>
-                </div>
-                <div className={styles["progress-bar"]}>
-                  <div
-                    className={styles["progress"]}
-                    style={{ width: `${percent}%` }}
-                  ></div>
-                </div>
-              </div>
-            </li>
-          </section>
-        )}
-        {percent === 100 && (
-          <section className={styles["upload-area"]}>
-            <li className={styles["row"]}>
-              <i className="fas fa-file-video"></i>
-              <div className={styles["content"]}>
-                <div className={styles["details"]}>
-                  <span
-                    className={styles["name"]}
-                  >{`${fileVideo?.name} ~ uploaded`}</span>
-                  <span className={styles["size"]}>{`${
-                    fileVideo ? fileVideo.size / 100 : 0
-                  } bytes`}</span>{" "}
-                  {}
-                </div>
-              </div>
-              <i className="fas fa-check"></i>
-            </li>
-          </section>
-        )}
         {fileVideo && (
           <form className={styles["form-field"]}>
             <div className={styles["form-item"]}>
@@ -275,6 +235,86 @@ const Create = () => {
                 {img && <img src={img} alt="file" />}
               </label>
             </div>
+            <div className={styles.category}>
+              <ul>
+                <li>Chọn thể loại</li>
+                <li>
+                  <label>
+                    Âm nhạc
+                    <input type="checkbox" name="" />
+                    <span className={styles.check}></span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    Trò chơi
+                    <input type="checkbox" name="" />
+                    <span className={styles.check}></span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    Tin tức
+                    <input type="checkbox" name="" />
+                    <span className={styles.check}></span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    Thể thao
+                    <input type="checkbox" name="" />
+                    <span className={styles.check}></span>
+                  </label>
+                </li>
+                <li>
+                  <label>
+                    Mục khác
+                    <input type="checkbox" name="" />
+                    <span className={styles.check}></span>
+                  </label>
+                </li>
+              </ul>
+            </div>
+            {fileVideo && percent !== 100 && (
+              <section className={styles["progress-area"]}>
+                <li className={styles["row"]}>
+                  <i className="fas fa-file-video"></i>
+                  <div className={styles["content"]}>
+                    <div className={styles["details"]}>
+                      <span
+                        className={styles["name"]}
+                      >{`${fileVideo?.name} ~ uploading`}</span>
+                      <span className={styles["percent"]}>{`${percent}%`}</span>
+                    </div>
+                    <div className={styles["progress-bar"]}>
+                      <div
+                        className={styles["progress"]}
+                        style={{ width: `${percent}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </li>
+              </section>
+            )}
+            {percent === 100 && (
+              <section className={styles["upload-area"]}>
+                <li className={styles["row"]}>
+                  <i className="fas fa-file-video"></i>
+                  <div className={styles["content"]}>
+                    <div className={styles["details"]}>
+                      <span
+                        className={styles["name"]}
+                      >{`${fileVideo?.name} ~ uploaded`}</span>
+                      <span className={styles["size"]}>{`${
+                        fileVideo ? fileVideo.size / 100 : 0
+                      } bytes`}</span>{" "}
+                      {}
+                    </div>
+                  </div>
+                  <i className="fas fa-check"></i>
+                </li>
+              </section>
+            )}
             <input
               type="submit"
               value="Đăng video"

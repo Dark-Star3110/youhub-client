@@ -88,7 +88,9 @@ const Comment = ({ videoId }: CommentProps) => {
 
   useEffect(() => {
     const timer = setTimeout(refreshHandler, 1000 * 61 * 2);
-    return clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+    };
   }, [refresh, refreshHandler]);
 
   const handleCreateComment = async () => {

@@ -4,9 +4,6 @@ import user_img from "../../assets/img/user.png";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 import styles from "./Subscriptions.module.scss";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const LOGGED_ID = "1";
-
 const Subscriptions = () => {
   useCheckAuth();
   const settings = {

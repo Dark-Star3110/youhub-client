@@ -3,7 +3,7 @@
 .noti-menu {
   @include menu_dropdown(60px, 80px);
   width: 476px;
-  max-height: 86vh;
+  max-height: 66vh;
   overflow: scroll;
   h3 {
     font-size: 18px;
@@ -14,6 +14,20 @@
   .noti-item {
     display: flex;
     margin: 10px 0;
+    .noti-item__status {
+      width: 2%;
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        top: 30px;
+        left: 5px;
+        width: 6px;
+        height: 6px;
+        background-color: #12a2ee;
+        border-radius: 50%;
+      }
+    }
     .noti-item__authorImg {
       padding: 10px;
       width: 15%;
@@ -50,5 +64,9 @@
       cursor: pointer;
       background-color: rgb(68, 68, 68);
     }
+  }
+  &.noti-none {
+    @include center();
+    height: 20vh;
   }
 }

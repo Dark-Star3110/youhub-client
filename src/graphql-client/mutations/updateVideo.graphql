@@ -1,0 +1,5 @@
+mutation UpdateVideo($updateVideoInput: UpdateVideoInput!, $videoId: ID!) {
+  updateVideo(updateVideoInput: $updateVideoInput, videoId: $videoId) {
+    ...mutationStatuses
+  }
+}

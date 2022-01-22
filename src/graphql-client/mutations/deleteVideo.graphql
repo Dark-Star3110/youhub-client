@@ -1,0 +1,5 @@
+mutation DeleteVideo($videoId: ID!) {
+  deleteVideo(videoId: $videoId) {
+    ...mutationStatuses
+  }
+}

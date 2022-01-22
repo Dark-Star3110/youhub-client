@@ -1,0 +1,121 @@
+@import "../../styles/variable.scss";
+@import "../../styles/mixim.scss";
+
+.container {
+  margin-top: 60px;
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    height: 64px;
+    padding: 10px;
+    background-color: rgb(63, 63, 63);
+    .logo-milo {
+      width: 50px;
+      height: 50px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    .logo {
+      width: 120px;
+      height: 40px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 10px;
+      }
+    }
+  }
+  .banner {
+    height: 45vh;
+    width: 100%;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .content {
+    display: flex;
+    margin-top: 20px;
+    .content-inf {
+      width: 50%;
+    }
+    .content-menu {
+      width: 440px;
+      background-color: rgb(19, 19, 19);
+      box-shadow: 0 0 2px 1px #888;
+      padding: 16px 48px;
+      h3 {
+        font-size: 24px;
+        font-weight: 500;
+      }
+      .content-menu__item {
+        background-color: #fff9f5;
+        width: 340px;
+        height: 100px;
+        padding: 20px 16px;
+        display: flex;
+        border: 1px solid #f7971d;
+        border-radius: 5px;
+        margin: 10px 0;
+        small {
+          color: #333;
+          padding-top: 24px;
+          // margin: 0 4px;
+        }
+        .content-menu__count {
+          color: #333;
+          width: 40px;
+          height: 40px;
+          font-size: 20px;
+          font-weight: 500;
+          background-color: #fff;
+          margin: 10px 10px 0;
+          padding: 5px 0;
+          border: 1px solid #f7971d;
+          border-radius: 50%;
+          text-align: center;
+          cursor: pointer;
+          &.active {
+            background-color: #f7971d;
+            color: #fff;
+          }
+        }
+        .content-menu__icon {
+          width: 60px;
+          height: 60px;
+          background-color: #fff9f5;
+          border: none;
+          padding: 0;
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+      }
+      .content-menu__btn {
+        width: 340px;
+        background-color: #fb970a;
+        border: none;
+        outline: none;
+        height: 49px;
+        border-radius: 49px;
+        color: #fff;
+        cursor: pointer;
+        margin: 10px 0;
+        &:hover {
+          background-color: #ffa763;
+        }
+        a {
+          color: #fff;
+          font-size: 16px;
+        }
+      }
+    }
+  }
+}

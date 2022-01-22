@@ -5,6 +5,7 @@ import Spinner from "../Spinner";
 import { getDateFromString } from "../../utils/dateHelper";
 
 const VideoConcern: React.FC<{ videoId: string }> = ({ videoId }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, loading, fetchMore, networkStatus } = useVideoConcernQuery({
     variables: {
       limit: 12,

@@ -252,7 +252,14 @@ const Me = () => {
                     styles[`${isChange ? "active" : ""}`]
                   }
                   disabled={isChange ? false : true}
-                  onClick={handleUpdateInfo}
+                  onClick={async () => {
+                    if (tab === "images") {
+                      await handleUpload();
+                    }
+                    if (tab === "info") {
+                      await handleUpdateInfo();
+                    }
+                  }}
                 >
                   {loading && (
                     <div className={styles["loading"]}>

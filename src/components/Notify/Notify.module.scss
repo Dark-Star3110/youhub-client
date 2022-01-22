@@ -1,0 +1,72 @@
+@import "../../styles/mixim.scss";
+
+.noti-menu {
+  @include menu_dropdown(60px, 80px);
+  width: 476px;
+  max-height: 66vh;
+  overflow: scroll;
+  h3 {
+    font-size: 18px;
+    font-weight: 400;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgb(87, 86, 86);
+  }
+  .noti-item {
+    display: flex;
+    margin: 10px 0;
+    .noti-item__status {
+      width: 2%;
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        top: 30px;
+        left: 5px;
+        width: 6px;
+        height: 6px;
+        background-color: #12a2ee;
+        border-radius: 50%;
+      }
+    }
+    .noti-item__authorImg {
+      padding: 10px;
+      width: 15%;
+      height: 70px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+      }
+    }
+    .noti-item__content {
+      width: 60%;
+      padding: 10px;
+      h4 {
+        color: #fff;
+        font-weight: 500;
+      }
+      small {
+        color: #888;
+      }
+    }
+    .noti-item__videoImg {
+      width: 20%;
+      height: 70px;
+      margin: 10px;
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+    &:hover {
+      cursor: pointer;
+      background-color: rgb(68, 68, 68);
+    }
+  }
+  &.noti-none {
+    @include center();
+    height: 20vh;
+  }
+}

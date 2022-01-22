@@ -1,9 +1,14 @@
 import { useRouter } from "../../hooks/useRouter";
-import { useState } from "react";
-import { useVideoQuery } from "../../generated/graphql";
+import { useContext, useState } from "react";
+import { useUpdateVideoMutation, useVideoQuery } from "../../generated/graphql";
 import styles from "./EditVideo.module.scss";
+import { ToastContext } from "../../contexts/ToastContext";
+import { useLogin } from "../../contexts/UserContext";
+import { gql } from "@apollo/client";
 
 const EditVideo = () => {
+  const { cache } = useLogin();
+
   const router = useRouter();
   const videoId = router.query.slug as string;
 
@@ -19,6 +24,38 @@ const EditVideo = () => {
     title: data?.video?.title,
     description: data?.video?.description,
   });
+
+  // update video
+  const { notify } = useContext(ToastContext);
+  const [updateVideoMutation] = useUpdateVideoMutation();
+
+  const updateVideo = async () => {
+    const response = await updateVideoMutation({
+      variables: {
+        videoId,
+        updateVideoInput: inputValue,
+      },
+    });
+    if (response.data?.updateVideo.success) {
+      notify("success", "Chỉnh sửa video thành công 😑");
+      cache.writeFragment({
+        id: `Video:${videoId}`,
+        fragment: gql`
+          fragment VideoUpdate on Video {
+            content
+            updatedAt
+          }
+        `,
+        data: {
+          content: inputValue,
+          updatedAt: new Date().toString(),
+        },
+      });
+      router.navigate("/");
+    } else {
+      notify("error", "Có lỗi xảy ra vui lòng thử lại! 😥");
+    }
+  };
 
   return (
     <div className={styles.content}>
@@ -89,7 +126,7 @@ const EditVideo = () => {
             styles["save-btn"] + " " + styles[`${isChange ? "active" : ""}`]
           }
           disabled={isChange ? false : true}
-          onClick={() => console.log("handleSave")}
+          onClick={updateVideo}
         >
           LƯU THAY ĐỔI
         </button>

@@ -1,8 +1,16 @@
 import { NetworkStatus } from "@apollo/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useUserVideosQuery } from "../../generated/graphql";
+import { ToastContext } from "../../contexts/ToastContext";
+import { useLogin } from "../../contexts/UserContext";
+import {
+  useDeleteVideoMutation,
+  // UserVideosDocument,
+  // UserVideosQuery,
+  useUserVideosQuery,
+} from "../../generated/graphql";
 import { getDateFromString } from "../../utils/dateHelper";
+import Modal from "../Modal";
 import Spinner from "../Spinner";
 import styles from "./MeVideos.module.scss";
 
@@ -11,7 +19,9 @@ interface MeVideosProps {
 }
 
 const MeVideos = ({ userId }: MeVideosProps) => {
+  const { cache } = useLogin();
   const [videoSelected, setVideoSelected] = useState("");
+  const [wantDelete, setWantDelete] = useState("");
 
   const { data, loading, fetchMore, networkStatus } = useUserVideosQuery({
     variables: {
@@ -21,6 +31,35 @@ const MeVideos = ({ userId }: MeVideosProps) => {
     notifyOnNetworkStatusChange: true,
   });
 
+  // delete video
+  const { notify } = useContext(ToastContext);
+  const [delteVideo] = useDeleteVideoMutation();
+
+  const handleDelete = async () => {
+    const response = await delteVideo({
+      variables: {
+        videoId: wantDelete,
+      },
+      // update(cache, { data }) {
+      //   if (data?.deleteVideo.success) {
+      //     cache.writeQuery<UserVideosQuery>({
+      //       query: UserVideosDocument,
+      //       data: { videoUser: data.},
+      //     });
+      //   }
+      // },
+    });
+    console.log(response.data?.deleteVideo);
+
+    if (response.data?.deleteVideo.success) {
+      notify("success", "Xóa video thành công 😪");
+      cache.evict({ id: `Video:${wantDelete}` });
+    } else {
+      notify("error", "Có lỗi xảy ra vui lòng thử lại! 😴");
+    }
+    setWantDelete("");
+  };
+  // =================================================================
   const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
   const loadMore = () => {
@@ -51,7 +90,9 @@ const MeVideos = ({ userId }: MeVideosProps) => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
-
+  if (!data?.videoUser && loading) {
+    return <Spinner />;
+  }
   if (!data?.videoUser) return <h2>Không có video nào được tải lên</h2>;
 
   return (
@@ -62,9 +103,7 @@ const MeVideos = ({ userId }: MeVideosProps) => {
             <img src={video.thumbnailUrl as string} alt="video" />
           </div>
           <div className={styles["videos-item_content"]}>
-            <h3>
-              {video.title} - {video.description}
-            </h3>
+            <h3>{video.title}</h3>
             <h4>{getDateFromString(video.createdAt)}</h4>
           </div>
           <div className={styles["videos-control"]}>
@@ -88,7 +127,12 @@ const MeVideos = ({ userId }: MeVideosProps) => {
                       <span className={styles["menu-title"]}>Chỉnh sửa</span>
                     </div>
                   </Link>
-                  <div className={styles["menu-item"]}>
+                  <div
+                    className={styles["menu-item"]}
+                    onClick={() => {
+                      setWantDelete(video.id);
+                    }}
+                  >
                     <span className={styles["menu-icon"]}>
                       <i className="fas fa-trash-alt"></i>
                     </span>
@@ -102,6 +146,16 @@ const MeVideos = ({ userId }: MeVideosProps) => {
       ))}
       {loadingMore && <Spinner />}
       {data.videoUser.hasMore && <button onClick={loadMore}>show more</button>}
+      {wantDelete !== "" && (
+        <Modal
+          title="Xóa video?"
+          handleText="Xóa"
+          failureHandler={() => setWantDelete("")}
+          successHandler={handleDelete}
+        >
+          Bạn chắc chắn muốn xóa video này?
+        </Modal>
+      )}
     </>
   );
 };

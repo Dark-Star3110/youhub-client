@@ -1,24 +1,42 @@
 import { NetworkStatus } from "@apollo/client";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useFindQuery } from "../../generated/graphql";
+import { useFindLazyQuery } from "../../generated/graphql";
 import { useRouter } from "../../hooks/useRouter";
 import { getDateFromString } from "../../utils/dateHelper";
 import Spinner from "../Spinner";
 import styles from "./Search.module.scss";
 import notFind from "../../assets/img/404_search.jpg";
+import { useLogin } from "../../contexts/UserContext";
 
 const Search = () => {
-  const router = useRouter();
-  const key = router.query.q;
+  const { cache } = useLogin();
 
-  const { data, loading, fetchMore, networkStatus } = useFindQuery({
-    variables: {
-      query: key as string,
-      limit: 12,
-    },
-    notifyOnNetworkStatusChange: true,
-  });
+  const router = useRouter();
+  const q = router.query.q;
+  const [key, setKey] = useState(q as string);
+
+  const [onSearch, { networkStatus, fetchMore, data, loading }] =
+    useFindLazyQuery();
+
+  const search = useCallback(async () => {
+    const res = await onSearch({
+      variables: {
+        query: key,
+        limit: 5,
+      },
+    });
+
+    if (!res.error) {
+      cache.modify({
+        fields: {
+          find(existing) {
+            return res.data?.find;
+          },
+        },
+      });
+    }
+  }, [cache, onSearch, key]);
 
   const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
@@ -49,6 +67,11 @@ const Search = () => {
     };
   }, [handleScroll]);
 
+  useEffect(() => {
+    setKey(router.query.q as string);
+    search();
+  }, [router.query.q, search]);
+
   const videosSearched = data?.find?.paginatedVideos;
 
   if (loading && !data?.find)
@@ -56,6 +79,20 @@ const Search = () => {
       <h1>
         <Spinner />
       </h1>
+    );
+
+  if (!loading && !data?.find)
+    return (
+      <div className={styles.container}>
+        <div className={styles.ops}>
+          <div className={styles.notFind}>
+            <div className={styles.meme}>
+              <img src={notFind} alt="not find" />
+            </div>
+            <h2>Không có kết quả cho tìm kiếm của bạn 😥😥</h2>
+          </div>
+        </div>
+      </div>
     );
 
   return (
@@ -73,7 +110,10 @@ const Search = () => {
                 </div>
                 <div className={styles["secondary-item_content"]}>
                   <h3>
-                    {video.title} - {video.description}
+                    {video.title} -{" "}
+                    {video.description.length < 100
+                      ? video.description
+                      : video.description.slice(0, 50) + "..."}
                   </h3>
                   <h4>{video.user.fullName}</h4>
                   <h4>{getDateFromString(video.createdAt)}</h4>

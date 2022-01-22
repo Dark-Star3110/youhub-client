@@ -5,12 +5,18 @@ import styles from "./Me.module.scss";
 import banner_icon from "../../assets/img/banner_icon.png";
 import { ToastContext } from "../../contexts/ToastContext";
 import MeVideos from "../MeVideos";
+import { useUpdateUserInfoMutation } from "../../generated/graphql";
+import { gql } from "@apollo/client";
+import { useRouter } from "../../hooks/useRouter";
 
 const Me = () => {
+  const router = useRouter();
   // context
   const {
     state: { details },
+    cache,
   } = useLogin();
+  const [updateUserInfoMutation] = useUpdateUserInfoMutation();
   const { notify } = useContext(ToastContext);
 
   // state
@@ -27,8 +33,9 @@ const Me = () => {
   const [img1, setImg1] = useState<string>("");
   const [img2, setImg2] = useState<string>("");
   const [inputValue, setInputValue] = useState({
-    name: details?.fullName as string,
-    chanelDescription: details?.channelDecscription as string,
+    firstName: "",
+    lastName: "",
+    channelDecscription: details?.channelDecscription as string,
   });
 
   const handleClick = (e: React.MouseEvent) => {
@@ -78,6 +85,39 @@ const Me = () => {
 
       setFileImg(file);
       setBannerChange(true);
+    }
+  };
+
+  // update Info
+  const handleUpdateInfo = async () => {
+    const response = await updateUserInfoMutation({
+      variables: {
+        updateInput: {
+          ...inputValue,
+        },
+      },
+    });
+
+    if (response.data?.updateInfo.success) {
+      notify("success", "Cập nhật thông tin thành công 😒");
+      cache.writeFragment({
+        id: `User:${details?.id}`,
+        fragment: gql`
+          fragment UserInfoUpdate on User {
+            firstName
+            lastName
+            channelDecscription
+          }
+        `,
+        data: {
+          firstName: inputValue.firstName,
+          lastName: inputValue.lastName,
+          channelDecscription: inputValue.channelDecscription,
+        },
+      });
+      router.navigate("/");
+    } else {
+      notify("error", "Có lỗi xảy ra vui lòng thử lại! 😪");
     }
   };
 
@@ -145,8 +185,9 @@ const Me = () => {
                     setImg2("");
                     setFileImg(undefined);
                     setInputValue({
-                      name: details?.fullName as string,
-                      chanelDescription: "",
+                      firstName: details?.firstName,
+                      lastName: details?.lastName,
+                      channelDecscription: "",
                     });
                   }}
                 >
@@ -159,7 +200,7 @@ const Me = () => {
                     styles[`${isChange ? "active" : ""}`]
                   }
                   disabled={isChange ? false : true}
-                  onClick={() => console.log("handleSave")}
+                  onClick={handleUpdateInfo}
                 >
                   LƯU THAY ĐỔI
                 </button>
@@ -176,8 +217,8 @@ const Me = () => {
                 <div className={styles["content-item"]}>
                   <h4>Ảnh</h4>
                   <small>
-                    Ảnh hồ sơ sẽ xuất hiện cùng với kênh của bạn trên YouTube
-                    tại những vị trí như bên cạnh bình luận và video của bạn
+                    Ảnh hồ sơ sẽ xuất hiện cùng với kênh của bạn trên YouHub tại
+                    những vị trí như bên cạnh bình luận và video của bạn
                   </small>
                   <div className={styles["content-item__img"]}>
                     <div className={styles["img"]}>
@@ -258,36 +299,66 @@ const Me = () => {
                   Chọn tên kênh thể hiện cá tính và nội dung của bạn.
                 </small>
                 <div className={styles.form}>
-                  <div className={styles["form-item"]}>
-                    <input
-                      type="text"
-                      id="name"
-                      className={styles["form-input"]}
-                      value={inputValue.name}
-                      onChange={(e) => {
-                        setIsChange(true);
-                        setInputValue((pre) => ({
-                          ...pre,
-                          name: e.target.value,
-                        }));
-                      }}
-                      placeholder=" "
-                      required
-                    />
-                    <label htmlFor="name" className={styles["form-label"]}>
-                      Tên
-                    </label>
+                  <div
+                    className={styles["form-item"] + " " + styles["form-half"]}
+                  >
+                    <div className={styles["form-item__half"]}>
+                      <input
+                        type="text"
+                        id="firstName"
+                        className={styles["form-input"]}
+                        value={inputValue.firstName}
+                        onChange={(e) => {
+                          setIsChange(true);
+                          setInputValue((pre) => ({
+                            ...pre,
+                            firstName: e.target.value,
+                          }));
+                        }}
+                        placeholder=" "
+                        required
+                      />
+                      <label
+                        htmlFor="firstName"
+                        className={styles["form-label"]}
+                      >
+                        Họ
+                      </label>
+                    </div>
+                    <div className={styles["form-item__half"]}>
+                      <input
+                        type="text"
+                        id="lastName"
+                        className={styles["form-input"]}
+                        value={inputValue.lastName}
+                        onChange={(e) => {
+                          setIsChange(true);
+                          setInputValue((pre) => ({
+                            ...pre,
+                            lastName: e.target.value,
+                          }));
+                        }}
+                        placeholder=" "
+                        required
+                      />
+                      <label
+                        htmlFor="lastName"
+                        className={styles["form-label"]}
+                      >
+                        Tên
+                      </label>
+                    </div>
                   </div>
                   <div className={styles["form-item"]}>
                     <textarea
                       id="desciption"
                       className={styles["form-input"] + " " + styles["desp"]}
-                      value={inputValue.chanelDescription}
+                      value={inputValue.channelDecscription ?? ""}
                       onChange={(e) => {
                         setIsChange(true);
                         setInputValue((pre) => ({
                           ...pre,
-                          chanelDescription: e.target.value,
+                          channelDecscription: e.target.value,
                         }));
                       }}
                       placeholder=" "

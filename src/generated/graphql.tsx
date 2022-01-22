@@ -444,6 +444,8 @@ export type CommentInfoFragment = { __typename?: 'Comment', id: string, content:
 
 export type FieldErrorFragment = { __typename?: 'FieldError', type: string, error: string };
 
+export type NotificationInfoFragment = { __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string };
+
 type MutationStatuses_CommentMutationResponse_Fragment = { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
 type MutationStatuses_UserMutationResponse_Fragment = { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined };
@@ -479,6 +481,20 @@ export type CreateVideoMutationVariables = Exact<{
 
 
 export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+
+export type DeleteCommentMutationVariables = Exact<{
+  commentId: Scalars['ID'];
+}>;
+
+
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
+
+export type DeleteVideoMutationVariables = Exact<{
+  videoId: Scalars['ID'];
+}>;
+
+
+export type DeleteVideoMutation = { __typename?: 'Mutation', deleteVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   email: Scalars['String'];
@@ -536,6 +552,21 @@ export type UpdateCommentMutationVariables = Exact<{
 
 export type UpdateCommentMutation = { __typename?: 'Mutation', updateComment: { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
 
+export type UpdateUserInfoMutationVariables = Exact<{
+  updateInput: UpdateUserInfoInput;
+}>;
+
+
+export type UpdateUserInfoMutation = { __typename?: 'Mutation', updateInfo: { __typename?: 'UserMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
+
+export type UpdateVideoMutationVariables = Exact<{
+  updateVideoInput: UpdateVideoInput;
+  videoId: Scalars['ID'];
+}>;
+
+
+export type UpdateVideoMutation = { __typename?: 'Mutation', updateVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined } };
+
 export type VoteCommentMutationVariables = Exact<{
   action: Action;
   type: VoteType;
@@ -581,6 +612,21 @@ export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string } | null | undefined };
+
+export type NotificationQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type NotificationQuery = { __typename?: 'Query', notification?: { __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string } | null | undefined };
+
+export type NotificationsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['Int']>;
+}>;
+
+
+export type NotificationsQuery = { __typename?: 'Query', notifications?: { __typename?: 'PaginatedNotification', totalCount: number, cursor: number, hasMore: boolean, paginatedNotification: Array<{ __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string }> } | null | undefined };
 
 export type UserQueryVariables = Exact<{
   userId: Scalars['ID'];
@@ -631,6 +677,19 @@ export const FieldErrorFragmentDoc = gql`
     fragment fieldError on FieldError {
   type
   error
+}
+    `;
+export const NotificationInfoFragmentDoc = gql`
+    fragment notificationInfo on Notification {
+  _id
+  type
+  videoId
+  commentId
+  readed
+  content
+  avatar_url
+  thumnail
+  createdAt
 }
     `;
 export const MutationStatusesFragmentDoc = gql`
@@ -794,6 +853,72 @@ export function useCreateVideoMutation(baseOptions?: Apollo.MutationHookOptions<
 export type CreateVideoMutationHookResult = ReturnType<typeof useCreateVideoMutation>;
 export type CreateVideoMutationResult = Apollo.MutationResult<CreateVideoMutation>;
 export type CreateVideoMutationOptions = Apollo.BaseMutationOptions<CreateVideoMutation, CreateVideoMutationVariables>;
+export const DeleteCommentDocument = gql`
+    mutation DeleteComment($commentId: ID!) {
+  deleteComment(commentId: $commentId) {
+    ...mutationStatuses
+  }
+}
+    ${MutationStatusesFragmentDoc}`;
+export type DeleteCommentMutationFn = Apollo.MutationFunction<DeleteCommentMutation, DeleteCommentMutationVariables>;
+
+/**
+ * __useDeleteCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCommentMutation, { data, loading, error }] = useDeleteCommentMutation({
+ *   variables: {
+ *      commentId: // value for 'commentId'
+ *   },
+ * });
+ */
+export function useDeleteCommentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCommentMutation, DeleteCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCommentMutation, DeleteCommentMutationVariables>(DeleteCommentDocument, options);
+      }
+export type DeleteCommentMutationHookResult = ReturnType<typeof useDeleteCommentMutation>;
+export type DeleteCommentMutationResult = Apollo.MutationResult<DeleteCommentMutation>;
+export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<DeleteCommentMutation, DeleteCommentMutationVariables>;
+export const DeleteVideoDocument = gql`
+    mutation DeleteVideo($videoId: ID!) {
+  deleteVideo(videoId: $videoId) {
+    ...mutationStatuses
+  }
+}
+    ${MutationStatusesFragmentDoc}`;
+export type DeleteVideoMutationFn = Apollo.MutationFunction<DeleteVideoMutation, DeleteVideoMutationVariables>;
+
+/**
+ * __useDeleteVideoMutation__
+ *
+ * To run a mutation, you first call `useDeleteVideoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteVideoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteVideoMutation, { data, loading, error }] = useDeleteVideoMutation({
+ *   variables: {
+ *      videoId: // value for 'videoId'
+ *   },
+ * });
+ */
+export function useDeleteVideoMutation(baseOptions?: Apollo.MutationHookOptions<DeleteVideoMutation, DeleteVideoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteVideoMutation, DeleteVideoMutationVariables>(DeleteVideoDocument, options);
+      }
+export type DeleteVideoMutationHookResult = ReturnType<typeof useDeleteVideoMutation>;
+export type DeleteVideoMutationResult = Apollo.MutationResult<DeleteVideoMutation>;
+export type DeleteVideoMutationOptions = Apollo.BaseMutationOptions<DeleteVideoMutation, DeleteVideoMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($email: String!) {
   forgotPassword(email: $email)
@@ -1071,6 +1196,73 @@ export function useUpdateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type UpdateCommentMutationHookResult = ReturnType<typeof useUpdateCommentMutation>;
 export type UpdateCommentMutationResult = Apollo.MutationResult<UpdateCommentMutation>;
 export type UpdateCommentMutationOptions = Apollo.BaseMutationOptions<UpdateCommentMutation, UpdateCommentMutationVariables>;
+export const UpdateUserInfoDocument = gql`
+    mutation UpdateUserInfo($updateInput: UpdateUserInfoInput!) {
+  updateInfo(updateInput: $updateInput) {
+    ...mutationStatuses
+  }
+}
+    ${MutationStatusesFragmentDoc}`;
+export type UpdateUserInfoMutationFn = Apollo.MutationFunction<UpdateUserInfoMutation, UpdateUserInfoMutationVariables>;
+
+/**
+ * __useUpdateUserInfoMutation__
+ *
+ * To run a mutation, you first call `useUpdateUserInfoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateUserInfoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateUserInfoMutation, { data, loading, error }] = useUpdateUserInfoMutation({
+ *   variables: {
+ *      updateInput: // value for 'updateInput'
+ *   },
+ * });
+ */
+export function useUpdateUserInfoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateUserInfoMutation, UpdateUserInfoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateUserInfoMutation, UpdateUserInfoMutationVariables>(UpdateUserInfoDocument, options);
+      }
+export type UpdateUserInfoMutationHookResult = ReturnType<typeof useUpdateUserInfoMutation>;
+export type UpdateUserInfoMutationResult = Apollo.MutationResult<UpdateUserInfoMutation>;
+export type UpdateUserInfoMutationOptions = Apollo.BaseMutationOptions<UpdateUserInfoMutation, UpdateUserInfoMutationVariables>;
+export const UpdateVideoDocument = gql`
+    mutation UpdateVideo($updateVideoInput: UpdateVideoInput!, $videoId: ID!) {
+  updateVideo(updateVideoInput: $updateVideoInput, videoId: $videoId) {
+    ...mutationStatuses
+  }
+}
+    ${MutationStatusesFragmentDoc}`;
+export type UpdateVideoMutationFn = Apollo.MutationFunction<UpdateVideoMutation, UpdateVideoMutationVariables>;
+
+/**
+ * __useUpdateVideoMutation__
+ *
+ * To run a mutation, you first call `useUpdateVideoMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateVideoMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateVideoMutation, { data, loading, error }] = useUpdateVideoMutation({
+ *   variables: {
+ *      updateVideoInput: // value for 'updateVideoInput'
+ *      videoId: // value for 'videoId'
+ *   },
+ * });
+ */
+export function useUpdateVideoMutation(baseOptions?: Apollo.MutationHookOptions<UpdateVideoMutation, UpdateVideoMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateVideoMutation, UpdateVideoMutationVariables>(UpdateVideoDocument, options);
+      }
+export type UpdateVideoMutationHookResult = ReturnType<typeof useUpdateVideoMutation>;
+export type UpdateVideoMutationResult = Apollo.MutationResult<UpdateVideoMutation>;
+export type UpdateVideoMutationOptions = Apollo.BaseMutationOptions<UpdateVideoMutation, UpdateVideoMutationVariables>;
 export const VoteCommentDocument = gql`
     mutation VoteComment($action: Action!, $type: VoteType!, $voteCommentCommentId2: ID!) {
   voteComment(action: $action, type: $type, commentId: $voteCommentCommentId2) {
@@ -1316,6 +1508,82 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
+export const NotificationDocument = gql`
+    query Notification($id: ID!) {
+  notification(id: $id) {
+    ...notificationInfo
+  }
+}
+    ${NotificationInfoFragmentDoc}`;
+
+/**
+ * __useNotificationQuery__
+ *
+ * To run a query within a React component, call `useNotificationQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useNotificationQuery(baseOptions: Apollo.QueryHookOptions<NotificationQuery, NotificationQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NotificationQuery, NotificationQueryVariables>(NotificationDocument, options);
+      }
+export function useNotificationLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotificationQuery, NotificationQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NotificationQuery, NotificationQueryVariables>(NotificationDocument, options);
+        }
+export type NotificationQueryHookResult = ReturnType<typeof useNotificationQuery>;
+export type NotificationLazyQueryHookResult = ReturnType<typeof useNotificationLazyQuery>;
+export type NotificationQueryResult = Apollo.QueryResult<NotificationQuery, NotificationQueryVariables>;
+export const NotificationsDocument = gql`
+    query Notifications($limit: Int!, $cursor: Int) {
+  notifications(limit: $limit, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedNotification {
+      ...notificationInfo
+    }
+  }
+}
+    ${NotificationInfoFragmentDoc}`;
+
+/**
+ * __useNotificationsQuery__
+ *
+ * To run a query within a React component, call `useNotificationsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useNotificationsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNotificationsQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useNotificationsQuery(baseOptions: Apollo.QueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, options);
+      }
+export function useNotificationsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NotificationsQuery, NotificationsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<NotificationsQuery, NotificationsQueryVariables>(NotificationsDocument, options);
+        }
+export type NotificationsQueryHookResult = ReturnType<typeof useNotificationsQuery>;
+export type NotificationsLazyQueryHookResult = ReturnType<typeof useNotificationsLazyQuery>;
+export type NotificationsQueryResult = Apollo.QueryResult<NotificationsQuery, NotificationsQueryVariables>;
 export const UserDocument = gql`
     query User($userId: ID!) {
   user(userId: $userId) {

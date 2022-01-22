@@ -77,7 +77,7 @@ const Comment = ({ videoId }: CommentProps) => {
       });
     });
     return () => {
-      socket.off("message");
+      socket.removeAllListeners("message");
     };
   }, [socket, cache]);
 
@@ -85,6 +85,7 @@ const Comment = ({ videoId }: CommentProps) => {
   const refreshHandler = useCallback(() => {
     setRefresh((prev) => !prev);
   }, []);
+
   useEffect(() => {
     const timer = setTimeout(refreshHandler, 1000 * 61 * 2);
     return () => {

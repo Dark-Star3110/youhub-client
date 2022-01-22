@@ -1,0 +1,5 @@
+query Notification($id: ID!) {
+  notification(id: $id) {
+    ...notificationInfo
+  }
+}

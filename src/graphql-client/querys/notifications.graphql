@@ -1,0 +1,10 @@
+query Notifications($limit: Int!, $cursor: Int) {
+  notifications(limit: $limit, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedNotification {
+      ...notificationInfo
+    }
+  }
+}

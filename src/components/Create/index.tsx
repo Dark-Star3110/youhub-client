@@ -8,8 +8,6 @@ import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
 import styles from "./Create.module.scss";
 
-const serverPort = "http://localhost:8000/video/upload";
-
 const Create = () => {
   useCheckAuth();
   const {
@@ -50,18 +48,26 @@ const Create = () => {
           notify("warning", "Vui lòng nhập tiêu đề");
           return;
         }
+        if (!inputValue.description) {
+          notify("warning", "Vui lòng nhập mô tả");
+          return;
+        }
 
-        const res = await axios.post(serverPort, formData, {
-          onUploadProgress: (progressEvent) => {
-            let newPercent = Math.round(
-              (progressEvent.loaded / progressEvent.total) * 100
-            );
-            setPercent(newPercent);
-          },
-          headers: {
-            authorization: `Bearer ${token}`,
-          },
-        });
+        const res = await axios.post(
+          `${process.env.REACT_APP_ENDPOINT}/video/upload`,
+          formData,
+          {
+            onUploadProgress: (progressEvent) => {
+              let newPercent = Math.round(
+                (progressEvent.loaded / progressEvent.total) * 100
+              );
+              setPercent(newPercent);
+            },
+            headers: {
+              authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (res.status !== 200) {
           setLoading(false);

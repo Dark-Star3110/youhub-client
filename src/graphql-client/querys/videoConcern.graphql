@@ -1,0 +1,18 @@
+query VideoConcern($videoId: ID!, $limit: Int!, $cursor: String) {
+  videoConcern(videoId: $videoId, limit: $limit, cursor: $cursor) {
+    totalCount
+    hasMore
+    cursor
+    paginatedVideos {
+      ...videoInfo
+      user {
+        id
+        firstName
+        lastName
+        fullName
+        image_url
+        role
+      }
+    }
+  }
+}

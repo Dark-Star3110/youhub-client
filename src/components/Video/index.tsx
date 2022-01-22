@@ -26,7 +26,11 @@ const Video = ({ videoData: video }: VideoProps) => {
   //   variables: { id: video },
   //   skip: !!!details,
   // });
-  const { cache } = useLogin();
+  const {
+    state: { details },
+    cache,
+    socket,
+  } = useLogin();
   const { notify } = useContext(ToastContext);
 
   const handleLike = async () => {
@@ -41,6 +45,8 @@ const Video = ({ videoData: video }: VideoProps) => {
     if (!response.data?.voteVideo.success) {
       notify("error", "Something went wrong");
     } else {
+      if (newAction === "like")
+        socket.emit("like-video", details?.id, video.id);
       cache.writeFragment({
         id: `Video:${video.id}`,
         fragment: gql`

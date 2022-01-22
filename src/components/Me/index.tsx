@@ -5,27 +5,30 @@ import styles from "./Me.module.scss";
 import banner_icon from "../../assets/img/banner_icon.png";
 import { ToastContext } from "../../contexts/ToastContext";
 import MeVideos from "../MeVideos";
+import axios from "axios";
+import { gql } from "@apollo/client";
 
 const Me = () => {
   // context
   const {
-    state: { details },
+    state: { details, token },
+    setState: setUserContext,
+    cache,
   } = useLogin();
   const { notify } = useContext(ToastContext);
 
   // state
   const [isChange, setIsChange] = useState(false);
-  const [isAvaChange, setAvaChange] = useState(false);
-  const [isBannerChange, setBannerChange] = useState(false);
   const [tab, setTab] = useState("videos");
   const [pgStyle, setPgStyle] = useState({
     left: 0,
     width: "85px",
   });
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [fileImg, setFileImg] = useState<File>();
+  const [fileAvatar, setFileAvatar] = useState<File>();
+  const [fileBanner, setFileBanner] = useState<File>();
   const [img1, setImg1] = useState<string>("");
   const [img2, setImg2] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const [inputValue, setInputValue] = useState({
     name: details?.fullName as string,
     chanelDescription: details?.channelDecscription as string,
@@ -55,8 +58,8 @@ const Me = () => {
       };
       reader.readAsDataURL(files[0]);
 
-      setFileImg(file);
-      setAvaChange(true);
+      setFileAvatar(file);
+      setIsChange(true);
     }
   };
   // banner
@@ -76,8 +79,59 @@ const Me = () => {
       };
       reader.readAsDataURL(files[0]);
 
-      setFileImg(file);
-      setBannerChange(true);
+      setFileBanner(file);
+      setIsChange(true);
+    }
+  };
+
+  const handleUpload = async () => {
+    if (!fileAvatar && !fileBanner) return;
+    setLoading(true);
+    const formData = new FormData();
+    if (fileAvatar) formData.append("fileAvatar", fileAvatar);
+    if (fileBanner) formData.append("fileBanner", fileBanner);
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_ENDPOINT}/user/update`,
+        formData,
+        {
+          headers: {
+            authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (res.status !== 200) {
+        notify("error", "có lỗi xảy ra vui lòng thử lại!");
+        return;
+      }
+      cache.writeFragment({
+        id: `User:${details?.id}`,
+        fragment: gql`
+          fragment avatarUpdate on User {
+            image_url
+            banner_url
+          }
+        `,
+        data: {
+          image_url: res.data.avatarUrl
+            ? res.data.avatarUrl
+            : details?.image_url,
+          banner_url: res.data.bannerUrl
+            ? res.data.bannerUrl
+            : details?.banner_url,
+        },
+      });
+      setUserContext((prev) => ({
+        ...prev,
+        details: undefined,
+      }));
+      setLoading(false);
+      setIsChange(false);
+      setFileAvatar(undefined);
+      setFileBanner(undefined);
+      notify("success", "Cập nhật thành công");
+    } catch (error) {
+      notify("error", "Có lỗi xảy ra vui lòng thử lại!");
     }
   };
 
@@ -143,7 +197,7 @@ const Me = () => {
                     setIsChange(false);
                     setImg1("");
                     setImg2("");
-                    setFileImg(undefined);
+                    setFileAvatar(undefined);
                     setInputValue({
                       name: details?.fullName as string,
                       chanelDescription: "",
@@ -159,9 +213,14 @@ const Me = () => {
                     styles[`${isChange ? "active" : ""}`]
                   }
                   disabled={isChange ? false : true}
-                  onClick={() => console.log("handleSave")}
+                  onClick={!loading ? handleUpload : undefined}
                 >
-                  LƯU THAY ĐỔI
+                  {loading && (
+                    <div className={styles["loading"]}>
+                      <Spinner />
+                    </div>
+                  )}
+                  <span>{!loading ? "LƯU THAY ĐỔI" : "ĐANG LƯU"}</span>
                 </button>
               </div>
             </div>
@@ -176,8 +235,8 @@ const Me = () => {
                 <div className={styles["content-item"]}>
                   <h4>Ảnh</h4>
                   <small>
-                    Ảnh hồ sơ sẽ xuất hiện cùng với kênh của bạn trên YouTube
-                    tại những vị trí như bên cạnh bình luận và video của bạn
+                    Ảnh hồ sơ sẽ xuất hiện cùng với kênh của bạn trên YouHub tại
+                    những vị trí như bên cạnh bình luận và video của bạn
                   </small>
                   <div className={styles["content-item__img"]}>
                     <div className={styles["img"]}>
@@ -205,7 +264,6 @@ const Me = () => {
                           id="img_url"
                           hidden
                         />
-                        <button disabled={!isAvaChange}>LƯU</button>
                       </div>
                     </div>
                   </div>
@@ -244,7 +302,6 @@ const Me = () => {
                           onChange={handleChooseImg2}
                           hidden
                         />
-                        <button disabled={!isBannerChange}>LƯU</button>
                       </div>
                     </div>
                   </div>

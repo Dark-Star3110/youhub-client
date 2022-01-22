@@ -14,6 +14,7 @@ import brokenheart from "../../assets/icon/broken-heart.png";
 import { getStringToDate } from "../../utils/dateHelper";
 import { useLogin } from "../../contexts/UserContext";
 import { gql } from "@apollo/client";
+import { useRouter } from "../../hooks/useRouter";
 
 interface CommentItemProps {
   id: string;
@@ -26,10 +27,12 @@ const CommentItem = ({ id }: CommentItemProps) => {
   // ==========================
   const ref = useRef<HTMLInputElement | null>(null);
   // =========================
-
+  const router = useRouter();
+  const videoId = router.query.slug;
   const {
     state: { details },
     cache,
+    socket,
   } = useLogin();
 
   const { data /* , loading */ } = useCommentQuery({
@@ -57,6 +60,8 @@ const CommentItem = ({ id }: CommentItemProps) => {
     if (!response.data?.voteComment.success) {
       notify("error", "Something went wrong");
     } else {
+      if (newAction === "like")
+        socket.emit("like-comment", details?.id, id, videoId);
       cache.writeFragment({
         id: `Comment:${id}`,
         fragment: gql`

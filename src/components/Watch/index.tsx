@@ -30,6 +30,7 @@ const Watch = () => {
       socket.emit("leave-room", videoId);
       // clear cache comment paginated
       cache.evict({ fieldName: "comments" });
+      cache.evict({ fieldName: "videoConcern" });
     };
   }, [socket, videoId, cache]);
 
@@ -53,7 +54,7 @@ const Watch = () => {
         <Video videoData={videoData?.video as VideoType} />
       </div>
       <div className={styles["secondary"]}>
-        <VideoConcern />
+        <VideoConcern videoId={videoId} />
       </div>
     </div>
   );

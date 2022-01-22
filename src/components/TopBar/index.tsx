@@ -208,7 +208,12 @@ const TopBar = ({ type }: TopBarProps) => {
                     src={details.image_url as string}
                     alt="user"
                   />
-                  <div className={styles["user-info-head__title"]}>
+                  <div
+                    className={styles["user-info-head__title"]}
+                    onClick={() => {
+                      setShow("");
+                    }}
+                  >
                     <h3>{`${details.firstName} ${details.lastName}`}</h3>
                     <Link to="/me">
                       <p>Quản lí tài khoản của bạn</p>

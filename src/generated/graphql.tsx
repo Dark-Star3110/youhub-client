@@ -259,6 +259,7 @@ export type Query = {
   notifications?: Maybe<PaginatedNotification>;
   user?: Maybe<User>;
   video?: Maybe<Video>;
+  videoConcern?: Maybe<PaginatedVideos>;
   videoUser?: Maybe<PaginatedVideos>;
   videos?: Maybe<PaginatedVideos>;
   videosVoted?: Maybe<PaginatedVideos>;
@@ -304,6 +305,13 @@ export type QueryVideoArgs = {
 };
 
 
+export type QueryVideoConcernArgs = {
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
+  videoId: Scalars['ID'];
+};
+
+
 export type QueryVideoUserArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
@@ -333,7 +341,7 @@ export type SignupInput = {
   dateOfBirth?: InputMaybe<Scalars['DateTime']>;
   email: Scalars['String'];
   firstName: Scalars['String'];
-  lastName?: InputMaybe<Scalars['String']>;
+  lastName: Scalars['String'];
   password: Scalars['String'];
   username: Scalars['String'];
 };
@@ -377,7 +385,7 @@ export type UpdateVideoInput = {
 
 export type User = {
   __typename?: 'User';
-  banner_url: Scalars['String'];
+  banner_url?: Maybe<Scalars['String']>;
   chanelsSubscribe?: Maybe<Array<User>>;
   channelDecscription?: Maybe<Scalars['String']>;
   createdAt: Scalars['String'];
@@ -454,7 +462,7 @@ type MutationStatuses_VideoMutationResponse_Fragment = { __typename?: 'VideoMuta
 
 export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_Fragment | MutationStatuses_UserMutationResponse_Fragment | MutationStatuses_VideoMutationResponse_Fragment;
 
-export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string };
+export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string };
 
 export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string };
 
@@ -582,7 +590,7 @@ export type FindQuery = { __typename?: 'Query', find?: { __typename?: 'Paginated
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string } | null | undefined };
+export type MeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string } | null | undefined };
 
 export type NotificationQueryVariables = Exact<{
   id: Scalars['ID'];
@@ -604,7 +612,7 @@ export type UserQueryVariables = Exact<{
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', numVideo: number, id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url: string, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } | null | undefined };
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', numVideo: number, id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } | null | undefined };
 
 export type UserVideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -621,6 +629,15 @@ export type VideoQueryVariables = Exact<{
 
 
 export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, numUsersLiked?: number | null | undefined, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, role: string, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
+
+export type VideoConcernQueryVariables = Exact<{
+  videoId: Scalars['ID'];
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type VideoConcernQuery = { __typename?: 'Query', videoConcern?: { __typename?: 'PaginatedVideos', totalCount: number, hasMore: boolean, cursor: any, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
 
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -1558,6 +1575,56 @@ export function useVideoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vide
 export type VideoQueryHookResult = ReturnType<typeof useVideoQuery>;
 export type VideoLazyQueryHookResult = ReturnType<typeof useVideoLazyQuery>;
 export type VideoQueryResult = Apollo.QueryResult<VideoQuery, VideoQueryVariables>;
+export const VideoConcernDocument = gql`
+    query VideoConcern($videoId: ID!, $limit: Int!, $cursor: String) {
+  videoConcern(videoId: $videoId, limit: $limit, cursor: $cursor) {
+    totalCount
+    hasMore
+    cursor
+    paginatedVideos {
+      ...videoInfo
+      user {
+        id
+        firstName
+        lastName
+        fullName
+        image_url
+        role
+      }
+    }
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useVideoConcernQuery__
+ *
+ * To run a query within a React component, call `useVideoConcernQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideoConcernQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideoConcernQuery({
+ *   variables: {
+ *      videoId: // value for 'videoId'
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useVideoConcernQuery(baseOptions: Apollo.QueryHookOptions<VideoConcernQuery, VideoConcernQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideoConcernQuery, VideoConcernQueryVariables>(VideoConcernDocument, options);
+      }
+export function useVideoConcernLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideoConcernQuery, VideoConcernQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideoConcernQuery, VideoConcernQueryVariables>(VideoConcernDocument, options);
+        }
+export type VideoConcernQueryHookResult = ReturnType<typeof useVideoConcernQuery>;
+export type VideoConcernLazyQueryHookResult = ReturnType<typeof useVideoConcernLazyQuery>;
+export type VideoConcernQueryResult = Apollo.QueryResult<VideoConcernQuery, VideoConcernQueryVariables>;
 export const VideosDocument = gql`
     query Videos($limit: Int!, $cursor: String) {
   videos(limit: $limit, cursor: $cursor) {

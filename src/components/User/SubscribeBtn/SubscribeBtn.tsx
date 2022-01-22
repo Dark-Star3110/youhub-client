@@ -32,6 +32,7 @@ const SubscribeBtn = ({
   const {
     state: { details },
     cache,
+    socket,
   } = useLogin();
   const router = useRouter();
   const { notify } = useContext(ToastContext);
@@ -43,6 +44,7 @@ const SubscribeBtn = ({
 
   const handleSubscribeClick = async () => {
     if (!details) {
+      notify("info", "Hãy đăng nhập để thực hiện chức năng này😘😘😘");
       router.push("/login");
       return;
     }
@@ -57,6 +59,7 @@ const SubscribeBtn = ({
       notify("error", "Có lỗi xảy ra. Vui lòng thử lại!");
     else {
       notify("success", "Đã đăng ký kênh");
+      socket.emit("subscribe", userId, details.id);
       cache.writeFragment({
         id: `User:${userId}`,
         fragment: gql`

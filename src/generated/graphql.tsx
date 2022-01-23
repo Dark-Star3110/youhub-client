@@ -58,6 +58,7 @@ export type CreateCommentInput = {
 };
 
 export type CreateVideoInput = {
+  categoriesId?: InputMaybe<Array<Scalars['ID']>>;
   commentable?: InputMaybe<Scalars['Boolean']>;
   description: Scalars['String'];
   id: Scalars['ID'];
@@ -212,6 +213,7 @@ export type Notification = {
   commentId?: Maybe<Scalars['String']>;
   content: Scalars['String'];
   createdAt: Scalars['String'];
+  from: Scalars['String'];
   readed: Scalars['Boolean'];
   thumnail?: Maybe<Scalars['String']>;
   type: Scalars['String'];
@@ -328,7 +330,7 @@ export type QueryVideosArgs = {
 export type QueryVideosVotedArgs = {
   cursor?: InputMaybe<Scalars['String']>;
   limit: Scalars['Int'];
-  type: Scalars['Float'];
+  type: VoteType;
 };
 
 
@@ -430,6 +432,7 @@ export type Video = {
   updatedAt: Scalars['String'];
   user: User;
   voteStatus: Scalars['Int'];
+  watchLaterStatus: Scalars['Boolean'];
 };
 
 export type VideoMutationResponse = MutationResponse & {
@@ -452,7 +455,7 @@ export type CommentInfoFragment = { __typename?: 'Comment', id: string, content:
 
 export type FieldErrorFragment = { __typename?: 'FieldError', type: string, error: string };
 
-export type NotificationInfoFragment = { __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string };
+export type NotificationInfoFragment = { __typename?: 'Notification', _id: string, type: string, from: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string };
 
 type MutationStatuses_CommentMutationResponse_Fragment = { __typename?: 'CommentMutationResponse', code: number, success: boolean, message?: string | null | undefined };
 
@@ -464,7 +467,7 @@ export type MutationStatusesFragment = MutationStatuses_CommentMutationResponse_
 
 export type UserInfoFragment = { __typename?: 'User', id: string, username?: string | null | undefined, email: string, firstName: string, lastName: string, fullName?: string | null | undefined, channelDecscription?: string | null | undefined, numSubscribers: number, image_url?: string | null | undefined, banner_url?: string | null | undefined, dateOfBirth?: any | null | undefined, role: string, createdAt: string, updatedAt: string };
 
-export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string };
+export type VideoInfoFragment = { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean };
 
 export type ChangePasswordMutationVariables = Exact<{
   token: Scalars['String'];
@@ -488,7 +491,7 @@ export type CreateVideoMutationVariables = Exact<{
 }>;
 
 
-export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+export type CreateVideoMutation = { __typename?: 'Mutation', createVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, video?: { __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean } | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
 export type DeleteCommentMutationVariables = Exact<{
   commentId: Scalars['ID'];
@@ -593,6 +596,14 @@ export type VoteVideoMutationVariables = Exact<{
 
 export type VoteVideoMutation = { __typename?: 'Mutation', voteVideo: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
 
+export type WatchLaterMutationVariables = Exact<{
+  action: Action;
+  videoId: Scalars['ID'];
+}>;
+
+
+export type WatchLaterMutation = { __typename?: 'Mutation', watchLater: { __typename?: 'VideoMutationResponse', code: number, success: boolean, message?: string | null | undefined, errors?: Array<{ __typename?: 'FieldError', type: string, error: string }> | null | undefined } };
+
 export type CommentQueryVariables = Exact<{
   id: Scalars['String'];
 }>;
@@ -614,7 +625,7 @@ export type FindQueryVariables = Exact<{
 }>;
 
 
-export type FindQuery = { __typename?: 'Query', find?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
+export type FindQuery = { __typename?: 'Query', find?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -626,7 +637,7 @@ export type NotificationQueryVariables = Exact<{
 }>;
 
 
-export type NotificationQuery = { __typename?: 'Query', notification?: { __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string } | null | undefined };
+export type NotificationQuery = { __typename?: 'Query', notification?: { __typename?: 'Notification', _id: string, type: string, from: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string } | null | undefined };
 
 export type NotificationsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -634,7 +645,7 @@ export type NotificationsQueryVariables = Exact<{
 }>;
 
 
-export type NotificationsQuery = { __typename?: 'Query', notifications?: { __typename?: 'PaginatedNotification', totalCount: number, cursor: number, hasMore: boolean, paginatedNotification: Array<{ __typename?: 'Notification', _id: string, type: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string }> } | null | undefined };
+export type NotificationsQuery = { __typename?: 'Query', notifications?: { __typename?: 'PaginatedNotification', totalCount: number, cursor: number, hasMore: boolean, paginatedNotification: Array<{ __typename?: 'Notification', _id: string, type: string, from: string, videoId?: string | null | undefined, commentId?: string | null | undefined, readed: boolean, content: string, avatar_url?: string | null | undefined, thumnail?: string | null | undefined, createdAt: string }> } | null | undefined };
 
 export type UserQueryVariables = Exact<{
   userId: Scalars['ID'];
@@ -650,14 +661,14 @@ export type UserVideosQueryVariables = Exact<{
 }>;
 
 
-export type UserVideosQuery = { __typename?: 'Query', videoUser?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', fullName?: string | null | undefined } }> } | null | undefined };
+export type UserVideosQuery = { __typename?: 'Query', videoUser?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', fullName?: string | null | undefined } }> } | null | undefined };
 
 export type VideoQueryVariables = Exact<{
   id: Scalars['ID'];
 }>;
 
 
-export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, numUsersLiked?: number | null | undefined, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, role: string, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
+export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, numUsersLiked?: number | null | undefined, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, role: string, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
 
 export type VideoConcernQueryVariables = Exact<{
   videoId: Scalars['ID'];
@@ -666,7 +677,7 @@ export type VideoConcernQueryVariables = Exact<{
 }>;
 
 
-export type VideoConcernQuery = { __typename?: 'Query', videoConcern?: { __typename?: 'PaginatedVideos', totalCount: number, hasMore: boolean, cursor: any, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
+export type VideoConcernQuery = { __typename?: 'Query', videoConcern?: { __typename?: 'PaginatedVideos', totalCount: number, hasMore: boolean, cursor: any, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
 
 export type VideosQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -674,7 +685,24 @@ export type VideosQueryVariables = Exact<{
 }>;
 
 
-export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
+export type VideosQuery = { __typename?: 'Query', videos?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
+
+export type VideosVotedQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+  type: VoteType;
+}>;
+
+
+export type VideosVotedQuery = { __typename?: 'Query', videosVoted?: { __typename?: 'PaginatedVideos', totalCount: number, hasMore: boolean, cursor: any, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', firstName: string, lastName: string, image_url?: string | null | undefined } }> } | null | undefined };
+
+export type VideosWatchLaterQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type VideosWatchLaterQuery = { __typename?: 'Query', videosWatchLater?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', firstName: string, lastName: string, image_url?: string | null | undefined } }> } | null | undefined };
 
 export const CatagoryInfoFragmentDoc = gql`
     fragment catagoryInfo on Catagory {
@@ -700,6 +728,7 @@ export const NotificationInfoFragmentDoc = gql`
     fragment notificationInfo on Notification {
   _id
   type
+  from
   videoId
   commentId
   readed
@@ -742,6 +771,7 @@ export const VideoInfoFragmentDoc = gql`
   thumbnailUrl
   createdAt
   updatedAt
+  watchLaterStatus
 }
     `;
 export const ChangePasswordDocument = gql`
@@ -1358,6 +1388,44 @@ export function useVoteVideoMutation(baseOptions?: Apollo.MutationHookOptions<Vo
 export type VoteVideoMutationHookResult = ReturnType<typeof useVoteVideoMutation>;
 export type VoteVideoMutationResult = Apollo.MutationResult<VoteVideoMutation>;
 export type VoteVideoMutationOptions = Apollo.BaseMutationOptions<VoteVideoMutation, VoteVideoMutationVariables>;
+export const WatchLaterDocument = gql`
+    mutation WatchLater($action: Action!, $videoId: ID!) {
+  watchLater(action: $action, videoId: $videoId) {
+    ...mutationStatuses
+    errors {
+      ...fieldError
+    }
+  }
+}
+    ${MutationStatusesFragmentDoc}
+${FieldErrorFragmentDoc}`;
+export type WatchLaterMutationFn = Apollo.MutationFunction<WatchLaterMutation, WatchLaterMutationVariables>;
+
+/**
+ * __useWatchLaterMutation__
+ *
+ * To run a mutation, you first call `useWatchLaterMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useWatchLaterMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [watchLaterMutation, { data, loading, error }] = useWatchLaterMutation({
+ *   variables: {
+ *      action: // value for 'action'
+ *      videoId: // value for 'videoId'
+ *   },
+ * });
+ */
+export function useWatchLaterMutation(baseOptions?: Apollo.MutationHookOptions<WatchLaterMutation, WatchLaterMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<WatchLaterMutation, WatchLaterMutationVariables>(WatchLaterDocument, options);
+      }
+export type WatchLaterMutationHookResult = ReturnType<typeof useWatchLaterMutation>;
+export type WatchLaterMutationResult = Apollo.MutationResult<WatchLaterMutation>;
+export type WatchLaterMutationOptions = Apollo.BaseMutationOptions<WatchLaterMutation, WatchLaterMutationVariables>;
 export const CommentDocument = gql`
     query Comment($id: String!) {
   comment(id: $id) {
@@ -1836,3 +1904,96 @@ export function useVideosLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vid
 export type VideosQueryHookResult = ReturnType<typeof useVideosQuery>;
 export type VideosLazyQueryHookResult = ReturnType<typeof useVideosLazyQuery>;
 export type VideosQueryResult = Apollo.QueryResult<VideosQuery, VideosQueryVariables>;
+export const VideosVotedDocument = gql`
+    query VideosVoted($limit: Int!, $cursor: String, $type: VoteType!) {
+  videosVoted(limit: $limit, cursor: $cursor, type: $type) {
+    totalCount
+    hasMore
+    cursor
+    paginatedVideos {
+      ...videoInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useVideosVotedQuery__
+ *
+ * To run a query within a React component, call `useVideosVotedQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideosVotedQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideosVotedQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *      type: // value for 'type'
+ *   },
+ * });
+ */
+export function useVideosVotedQuery(baseOptions: Apollo.QueryHookOptions<VideosVotedQuery, VideosVotedQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideosVotedQuery, VideosVotedQueryVariables>(VideosVotedDocument, options);
+      }
+export function useVideosVotedLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideosVotedQuery, VideosVotedQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideosVotedQuery, VideosVotedQueryVariables>(VideosVotedDocument, options);
+        }
+export type VideosVotedQueryHookResult = ReturnType<typeof useVideosVotedQuery>;
+export type VideosVotedLazyQueryHookResult = ReturnType<typeof useVideosVotedLazyQuery>;
+export type VideosVotedQueryResult = Apollo.QueryResult<VideosVotedQuery, VideosVotedQueryVariables>;
+export const VideosWatchLaterDocument = gql`
+    query VideosWatchLater($limit: Int!, $cursor: String) {
+  videosWatchLater(limit: $limit, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedVideos {
+      ...videoInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+  }
+}
+    ${VideoInfoFragmentDoc}`;
+
+/**
+ * __useVideosWatchLaterQuery__
+ *
+ * To run a query within a React component, call `useVideosWatchLaterQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideosWatchLaterQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideosWatchLaterQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
+ *   },
+ * });
+ */
+export function useVideosWatchLaterQuery(baseOptions: Apollo.QueryHookOptions<VideosWatchLaterQuery, VideosWatchLaterQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideosWatchLaterQuery, VideosWatchLaterQueryVariables>(VideosWatchLaterDocument, options);
+      }
+export function useVideosWatchLaterLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideosWatchLaterQuery, VideosWatchLaterQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideosWatchLaterQuery, VideosWatchLaterQueryVariables>(VideosWatchLaterDocument, options);
+        }
+export type VideosWatchLaterQueryHookResult = ReturnType<typeof useVideosWatchLaterQuery>;
+export type VideosWatchLaterLazyQueryHookResult = ReturnType<typeof useVideosWatchLaterLazyQuery>;
+export type VideosWatchLaterQueryResult = Apollo.QueryResult<VideosWatchLaterQuery, VideosWatchLaterQueryVariables>;

@@ -1,6 +1,7 @@
 fragment notificationInfo on Notification {
   _id
   type
+  from
   videoId
   commentId
   readed

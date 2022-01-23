@@ -1,0 +1,15 @@
+query VideosWatchLater($limit: Int!, $cursor: String) {
+  videosWatchLater(limit: $limit, cursor: $cursor) {
+    totalCount
+    cursor
+    hasMore
+    paginatedVideos {
+      ...videoInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+  }
+}

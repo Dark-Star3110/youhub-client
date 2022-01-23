@@ -5,12 +5,30 @@
   width: 476px;
   max-height: 66vh;
   overflow: scroll;
-  h3 {
-    font-size: 18px;
-    font-weight: 400;
-    padding: 10px 16px;
+
+  .noti-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid rgb(87, 86, 86);
+
+    h3 {
+      font-size: 18px;
+      font-weight: 400;
+      padding: 10px 16px;
+    }
+
+    span {
+      margin-right: 16px;
+
+      &:hover {
+        color: $blue2-color;
+        text-decoration: underline;
+        cursor: pointer;
+      }
+    }
   }
+
   .noti-item {
     display: flex;
     margin: 10px 0;

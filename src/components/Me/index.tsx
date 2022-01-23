@@ -151,6 +151,10 @@ const Me = () => {
     });
 
     if (response.data?.updateInfo.success) {
+      setUserContext((prev) => ({
+        ...prev,
+        details: undefined,
+      }));
       notify("success", "Cập nhật thông tin thành công 😒");
       cache.writeFragment({
         id: `User:${details?.id}`,
@@ -252,7 +256,14 @@ const Me = () => {
                     styles[`${isChange ? "active" : ""}`]
                   }
                   disabled={isChange ? false : true}
-                  onClick={handleUpdateInfo}
+                  onClick={async () => {
+                    if (tab === "images") {
+                      await handleUpload();
+                    }
+                    if (tab === "info") {
+                      await handleUpdateInfo();
+                    }
+                  }}
                 >
                   {loading && (
                     <div className={styles["loading"]}>

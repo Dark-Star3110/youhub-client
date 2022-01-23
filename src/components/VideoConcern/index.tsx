@@ -6,11 +6,13 @@ import { getDateFromString } from "../../utils/dateHelper";
 import { NetworkStatus } from "@apollo/client";
 
 const VideoConcern: React.FC<{ videoId: string }> = ({ videoId }) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { data, loading, fetchMore, networkStatus } = useVideoConcernQuery({
     variables: {
       limit: 12,
       videoId,
     },
+    notifyOnNetworkStatusChange: true,
   });
 
   const loadingMore = networkStatus === NetworkStatus.fetchMore;

@@ -1,0 +1,31 @@
+@import "../../styles/variable.scss";
+
+.videos-control__menu {
+  position: absolute;
+  top: 24px;
+  right: -10px;
+  width: 150px;
+  margin-top: 4px;
+  background-color: #333;
+  border-radius: 4px;
+  z-index: 1;
+  .menu-item {
+    color: #fff;
+    width: 154px;
+    padding: 8px 36px 8px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    .menu-icon {
+      font-size: 20px;
+      margin-right: 8px;
+    }
+    .menu-title {
+      font-size: 14px;
+      font-weight: 500;
+    }
+    &:hover {
+      background-color: $black4-color;
+    }
+  }
+}

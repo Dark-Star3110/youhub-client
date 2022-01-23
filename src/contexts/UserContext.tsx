@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { connect, Socket } from "socket.io-client";
-import { Comment, User, Video } from "../generated/graphql";
+import { Comment, Notification, User, Video } from "../generated/graphql";
 
 export interface State {
   token?: string;
@@ -128,6 +128,103 @@ const cache = new InMemoryCache({
               );
             }
             return { ...incoming, paginatedVideos };
+          },
+        },
+        videosVoted: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
+
+            let paginatedVideos: Video[] = [];
+            if (existing && existing.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                existing.paginatedVideos
+              );
+            }
+            if (incoming && incoming.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                incoming.paginatedVideos
+              );
+            }
+            return { ...incoming, paginatedVideos };
+          },
+        },
+        videosWatchLater: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
+            let paginatedVideos: Video[] = [];
+            if (existing && existing.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                existing.paginatedVideos
+              );
+            }
+            if (incoming && incoming.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                incoming.paginatedVideos
+              );
+            }
+            return { ...incoming, paginatedVideos };
+          },
+        },
+        videoConcern: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (existing?.cursor && incoming?.cursor) {
+              const date1 = new Date(existing.cursor);
+              const date2 = new Date(incoming.cursor);
+              if (date1.getTime() <= date2.getTime()) {
+                return existing;
+              }
+            }
+            let paginatedVideos: Video[] = [];
+            if (existing && existing.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                existing.paginatedVideos
+              );
+            }
+            if (incoming && incoming.paginatedVideos) {
+              paginatedVideos = paginatedVideos.concat(
+                incoming.paginatedVideos
+              );
+            }
+            return { ...incoming, paginatedVideos };
+          },
+        },
+        notifications: {
+          keyArgs: false,
+          merge(existing, incoming) {
+            if (
+              existing?.cursor &&
+              incoming?.cursor &&
+              existing.cursor >= incoming.cursor
+            ) {
+              return existing;
+            }
+            let paginatedNotification: Notification[] = [];
+            if (existing && existing.paginatedNotification) {
+              paginatedNotification = paginatedNotification.concat(
+                existing.paginatedNotification
+              );
+            }
+            if (incoming && incoming.paginatedNotification) {
+              paginatedNotification = paginatedNotification.concat(
+                incoming.paginatedNotification
+              );
+            }
+            return { ...incoming, paginatedNotification };
           },
         },
       },

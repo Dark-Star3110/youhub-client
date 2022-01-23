@@ -1,18 +1,22 @@
-import { gql } from "@apollo/client";
+import { gql, Reference } from "@apollo/client";
 import { Link } from "react-router-dom";
 import { useLogin } from "../../contexts/UserContext";
 import { useNotificationsQuery } from "../../generated/graphql";
+import { useRouter } from "../../hooks/useRouter";
 import { getStringToDate } from "../../utils/dateHelper";
 import Spinner from "../Spinner";
 import styles from "./Notify.module.scss";
 
-const Notify = () => {
+const Notify: React.FC<{
+  onChange: React.Dispatch<React.SetStateAction<number>>;
+}> = ({ onChange }) => {
   const {
     state: { details },
     socket,
     cache,
   } = useLogin();
 
+  const router = useRouter();
   const { data, loading } = useNotificationsQuery({
     variables: {
       limit: 10,
@@ -36,24 +40,62 @@ const Notify = () => {
 
   return (
     <div className={styles["noti-menu"]}>
-      <h3>Thông báo</h3>
+      <div className={styles["noti-top"]}>
+        <h3>Thông báo</h3>
+        <span
+          onClick={() => {
+            socket.emit("read-all-notify", details?.id);
+            onChange(0);
+            cache.modify({
+              fields: {
+                notifications(existing) {
+                  existing.paginatedNotification?.forEach((noti: Reference) => {
+                    cache.writeFragment({
+                      id: noti.__ref,
+                      fragment: gql`
+                        fragment notificationInfo on Notification {
+                          readed
+                        }
+                      `,
+                      data: { readed: true },
+                    });
+                  });
+                  return existing;
+                },
+              },
+            });
+          }}
+        >
+          Đọc tất cả
+        </span>
+      </div>
       {data.notifications.paginatedNotification.map((noti) => (
-        <Link to={`watch/${noti.videoId}`} key={noti._id}>
+        <Link
+          to={
+            noti.type === "SUBSCRIBE"
+              ? `user/${noti.from}`
+              : noti.type !== "OTHER"
+              ? `watch/${noti.videoId}`
+              : router.location.pathname
+          }
+          key={noti._id}
+        >
           <div
             className={styles["noti-item"]}
             onClick={() => {
-              console.log(noti._id);
-
-              socket.emit("read-one-notify", noti._id);
-              cache.writeFragment({
-                id: `Notification:${noti._id}`,
-                fragment: gql`
-                  fragment notificationInfo on Notification {
-                    readed
-                  }
-                `,
-                data: { readed: true },
-              });
+              if (!noti.readed) {
+                socket.emit("read-notify", details?.id, noti._id);
+                onChange((prev) => prev - 1);
+                cache.writeFragment({
+                  id: `Notification:${noti._id}`,
+                  fragment: gql`
+                    fragment notificationInfo on Notification {
+                      readed
+                    }
+                  `,
+                  data: { readed: true },
+                });
+              }
             }}
           >
             {!noti.readed && (
@@ -66,9 +108,11 @@ const Notify = () => {
               <h4>{noti.content}</h4>
               <small>{getStringToDate(noti.createdAt)}</small>
             </div>
-            <div className={styles["noti-item__videoImg"]}>
-              <img src={noti.thumnail as string} alt="video-" />
-            </div>
+            {noti.type !== "SUBSCRIBE" && noti.type !== "OTHER" && (
+              <div className={styles["noti-item__videoImg"]}>
+                <img src={noti.thumnail as string} alt="video-" />
+              </div>
+            )}
           </div>
         </Link>
       ))}

@@ -8,6 +8,14 @@ import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
 import styles from "./Create.module.scss";
 
+const categories = {
+  music: "9e53165f-f37b-ec11-8359-405bd82e7629",
+  game: "a153165f-f37b-ec11-8359-405bd82e7629",
+  news: "a053165f-f37b-ec11-8359-405bd82e7629",
+  sport: "9f53165f-f37b-ec11-8359-405bd82e7629",
+  other: "a253165f-f37b-ec11-8359-405bd82e7629",
+};
+
 const Create = () => {
   useCheckAuth();
   const {
@@ -22,6 +30,7 @@ const Create = () => {
     title: "",
     description: "",
   });
+  const [categoriesChoose, setCategoriesChoose] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -83,6 +92,7 @@ const Create = () => {
               thumbnailUrl: res.data.imgId,
               commentable: true,
               ...inputValue,
+              categoriesId: categoriesChoose,
             },
           },
 
@@ -107,7 +117,7 @@ const Create = () => {
             });
           },
         });
-
+        console.log(res_graph.data?.createVideo);
         if (res_graph.data?.createVideo.video) {
           setLoading(false);
           notify("success", "đăng video thành công");
@@ -161,6 +171,14 @@ const Create = () => {
       reader.readAsDataURL(files[0]);
 
       setFileImg(file);
+    }
+  };
+
+  const handleChooseCategory = (id: string) => {
+    if (categoriesChoose.includes(id)) {
+      setCategoriesChoose((prev) => prev.filter((state) => state !== id));
+    } else {
+      setCategoriesChoose((prev) => [...prev, id]);
     }
   };
 
@@ -241,35 +259,60 @@ const Create = () => {
                 <li>
                   <label>
                     Âm nhạc
-                    <input type="checkbox" name="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      checked={categoriesChoose.includes(categories.music)}
+                      onChange={() => handleChooseCategory(categories.music)}
+                    />
                     <span className={styles.check}></span>
                   </label>
                 </li>
                 <li>
                   <label>
                     Trò chơi
-                    <input type="checkbox" name="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      checked={categoriesChoose.includes(categories.game)}
+                      onChange={() => handleChooseCategory(categories.game)}
+                    />
                     <span className={styles.check}></span>
                   </label>
                 </li>
                 <li>
                   <label>
                     Tin tức
-                    <input type="checkbox" name="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      checked={categoriesChoose.includes(categories.news)}
+                      onChange={() => handleChooseCategory(categories.news)}
+                    />
                     <span className={styles.check}></span>
                   </label>
                 </li>
                 <li>
                   <label>
                     Thể thao
-                    <input type="checkbox" name="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      checked={categoriesChoose.includes(categories.sport)}
+                      onChange={() => handleChooseCategory(categories.sport)}
+                    />
                     <span className={styles.check}></span>
                   </label>
                 </li>
                 <li>
                   <label>
                     Mục khác
-                    <input type="checkbox" name="" />
+                    <input
+                      type="checkbox"
+                      name=""
+                      checked={categoriesChoose.includes(categories.other)}
+                      onChange={() => handleChooseCategory(categories.other)}
+                    />
                     <span className={styles.check}></span>
                   </label>
                 </li>

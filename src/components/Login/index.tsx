@@ -108,7 +108,7 @@ const Login = () => {
   };
 
   const onFailure = (error: any) => {
-    notify("error", "đăng nhập thất bại 😞");
+    notify("error", "Đăng nhập thất bại");
     console.log("login failure", error);
   };
 

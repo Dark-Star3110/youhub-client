@@ -8,6 +8,7 @@ import { useRouter } from "../../hooks/useRouter";
 import { getStringToDate } from "../../utils/dateHelper";
 import SlickNav from "../SlickNav";
 import Spinner from "../Spinner";
+import VideoMenuSelect from "../VideoMenuSelect";
 import styles from "./Home.module.scss";
 
 const limit = 12;
@@ -147,24 +148,10 @@ const Home = () => {
                     >
                       <i className="fas fa-ellipsis-v"></i>
                       {video.id === videoSelected && (
-                        <div className={styles["videos-control__menu"]}>
-                          <div className={styles["menu-item"]}>
-                            <span className={styles["menu-icon"]}>
-                              <i className="far fa-clock"></i>
-                            </span>
-                            <span className={styles["menu-title"]}>
-                              Xem sau
-                            </span>
-                          </div>
-                          {video.user.role === "ADMIN" && (
-                            <div className={styles["menu-item"]}>
-                              <span className={styles["menu-icon"]}>
-                                <i className="fas fa-trash-alt"></i>
-                              </span>
-                              <span className={styles["menu-title"]}>Xóa</span>
-                            </div>
-                          )}
-                        </div>
+                        <VideoMenuSelect
+                          videoId={video.id}
+                          status={video.watchLaterStatus}
+                        />
                       )}
                     </div>
                   </div>

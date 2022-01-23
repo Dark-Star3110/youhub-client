@@ -1,0 +1,8 @@
+mutation WatchLater($action: Action!, $videoId: ID!) {
+  watchLater(action: $action, videoId: $videoId) {
+    ...mutationStatuses
+    errors {
+      ...fieldError
+    }
+  }
+}

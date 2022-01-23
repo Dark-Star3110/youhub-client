@@ -1,0 +1,15 @@
+query VideosVoted($limit: Int!, $cursor: String, $type: VoteType!) {
+  videosVoted(limit: $limit, cursor: $cursor, type: $type) {
+    totalCount
+    hasMore
+    cursor
+    paginatedVideos {
+      ...videoInfo
+      user {
+        firstName
+        lastName
+        image_url
+      }
+    }
+  }
+}

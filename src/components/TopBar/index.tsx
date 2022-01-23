@@ -196,7 +196,6 @@ const TopBar = ({ type }: TopBarProps) => {
               className={styles["noti-btn"]}
               onClick={() => {
                 setShow(show === "noti" ? "" : "noti");
-                setNumNoti(0);
                 // socket.emit("read-notify", details.id);
               }}
             >
@@ -334,7 +333,7 @@ const TopBar = ({ type }: TopBarProps) => {
           )}
           {show === "noti" && (
             <div className="fixed-wrapper" onClick={() => setShow("")}>
-              <Notify />
+              <Notify onChange={setNumNoti} />
             </div>
           )}
         </>

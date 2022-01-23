@@ -151,6 +151,10 @@ const Me = () => {
     });
 
     if (response.data?.updateInfo.success) {
+      setUserContext((prev) => ({
+        ...prev,
+        details: undefined,
+      }));
       notify("success", "Cập nhật thông tin thành công 😒");
       cache.writeFragment({
         id: `User:${details?.id}`,

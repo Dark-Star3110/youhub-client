@@ -15,6 +15,7 @@ const VideoConcern: React.FC<{ videoId: string }> = ({ videoId }) => {
     notifyOnNetworkStatusChange: true,
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
   if (loading && !data?.videoConcern?.paginatedVideos) return <Spinner />;

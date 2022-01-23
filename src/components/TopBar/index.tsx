@@ -33,7 +33,7 @@ const TopBar = ({ type }: TopBarProps) => {
 
   const router = useRouter();
   // context
-  const { toggleNav } = useContext(NavContext);
+  const { action, toggleNav } = useContext(NavContext);
   const { toggleExtraNav } = useContext(ExtraNavContext);
   const { notify } = useContext(ToastContext);
   const {
@@ -120,7 +120,10 @@ const TopBar = ({ type }: TopBarProps) => {
   // voice search
   useEffect(() => {
     if (!browserSupportsSpeechRecognition) {
-      notify("error", "Trình duyệt bạn sử dụng không hỗ trợ chức năng này");
+      notify(
+        "error",
+        "Trình duyệt bạn sử dụng không hỗ trợ chức năng tìm kiếm bằng giọng nói"
+      );
     }
     if (listening) {
       setSearchInput(transcript);
@@ -129,6 +132,9 @@ const TopBar = ({ type }: TopBarProps) => {
       notify("success", "nghe rồi con điz 🤡");
       SpeechRecognition.stopListening();
     }
+    return () => {
+      SpeechRecognition.stopListening();
+    };
   }, [browserSupportsSpeechRecognition, listening, transcript, notify]);
 
   return (
@@ -138,7 +144,10 @@ const TopBar = ({ type }: TopBarProps) => {
           <i className="fas fa-align-left"></i>
         </div>
       ) : (
-        <div className={styles.toggle} onClick={toggleNav}>
+        <div
+          className={styles.toggle + " " + styles[action]}
+          onClick={toggleNav}
+        >
           <i className="fas fa-bars"></i>
         </div>
       )}

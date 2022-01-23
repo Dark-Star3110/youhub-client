@@ -149,7 +149,7 @@ const Video = ({ videoData: video }: VideoProps) => {
               <span>
                 <i className="far fa-thumbs-up"></i>
               </span>
-              <span>
+              <span className={styles["num-like"]}>
                 {getNumToString(video.numUsersLiked as number | undefined)}
               </span>
             </div>

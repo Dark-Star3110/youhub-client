@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import banner from "../../assets/img/banner.jpg";
 import { useLogin } from "../../contexts/UserContext";
-import { useUserQuery } from "../../generated/graphql";
+import { useUserQuery, useUserVideosQuery } from "../../generated/graphql";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 import { useRouter } from "../../hooks/useRouter";
 import { getDateFromString } from "../../utils/dateHelper";
@@ -27,19 +27,28 @@ const User = () => {
     state: { details },
     cache,
   } = useLogin();
-  const { data, loading } = useUserQuery({
+  const { data: userInfoData, loading: userInfoLoading } = useUserQuery({
     variables: { userId },
     skip: !!window.localStorage.getItem("login") && !details,
   });
 
+  const { data: userVideoData, loading: userVideoLoading } = useUserVideosQuery(
+    {
+      variables: {
+        limit: 1,
+        userId,
+      },
+    }
+  );
+
   useEffect(() => {
     return () => {
-      if (data?.user) {
-        cache.evict({ id: `User:${data.user.id}` });
+      if (userInfoData?.user) {
+        cache.evict({ id: `User:${userInfoData.user.id}` });
         cache.evict({ fieldName: "videoUser" });
       }
     };
-  }, [cache, data?.user]);
+  }, [cache, userInfoData?.user]);
 
   const handleClick = (e: React.MouseEvent) => {
     const left = (e.target as HTMLSpanElement).offsetLeft;
@@ -48,15 +57,24 @@ const User = () => {
     const newTab = (e.target as HTMLSpanElement).id;
     setTab(newTab);
   };
-  const user = data?.user;
+  const user = userInfoData?.user;
+  const video = userVideoData?.videoUser?.paginatedVideos[0];
 
-  if (loading || (!!window.localStorage.getItem("login") && !details))
+  if (userInfoLoading || (!!window.localStorage.getItem("login") && !details))
     return (
       <h1>
         <Spinner />
       </h1>
     );
   if (!user) return <UserNotFound />;
+
+  if (!userVideoData?.videoUser && userVideoLoading) {
+    return <Spinner />;
+  }
+
+  if (!userVideoData?.videoUser)
+    return <h2>Vui lòng tải video lên để có dữ liệu trang này</h2>;
+
   return (
     <div className={styles.container}>
       <div className={styles.banner}>
@@ -102,7 +120,19 @@ const User = () => {
         </div>
       </div>
       <div className={styles["content"]}>
-        {tab === "home" && <h2>Sin lỗi vì không biết để gì được hưm</h2>}
+        {tab === "home" && (
+          <div className={styles["user-home"]}>
+            <div className={styles["primary-video"]}>
+              <iframe
+                title="Drive video player"
+                src={`https://drive.google.com/file/d/${video?.id}/preview`}
+                allow="autoplay"
+                allowFullScreen
+                className={styles["primary-video__d"]}
+              ></iframe>
+            </div>
+          </div>
+        )}
         {tab === "videos" && <UserVideos userId={userId} />}
         {tab === "intro" && (
           <div className={styles["intro"]}>

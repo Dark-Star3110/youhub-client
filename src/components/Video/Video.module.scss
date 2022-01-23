@@ -124,6 +124,42 @@
   .primary-video {
     height: 48vh;
   }
+  .primary-video_inf {
+    font-size: 14px;
+    .primary-video_control {
+      .primary-video_icon {
+        .primary-video_icon-item {
+          span {
+            i {
+              font-size: 16px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 560px) {
+  .primary-video_inf {
+    .primary-video_control {
+      .primary-video_icon {
+        .primary-video_icon-item {
+          span:nth-child(1) {
+            i {
+              font-size: 20px;
+            }
+          }
+          span:nth-child(2) {
+            display: none;
+          }
+          .num-like {
+            display: block;
+          }
+        }
+      }
+    }
+  }
 }
 
 @media (max-width: 480px) {

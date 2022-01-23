@@ -287,11 +287,12 @@
 
 @media (max-width: 768px) {
   .topbar {
+    overflow: hidden;
     .user {
       flex-direction: column-reverse;
-      margin-top: 1em;
+      margin-top: 0.4em;
       .user-item {
-        margin-bottom: 0.6em;
+        margin-bottom: 0.4em;
         display: none;
       }
       .user-img {
@@ -300,9 +301,10 @@
       &:hover {
         cursor: pointer;
         background-color: $black3-color;
-        margin-top: 6em;
-        .user-item {
-          display: block;
+      }
+      .noti-btn {
+        .noti-num {
+          display: none;
         }
       }
     }
@@ -313,11 +315,27 @@
 }
 
 @media (max-width: 480px) {
-  .user {
-    min-width: 40px;
-  }
-  .toggle {
-    z-index: 10;
-    right: 0;
+  .topbar {
+    .search {
+      margin-right: 5px;
+      .voice {
+        display: none;
+      }
+    }
+    .user {
+      min-width: 40px;
+    }
+    .toggle {
+      z-index: 6;
+      right: 0;
+    }
+    .toggle.active {
+      background-color: #313131;
+      right: 0;
+      width: 160px;
+    }
+    .user-info {
+      @include menu_dropdown(60px, 0);
+    }
   }
 }

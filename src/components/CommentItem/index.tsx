@@ -22,7 +22,7 @@ interface CommentItemProps {
 }
 
 const CommentItem = ({ id }: CommentItemProps) => {
-  const [cmtSelected, setCmtSelected] = useState("");
+  const [cmtSelected, setCmtSelected] = useState(false);
   const [cmtEdit, setCmtEdit] = useState("");
   const [value, setValue] = useState("");
   // ==========================
@@ -242,14 +242,10 @@ const CommentItem = ({ id }: CommentItemProps) => {
           </div>
           <div
             className={
-              styles.navigation +
-              " " +
-              styles[comment.id === cmtSelected ? "active" : ""]
+              styles.navigation + " " + styles[cmtSelected ? "active" : ""]
             }
             onClick={() => {
-              setCmtSelected((pre) => {
-                return comment.id === pre ? "" : comment.id;
-              });
+              setCmtSelected(!cmtSelected);
             }}
           >
             <span onClick={handleLike}>

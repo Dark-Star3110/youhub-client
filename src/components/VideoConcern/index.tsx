@@ -3,6 +3,7 @@ import styles from "./VideoConcern.module.scss";
 import { useVideoConcernQuery } from "../../generated/graphql";
 import Spinner from "../Spinner";
 import { getDateFromString } from "../../utils/dateHelper";
+import { NetworkStatus } from "@apollo/client";
 
 const VideoConcern: React.FC<{ videoId: string }> = ({ videoId }) => {
   const { data, loading, fetchMore, networkStatus } = useVideoConcernQuery({
@@ -11,6 +12,8 @@ const VideoConcern: React.FC<{ videoId: string }> = ({ videoId }) => {
       videoId,
     },
   });
+
+  const loadingMore = networkStatus === NetworkStatus.fetchMore;
 
   if (loading && !data?.videoConcern?.paginatedVideos) return <Spinner />;
 

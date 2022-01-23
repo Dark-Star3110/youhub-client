@@ -27,7 +27,7 @@ interface UserContextProps {
   children: ReactNode;
 }
 
-const socket = connect("http://localhost:8000");
+const socket = connect(process.env.REACT_APP_ENDPOINT as string);
 const cache = new InMemoryCache({
   typePolicies: {
     Query: {

@@ -195,7 +195,6 @@ const TopBar = ({ type }: TopBarProps) => {
             <div
               className={styles["noti-btn"]}
               onClick={() => {
-                console.log("hello");
                 setShow(show === "noti" ? "" : "noti");
                 // socket.emit("read-notify", details.id);
               }}

@@ -129,7 +129,7 @@ const TopBar = ({ type }: TopBarProps) => {
       setSearchInput(transcript);
     }
     if (!listening && transcript !== "") {
-      notify("success", "nghe rồi con điz 🤡");
+      notify("success", "Nghe rồi nhá bạn ơi🤡");
       SpeechRecognition.stopListening();
     }
     return () => {

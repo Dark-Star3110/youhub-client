@@ -12,7 +12,7 @@ const ChanelVideo: React.FC<{ userId: string }> = ({ userId }) => {
       userId,
       limit: 4,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "cache-and-network",
   });
 
   const settings = {

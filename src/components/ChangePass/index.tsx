@@ -14,12 +14,12 @@ const ChangePass = () => {
   const [changePass] = useChangePasswordMutation();
 
   if (!token) {
-    router.navigate("/cut");
+    router.navigate("/nham");
   }
 
   const handleChangePasswordSubmit = async () => {
     if (newPassword !== confirmNewPassword) {
-      setError("Nhập ngu");
+      setError("Nhập sai");
       return;
     }
     const response = await changePass({

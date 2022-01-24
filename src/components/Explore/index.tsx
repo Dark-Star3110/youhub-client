@@ -1,194 +1,83 @@
 import styles from "./Explore.module.scss";
-import fire_icon from "./../../assets/icon/fire.png";
+import other_icon from "./../../assets/icon/other.png";
 import game_icon from "./../../assets/icon/game.png";
 import music_icon from "./../../assets/icon/music.png";
 import news_icon from "./../../assets/icon/news.png";
 import sport_icon from "./../../assets/icon/sport.png";
 
-import user_img from "../../assets/img/user.png"; // rac
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
+import { useVideoCategoryQuery } from "../../generated/graphql";
+import Spinner from "../Spinner";
+import { getDateFromString } from "../../utils/dateHelper";
+import { NetworkStatus } from "@apollo/client";
+
+const categories: { [key: string]: string } = {
+  "Âm nhạc": "9e53165f-f37b-ec11-8359-405bd82e7629",
+  "Trò chơi": "a153165f-f37b-ec11-8359-405bd82e7629",
+  "Tin tức": "a053165f-f37b-ec11-8359-405bd82e7629",
+  "Thể thao": "9f53165f-f37b-ec11-8359-405bd82e7629",
+  "Thể loại khác": "a253165f-f37b-ec11-8359-405bd82e7629",
+};
 
 const Explore = () => {
   useCheckAuth();
-  const data = [
-    {
-      id: "17ZXlVzLb0toTe3dtO8q80DmVlnQz9R99",
-      title: "Tokyo Ghoul",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images8.alphacoders.com/546/thumbbig-546902.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
+  const [tab, setTab] = useState<string>("Âm nhạc");
+  const { data, loading, fetchMore, networkStatus } = useVideoCategoryQuery({
+    variables: {
+      limit: 20,
+      categoryId: categories[tab],
     },
-    {
-      id: "1r27Pc7Y4p8VALLxl3MUZSvMIAIoK2CGe",
-      title: "Arcane",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images2.alphacoders.com/119/thumbbig-1192178.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1VOhQq4iMun2ojv9CindmKnd4s4CgAwDd",
-      title: "Sword Art Online",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images8.alphacoders.com/533/thumbbig-533007.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1HSLvuGOSUfDQWC7ZwZlFobnfzlgGfwld",
-      title: "Naruto",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images3.alphacoders.com/135/thumbbig-135625.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1c2dBx0KCmX3aAbqRFYaJLxiwIPeOoZ73",
-      title: "Dragon Ball",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images.alphacoders.com/605/thumbbig-605799.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "12STlO4qx1tccXTTvRmdGG8cU57EJEdbK",
-      title: "One Piece Stamp",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images6.alphacoders.com/606/thumbbig-606263.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1GoZqWSYQXk2YYQz6T4KT27QCiPrSfK2V",
-      title: "Bleach EX",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images3.alphacoders.com/167/thumbbig-16729.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1XN64i3mSXalozFZ6lFBiDJSlgYHdZztG",
-      title: "Pokemon",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images5.alphacoders.com/613/thumbbig-613925.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1Ot-lfQvZtOFrBv78hTmLT8SrMR3qflEs",
-      title: "Your Name",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images2.alphacoders.com/742/thumbbig-742320.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-    {
-      id: "1D2Jya5U-kcuRjJSPJSfi4ZMJm1AQSyAx",
-      title: "Fairy Tail",
-      description: "this is description",
-      userId: "1",
-      commentable: true,
-      thumbNailUrl: "https://images6.alphacoders.com/311/thumbbig-311015.webp",
-      size: 1000,
-      createdAt: "09/12/2021",
-      updatedAt: "09/12/2021",
-      author: {
-        firstName: "user",
-        lastName: "mr",
-        image_url: user_img,
-      },
-    },
-  ];
+    notifyOnNetworkStatusChange: true,
+  });
 
-  const [tab, setTab] = useState("Video thịnh hành");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const loadingMore = networkStatus === NetworkStatus.fetchMore;
+
+  const loadMore = () => {
+    fetchMore({ variables: { cursor: data?.videoCategory?.cursor } });
+  };
+
+  const handleScroll = useCallback(() => {
+    let condition: number = 0;
+    if (document.documentElement.scrollHeight < 1500) condition = 0.38;
+    else if (document.documentElement.scrollHeight < 2500) condition = 0.66;
+    else if (document.documentElement.scrollHeight < 3500) condition = 0.8;
+    else condition = 0.9;
+    if (
+      window.scrollY / document.documentElement.scrollHeight >= condition &&
+      data?.videoCategory?.hasMore
+    ) {
+      if (!loading) {
+        fetchMore({ variables: { cursor: data?.videoCategory?.cursor } });
+      }
+    }
+  }, [
+    data?.videoCategory?.cursor,
+    fetchMore,
+    data?.videoCategory?.hasMore,
+    loading,
+  ]);
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, [handleScroll]);
+  const videos = data?.videoCategory?.paginatedVideos;
+  if (loading && !videos) {
+    return (
+      <h1>
+        <Spinner />
+      </h1>
+    );
+  }
 
   return (
     <div className={styles.container}>
       <div className={styles.menu}>
-        <div
-          className={styles["menu-item"]}
-          onClick={() => setTab("Video thịnh hành")}
-        >
-          <div className={styles["menu-item__icon"]}>
-            <img src={fire_icon} alt="icon" />
-          </div>
-          <div className={styles["menu-item__text"]}>Thịnh hành</div>
-        </div>
         <div className={styles["menu-item"]} onClick={() => setTab("Âm nhạc")}>
           <div className={styles["menu-item__icon"]}>
             <img src={music_icon} alt="icon" />
@@ -213,26 +102,43 @@ const Explore = () => {
           </div>
           <div className={styles["menu-item__text"]}>Thể thao</div>
         </div>
+        <div
+          className={styles["menu-item"]}
+          onClick={() => setTab("Thể loại khác")}
+        >
+          <div className={styles["menu-item__icon"]}>
+            <img src={other_icon} alt="icon" />
+          </div>
+          <div className={styles["menu-item__text"]}>Khác</div>
+        </div>
       </div>
       <div className={styles["content"]}>
         <h3 className={styles["content-title"]}>{tab}</h3>
-        {data.map((video) => (
+        {!loading && !videos && (
+          <h2>Không có video thuộc thể loại này !!! 😀</h2>
+        )}
+        {videos?.map((video) => (
           <Link to={`/watch/${video.id}`} key={video.id}>
             <div className={styles["secondary-item"]}>
               <div className={styles["secondary-item_img"]}>
-                <img src={video.thumbNailUrl} alt="video" />
+                <img src={video.thumbnailUrl as string} alt="video" />
               </div>
               <div className={styles["secondary-item_content"]}>
-                <h3>
-                  {video.title} - {video.description}
-                </h3>
-                <h4>{video.author.lastName + " " + video.author.firstName}</h4>
-                <h4>{video.createdAt}</h4>
+                <h3>{video.title}</h3>
+                <h4>{video.user.firstName + " " + video.user.lastName}</h4>
+                <h4>{getDateFromString(video.createdAt)}</h4>
               </div>
             </div>
           </Link>
         ))}
       </div>
+      {loadingMore && <Spinner />}
+
+      {data?.videoCategory?.hasMore && (
+        <button className={styles["more-btn"]} onClick={loadMore}>
+          Load More
+        </button>
+      )}
     </div>
   );
 };

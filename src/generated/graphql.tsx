@@ -261,6 +261,7 @@ export type Query = {
   notifications?: Maybe<PaginatedNotification>;
   user?: Maybe<User>;
   video?: Maybe<Video>;
+  videoCategory?: Maybe<PaginatedVideos>;
   videoConcern?: Maybe<PaginatedVideos>;
   videoUser?: Maybe<PaginatedVideos>;
   videos?: Maybe<PaginatedVideos>;
@@ -304,6 +305,13 @@ export type QueryUserArgs = {
 
 export type QueryVideoArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryVideoCategoryArgs = {
+  categoryId: Scalars['ID'];
+  cursor?: InputMaybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -669,6 +677,14 @@ export type VideoQueryVariables = Exact<{
 
 
 export type VideoQuery = { __typename?: 'Query', video?: { __typename?: 'Video', commentable: boolean, numUsersLiked?: number | null | undefined, voteStatus: number, id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, numSubscribers: number, role: string, subscribeStatus: { __typename?: 'SubscribeStatus', status: boolean, notification: boolean } } } | null | undefined };
+
+export type VideoCategoryQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  categoryId: Scalars['ID'];
+}>;
+
+
+export type VideoCategoryQuery = { __typename?: 'Query', videoCategory?: { __typename?: 'PaginatedVideos', cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, thumbnailUrl?: string | null | undefined, createdAt: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> } | null | undefined };
 
 export type VideoConcernQueryVariables = Exact<{
   videoId: Scalars['ID'];
@@ -1805,6 +1821,54 @@ export function useVideoLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<Vide
 export type VideoQueryHookResult = ReturnType<typeof useVideoQuery>;
 export type VideoLazyQueryHookResult = ReturnType<typeof useVideoLazyQuery>;
 export type VideoQueryResult = Apollo.QueryResult<VideoQuery, VideoQueryVariables>;
+export const VideoCategoryDocument = gql`
+    query VideoCategory($limit: Int!, $categoryId: ID!) {
+  videoCategory(limit: $limit, categoryId: $categoryId) {
+    cursor
+    hasMore
+    paginatedVideos {
+      id
+      title
+      thumbnailUrl
+      createdAt
+      user {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useVideoCategoryQuery__
+ *
+ * To run a query within a React component, call `useVideoCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useVideoCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useVideoCategoryQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      categoryId: // value for 'categoryId'
+ *   },
+ * });
+ */
+export function useVideoCategoryQuery(baseOptions: Apollo.QueryHookOptions<VideoCategoryQuery, VideoCategoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<VideoCategoryQuery, VideoCategoryQueryVariables>(VideoCategoryDocument, options);
+      }
+export function useVideoCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<VideoCategoryQuery, VideoCategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<VideoCategoryQuery, VideoCategoryQueryVariables>(VideoCategoryDocument, options);
+        }
+export type VideoCategoryQueryHookResult = ReturnType<typeof useVideoCategoryQuery>;
+export type VideoCategoryLazyQueryHookResult = ReturnType<typeof useVideoCategoryLazyQuery>;
+export type VideoCategoryQueryResult = Apollo.QueryResult<VideoCategoryQuery, VideoCategoryQueryVariables>;
 export const VideoConcernDocument = gql`
     query VideoConcern($videoId: ID!, $limit: Int!, $cursor: String) {
   videoConcern(videoId: $videoId, limit: $limit, cursor: $cursor) {

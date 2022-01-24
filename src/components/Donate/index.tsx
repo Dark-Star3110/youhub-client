@@ -25,11 +25,6 @@ const Donante = () => {
           <div className={styles["content-video"]}>
             <video src={videointro} controls></video>
           </div>
-          <p>
-            💩💩Bạn nào thấy hay có thể ủng hộ cho mình hộp milo, gói oreo hay
-            chỉ là gói mì tôm hảo hảo cũng được. Toàn bộ số tiền sẽ được sử dụng
-            để vận hành, duy trì và phát triển website trong tương lai.
-          </p>
         </div>
         <div className={styles["content-menu"]}>
           <h3>Mua cho YouHub hộp milo</h3>
@@ -89,6 +84,13 @@ const Donante = () => {
             </a>
           </button>
         </div>
+      </div>
+      <div className={styles.footer}>
+        <p>
+          💩💩Bạn nào thấy hay có thể ủng hộ cho mình hộp milo, gói oreo hay chỉ
+          là gói mì tôm hảo hảo cũng được. Toàn bộ số tiền sẽ được sử dụng để
+          vận hành, duy trì và phát triển website trong tương lai.
+        </p>
       </div>
     </div>
   );

@@ -1,0 +1,17 @@
+query VideoCategory($limit: Int!, $categoryId: ID!) {
+  videoCategory(limit: $limit, categoryId: $categoryId) {
+    cursor
+    hasMore
+    paginatedVideos {
+      id
+      title
+      thumbnailUrl
+      createdAt
+      user {
+        id
+        firstName
+        lastName
+      }
+    }
+  }
+}

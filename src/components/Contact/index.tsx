@@ -1,4 +1,5 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useContext, useState } from "react";
+import { ToastContext } from "../../contexts/ToastContext";
 import { useCheckAuth } from "../../hooks/useCheckAuth";
 import styles from "./Contact.module.scss";
 const Contact = () => {
@@ -11,6 +12,8 @@ const Contact = () => {
     message: "",
   });
 
+  const { notify } = useContext(ToastContext);
+
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -18,7 +21,7 @@ const Contact = () => {
   };
 
   const handleSubmit = () => {
-    console.log(inputValue);
+    notify("success", "Chúng tôi đã tiếp nhận phản hồi của bạn 😑");
     // send req
     setInputValue({
       firstName: "",

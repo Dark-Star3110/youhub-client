@@ -45,7 +45,7 @@ const ChangePass = () => {
         <h2>Mật khẩu mới</h2>
         <div className={styles["alert-success"]}>Nhập mật khẩu mới của bạn</div>
         <input
-          type="text"
+          type="password"
           placeholder="Nhập mật khẩu mới"
           className={styles["form-input"]}
           value={newPassword}
@@ -55,7 +55,7 @@ const ChangePass = () => {
           }}
         />
         <input
-          type="text"
+          type="password"
           placeholder="Xác nhận mật khẩu"
           className={styles["form-input"]}
           value={confirmNewPassword}

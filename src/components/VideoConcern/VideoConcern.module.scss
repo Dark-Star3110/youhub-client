@@ -5,6 +5,11 @@
   .secondary-item_img {
     width: 45%;
     margin-right: 8px;
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
   }
   .secondary-item_content {
     width: 55%;

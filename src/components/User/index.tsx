@@ -72,9 +72,6 @@ const User = () => {
     return <Spinner />;
   }
 
-  if (!userVideoData?.videoUser)
-    return <h2>Vui lòng tải video lên để có dữ liệu trang này</h2>;
-
   return (
     <div className={styles.container}>
       <div className={styles.banner}>
@@ -131,6 +128,22 @@ const User = () => {
                 className={styles["primary-video__d"]}
               ></iframe>
             </div>
+            <div className={styles["primary-video_inf"]}>
+              <h3>{video?.title}</h3>
+              <div className={styles["primary-video_control"]}>
+                <time>
+                  Đã tải lên vào {getDateFromString(video?.createdAt as string)}
+                </time>
+              </div>
+              <h4>
+                {!video?.description ?? video?.description!.length > 400
+                  ? video?.description.slice(0, 400) + "..."
+                  : video.description}
+              </h4>
+            </div>
+            {!userVideoData?.videoUser && (
+              <h2>Vui lòng tải video lên để có dữ liệu trang này</h2>
+            )}
           </div>
         )}
         {tab === "videos" && <UserVideos userId={userId} />}

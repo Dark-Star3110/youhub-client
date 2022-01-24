@@ -134,7 +134,11 @@ const Search = () => {
       )}
       {loadingMore && <Spinner />}
 
-      {data?.find?.hasMore && <button onClick={loadMore}>Load More</button>}
+      {data?.find?.hasMore && (
+        <button onClick={loadMore} className={styles["more-btn"]}>
+          Load More
+        </button>
+      )}
     </div>
   );
 };

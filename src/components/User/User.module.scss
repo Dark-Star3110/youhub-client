@@ -69,6 +69,42 @@
   .content {
     padding: 20px 100px 0;
   }
+  .user-home {
+    display: flex;
+    border-bottom: 2px solid $black3-color;
+    padding-bottom: 16px;
+    .primary-video {
+      width: 30%;
+      height: 24vh;
+      position: relative;
+      &::before {
+        content: "";
+        position: absolute;
+        top: 12px;
+        right: 0px;
+        width: 42px;
+        height: 42px;
+        background-color: transparent;
+        cursor: not-allowed;
+      }
+      .primary-video__d {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+    }
+    .primary-video_inf {
+      width: 60%;
+      margin-left: 20px;
+      time {
+        color: rgb(187, 187, 187);
+      }
+      h4 {
+        // font-family: "Courier New", Courier, monospace;
+        font-weight: 400;
+      }
+    }
+  }
   .intro {
     display: flex;
     .intro-detail {

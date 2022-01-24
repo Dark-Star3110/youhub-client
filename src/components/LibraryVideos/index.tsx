@@ -166,7 +166,9 @@ const LibraryVideos = ({ slug }: LibraryVideosProps) => {
       </div>
       {loadingMore && <Spinner />}
 
-      {data?.hasMore && <button>Load More</button>}
+      {data?.hasMore && (
+        <button className={styles["more-btn"]}>Load More</button>
+      )}
     </div>
   );
 };

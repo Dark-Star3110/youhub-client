@@ -3,6 +3,7 @@ import styles from "./Donate.module.scss";
 import milo from "../../assets/img/milo.png";
 import banner from "../../assets/img/banner.png";
 import logo from "../../assets/img/logo.png";
+import videointro from "../../assets/video/videointro.mp4";
 
 const Donante = () => {
   const [count, setCount] = useState(1);
@@ -21,6 +22,9 @@ const Donante = () => {
       </div>
       <div className={styles.content}>
         <div className={styles["content-inf"]}>
+          <div className={styles["content-video"]}>
+            <video src={videointro} controls></video>
+          </div>
           <p>
             💩💩Bạn nào thấy hay có thể ủng hộ cho mình hộp milo, gói oreo hay
             chỉ là gói mì tôm hảo hảo cũng được. Toàn bộ số tiền sẽ được sử dụng

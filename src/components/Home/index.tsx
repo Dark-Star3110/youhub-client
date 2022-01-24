@@ -163,7 +163,11 @@ const Home = () => {
       </div>
       {loadingMore && <Spinner />}
 
-      {data?.videos?.hasMore && <button onClick={loadMore}>Load More</button>}
+      {data?.videos?.hasMore && (
+        <button className={styles["more-btn"]} onClick={loadMore}>
+          Load More
+        </button>
+      )}
     </div>
   );
 };

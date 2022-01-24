@@ -176,6 +176,7 @@ const Login = () => {
     // check errors here
 
     if (response.data?.signup.success) {
+      notify("success", "Đăng ký thành công");
       setMode("");
       setSignupData({
         username: "",
@@ -184,6 +185,8 @@ const Login = () => {
         firstName: "",
         lastName: "",
       });
+    } else {
+      notify("error", "Có lỗi xảy ra, vui lòng thử lại! 😫");
     }
     setLoading(false);
   };

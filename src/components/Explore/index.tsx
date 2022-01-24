@@ -12,6 +12,7 @@ import { useVideoCategoryQuery } from "../../generated/graphql";
 import Spinner from "../Spinner";
 import { getDateFromString } from "../../utils/dateHelper";
 import { NetworkStatus } from "@apollo/client";
+import { useLogin } from "../../contexts/UserContext";
 
 const categories: { [key: string]: string } = {
   "Âm nhạc": "9e53165f-f37b-ec11-8359-405bd82e7629",
@@ -22,6 +23,7 @@ const categories: { [key: string]: string } = {
 };
 
 const Explore = () => {
+  const { cache } = useLogin();
   useCheckAuth();
   const [tab, setTab] = useState<string>("Âm nhạc");
   const { data, loading, fetchMore, networkStatus } = useVideoCategoryQuery({
@@ -66,6 +68,13 @@ const Explore = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [handleScroll]);
+
+  useEffect(() => {
+    return () => {
+      cache.evict({ fieldName: "videoCategory" });
+    };
+  }, [tab, cache]);
+
   const videos = data?.videoCategory?.paginatedVideos;
   if (loading && !videos) {
     return (

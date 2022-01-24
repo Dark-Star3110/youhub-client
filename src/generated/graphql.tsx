@@ -635,6 +635,13 @@ export type FindQueryVariables = Exact<{
 
 export type FindQuery = { __typename?: 'Query', find?: { __typename?: 'PaginatedVideos', totalCount: number, cursor: any, hasMore: boolean, paginatedVideos: Array<{ __typename?: 'Video', id: string, title: string, description: string, thumbnailUrl?: string | null | undefined, createdAt: string, updatedAt: string, watchLaterStatus: boolean, user: { __typename?: 'User', id: string, firstName: string, lastName: string, fullName?: string | null | undefined, image_url?: string | null | undefined, role: string } }> } | null | undefined };
 
+export type GetChanelQueryVariables = Exact<{
+  userId: Scalars['ID'];
+}>;
+
+
+export type GetChanelQuery = { __typename?: 'Query', user?: { __typename?: 'User', chanelsSubscribe?: Array<{ __typename?: 'User', id: string, firstName: string, lastName: string, image_url?: string | null | undefined }> | null | undefined } | null | undefined };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1575,6 +1582,46 @@ export function useFindLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FindQ
 export type FindQueryHookResult = ReturnType<typeof useFindQuery>;
 export type FindLazyQueryHookResult = ReturnType<typeof useFindLazyQuery>;
 export type FindQueryResult = Apollo.QueryResult<FindQuery, FindQueryVariables>;
+export const GetChanelDocument = gql`
+    query GetChanel($userId: ID!) {
+  user(userId: $userId) {
+    chanelsSubscribe {
+      id
+      firstName
+      lastName
+      image_url
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetChanelQuery__
+ *
+ * To run a query within a React component, call `useGetChanelQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetChanelQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetChanelQuery({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useGetChanelQuery(baseOptions: Apollo.QueryHookOptions<GetChanelQuery, GetChanelQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetChanelQuery, GetChanelQueryVariables>(GetChanelDocument, options);
+      }
+export function useGetChanelLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChanelQuery, GetChanelQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetChanelQuery, GetChanelQueryVariables>(GetChanelDocument, options);
+        }
+export type GetChanelQueryHookResult = ReturnType<typeof useGetChanelQuery>;
+export type GetChanelLazyQueryHookResult = ReturnType<typeof useGetChanelLazyQuery>;
+export type GetChanelQueryResult = Apollo.QueryResult<GetChanelQuery, GetChanelQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {

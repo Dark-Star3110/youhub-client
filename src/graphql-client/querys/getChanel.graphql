@@ -1,0 +1,10 @@
+query GetChanel($userId: ID!) {
+  user(userId: $userId) {
+    chanelsSubscribe {
+      id
+      firstName
+      lastName
+      image_url
+    }
+  }
+}

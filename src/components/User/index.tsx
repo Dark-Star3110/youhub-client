@@ -50,6 +50,12 @@ const User = () => {
     };
   }, [cache, userInfoData?.user]);
 
+  useEffect(() => {
+    return () => {
+      if (tab === "home") cache.evict({ fieldName: "videoUser" });
+    };
+  }, [tab, cache]);
+
   const handleClick = (e: React.MouseEvent) => {
     const left = (e.target as HTMLSpanElement).offsetLeft;
     const width = (e.target as HTMLSpanElement).offsetWidth + "px";

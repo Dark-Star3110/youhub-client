@@ -53,7 +53,7 @@ const Notify: React.FC<{
                     cache.writeFragment({
                       id: noti.__ref,
                       fragment: gql`
-                        fragment notificationInfo on Notification {
+                        fragment notificationInfos on Notification {
                           readed
                         }
                       `,
@@ -89,7 +89,7 @@ const Notify: React.FC<{
                 cache.writeFragment({
                   id: `Notification:${noti._id}`,
                   fragment: gql`
-                    fragment notificationInfo on Notification {
+                    fragment notificationInfos on Notification {
                       readed
                     }
                   `,

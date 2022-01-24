@@ -45,9 +45,11 @@ const LibraryVideos = ({ slug }: LibraryVideosProps) => {
 
   useEffect(() => {
     return () => {
-      cache.evict({ fieldName: "videosVoted" });
+      if (slug !== "playlist") {
+        cache.evict({ fieldName: "videosVoted" });
+      }
     };
-  }, [cache]);
+  }, [cache, slug]);
 
   const handleScroll = useCallback(() => {
     let condition: number = 0;

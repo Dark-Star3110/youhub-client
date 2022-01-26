@@ -1,7 +1,7 @@
 # YouHub : nền tảng xem video không quảng cáo
 
 Dự án dược tạo bởi [Create React App](https://github.com/facebook/create-react-app).
-Link trang web : [YouHub](https://github.com)
+Link trang web : [YouHub](https://youhub.vercel.app/)
 
 ## Available Scripts
 
